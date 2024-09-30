@@ -1,0 +1,20 @@
+#spring.application.name=news
+server:
+  port: 8080
+  servlet:
+    context-path: /news_lv
+
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/news_lv"
+    username: root
+    password: khang78780213
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  #Khai báo thymeleaf
+  mvc:
+    static-path-pattern: /static/**
