@@ -22,7 +22,6 @@ import java.util.Set;
 public class UserResponse extends BaseResponse<UserResponse> {
 //    Long id;
     String userName;
-    String password;
     String fullName;
     String email;
     String avatar;

@@ -3,6 +3,8 @@ server:
   port: 8080
   servlet:
     context-path: /news_lv
+    session:
+      timeout: 1440m  # Thời gian session là 1440 phút (1 ngày)
 
 spring:
   datasource:
@@ -12,8 +14,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      #ddl-auto: update
+      ddl-auto: none
+    #show-sql: true
 
   #Khai báo thymeleaf
   mvc:
