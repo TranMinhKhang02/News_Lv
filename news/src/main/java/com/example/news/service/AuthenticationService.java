@@ -46,9 +46,8 @@ public class AuthenticationService {
         session.setAttribute("user", user);
 
         // Lưu vai trò vào SecurityContext
-        /*List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().getCode())); // Lấy mã vai trò từ user
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, authorities));*/
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getCode()));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, authorities));
 
         var userResponse = userService.getUserByUsername(request.getUserName());
 

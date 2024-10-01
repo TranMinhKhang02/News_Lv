@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
@@ -25,9 +26,9 @@ public class UserResponse extends BaseResponse<UserResponse> {
     String fullName;
     String email;
     String avatar;
-    Date dob;
+    LocalDate dob;
     String phoneNumber;
-    Role role;
+    RoleResponse role;
     /*String createdBy;
     LocalDateTime createdDate;
     String modifiedBy;

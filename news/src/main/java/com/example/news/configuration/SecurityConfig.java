@@ -12,10 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
@@ -25,7 +26,8 @@ public class SecurityConfig {
     };
 
     private final String[] Get_PUBLIC_ENDPOINTS = {
-            "/users/**"
+            "/users/**",
+            "role/**"
     };
 
     @Bean
@@ -34,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, Get_PUBLIC_ENDPOINTS).permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 // Cấu hình session management
@@ -41,7 +44,8 @@ public class SecurityConfig {
                         .maximumSessions(1) // Cho phép 2 session tại một thời điểm
                         .maxSessionsPreventsLogin(false) // Cho phép user login lại nếu hết session
                 )
-                .csrf(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable)
+                .addFilterAfter(new SecurityContextPersistenceFilter(), SecurityContextPersistenceFilter.class);
 //                .addFilterBefore(new SessionCheckFilter(), UsernamePasswordAuthenticationFilter.class); // Thêm filter
 
 

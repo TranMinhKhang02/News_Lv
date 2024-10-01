@@ -11,10 +11,17 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // Thay thế private final
@@ -32,13 +39,20 @@ public class AuthenticationController {
         // Lấy thông tin người dùng từ kết quả xác thực
         User user = (User) httpRequest.getSession().getAttribute("user");
         if (user != null && user.getRole() != null) {
-            // Lấy mã của vai trò
+
+            // In log thông tin người dùng
+            log.info("User role: {}", user.getRole().getCode());
+            log.info("User authorities: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+            log.info("User context: {}", SecurityContextHolder.getContext());
+//            log.info("Session ID after login: {}", httpRequest.getSession().getId());
+            /*// Lấy mã của vai trò
             String roleCode = user.getRole().getCode();
             // In ra dòng log với mã của vai trò
-            log.info("User role: {}", roleCode);
+            log.info("User role: {}", roleCode);*/
         }
 
         return ApiResponse.<AuthenticationResponse>builder()
+                .code(1000)
                 .result(result)
                 .build();
     }
@@ -47,6 +61,7 @@ public class AuthenticationController {
     public ApiResponse<String> logout(HttpServletRequest request, HttpServletResponse response) {
         request.getSession().invalidate(); // Vô hiệu hóa session
         return ApiResponse.<String>builder()
+                .code(1000)
                 .result("Logout successful")
                 .build();
     }

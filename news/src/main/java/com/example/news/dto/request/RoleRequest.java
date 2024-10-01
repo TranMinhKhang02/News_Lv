@@ -3,17 +3,14 @@ package com.example.news.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
-
-    String password;
-    String fullName;
-    LocalDateTime dob;
+public class RoleRequest {
+    String name;
+    String code;
+    String description;
+    String categories;
 }

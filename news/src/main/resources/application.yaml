@@ -14,8 +14,8 @@ spring:
 
   jpa:
     hibernate:
-      #ddl-auto: update
-      ddl-auto: none
+      ddl-auto: update
+      #ddl-auto: none
     #show-sql: true
 
   #Khai báo thymeleaf

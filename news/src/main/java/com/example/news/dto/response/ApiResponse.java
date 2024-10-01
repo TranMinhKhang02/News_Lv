@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     int code = 1000;
+//    LocalDateTime currentTime = LocalDateTime.now(); // Thêm trường timestamp
     String message;
     T result;
-    LocalDateTime currentTime = LocalDateTime.now(); // Thêm trường timestamp
 }

@@ -14,7 +14,8 @@ public class WebConfig implements WebMvcConfigurer {
     // Các endpoint public được định nghĩa là biến final
     public final String[] PUBLIC_ENDPOINTS = {
             "/auth/log-in",
-            "/auth/log-out"
+            "/auth/log-out",
+            "/users"
     };
 
     @Override

@@ -16,6 +16,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +35,7 @@ public class UserController {
 
     @PostMapping
     public ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+        log.info("Received request to create user: {}", request);  // Thêm log
         ApiResponse<User> apiResponse = new ApiResponse<>();
 
         apiResponse.setResult(userService.createUser(request));
@@ -41,7 +44,26 @@ public class UserController {
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
+        log.info("User is accessing getAllUsers endpoint");
+        /*// Lấy đối tượng Authentication từ SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Kiểm tra nếu người dùng đã đăng nhập và có quyền hạn
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = (User) authentication.getPrincipal(); // Lấy thông tin người dùng
+
+            // Kiểm tra role của người dùng
+            if ("ADMIN".equals(user.getRole().getCode())) {
+                return userService.getAllUsers(); // Trả về danh sách người dùng nếu là ADMIN
+            }
+        }*/
+        /*User user = (User) httpRequest.getSession().getAttribute("user");
+        if(user.getRole().getCode().equals("ADMIN")) {
+            return userService.getAllUsers();
+        }*/
+//        throw new AppException(ErrorCode.UNAUTHORIZED);
         return userService.getAllUsers();
     }
 
@@ -61,12 +83,15 @@ public class UserController {
         return "User has been deleted";
     }
 
-    @GetMapping("/me")
+    @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // Lấy session hiện tại
         if (session == null || session.getAttribute("user") == null) {
-            throw new AppException(ErrorCode.UNLogin); // Nếu không có session, throw exception
+            throw new AppException(ErrorCode.UNLOGIN); // Nếu không có session, throw exception
         }
+
+        log.info("SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        log.info("Session ID in myInfo: {}", session.getId()); // Log ID session
 
         User user = (User) session.getAttribute("user");
         UserResponse userResponse = userMapper.toUserResponse(user);
