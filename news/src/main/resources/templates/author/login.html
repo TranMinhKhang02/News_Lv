@@ -15,14 +15,15 @@
             <div class="card border-0 shadow rounded-3 my-5">
                 <div class="card-body p-4 p-sm-5">
                     <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
-                    <form>
+                    <form action="/news_lv/auth/log-in" method="post">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
+<!--                            <input class="input100" type="text" id="userName" name="userName" placeholder="Tên đăng nhập">-->
+                            <input type="text" class="form-control" id="userName" name=userName placeholder="Tên đăng nhập">
+                            <label for="userName">Tên đăng nhập</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                            <label for="floatingPassword">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            <label for="password">Password</label>
                         </div>
 
                         <div class="form-check mb-3">
@@ -37,9 +38,14 @@
                         </div>
                         <hr class="my-4">
                         <div class="d-grid mb-2">
-                            <button class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
+                            <a href="/news_lv/oauth2/authorization/google">
+                                <button class="btn btn-google btn-login text-uppercase fw-bold" type="button">
+                                    <i class="fab fa-google me-2"></i> Sign in with Google
+                                </button>
+                            </a>
+                            <!--<button class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
                                 <i class="fab fa-google me-2"></i> Sign in with Google
-                            </button>
+                            </button>-->
                         </div>
                         <div class="d-grid">
                             <button class="btn btn-facebook btn-login text-uppercase fw-bold" type="submit">

@@ -19,7 +19,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 //@Slf4j
 @RequiredArgsConstructor // Thay thế Autowried
@@ -79,4 +81,43 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user!")));
     }
+
+    public User loginWithGoogle(String googleId, String email, String fullName, String avatar, LocalDate dob) {
+        // Kiểm tra xem người dùng đã tồn tại trong cơ sở dữ liệu hay chưa
+        Optional<User> existingUser = userRepository.findByGoogleId(googleId);
+
+        if (existingUser.isPresent()) {
+            // Nếu người dùng đã tồn tại, trả về người dùng đó
+            return existingUser.get();
+        } else {
+            // Nếu người dùng chưa tồn tại, tạo tài khoản mới
+            User newUser = new User();
+            newUser.setGoogleId(googleId);
+            newUser.setEmail(email);
+            newUser.setFullName(fullName);
+            newUser.setAvatar(avatar);
+            newUser.setDob(dob);
+            newUser.setStatus(1);
+
+            // Đặt role mặc định cho người dùng mới
+            Role defaultRole = roleRepository.findById(2L)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy role!"));
+            newUser.setRole(defaultRole);
+
+            // Lưu người dùng mới vào cơ sở dữ liệu
+            return userRepository.save(newUser);
+        }
+    }
+    /*public User loginWithGoogle(String googleId, String email, String fullName) {
+        User user = userRepository.findByGoogleId(googleId)
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setGoogleId(googleId);
+                    newUser.setEmail(email);
+                    newUser.setFullName(fullName);
+                    newUser.setStatus(1);
+                    return userRepository.save(newUser);
+                });
+        return user;
+    }*/
 }

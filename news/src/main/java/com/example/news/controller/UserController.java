@@ -18,9 +18,13 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor // Thay thế Autowried
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // Thay thế private final
@@ -46,24 +50,6 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
-        log.info("User is accessing getAllUsers endpoint");
-        /*// Lấy đối tượng Authentication từ SecurityContextHolder
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Kiểm tra nếu người dùng đã đăng nhập và có quyền hạn
-        if (authentication != null && authentication.isAuthenticated()) {
-            User user = (User) authentication.getPrincipal(); // Lấy thông tin người dùng
-
-            // Kiểm tra role của người dùng
-            if ("ADMIN".equals(user.getRole().getCode())) {
-                return userService.getAllUsers(); // Trả về danh sách người dùng nếu là ADMIN
-            }
-        }*/
-        /*User user = (User) httpRequest.getSession().getAttribute("user");
-        if(user.getRole().getCode().equals("ADMIN")) {
-            return userService.getAllUsers();
-        }*/
-//        throw new AppException(ErrorCode.UNAUTHORIZED);
         return userService.getAllUsers();
     }
 
@@ -100,4 +86,39 @@ public class UserController {
                 .result(userResponse)
                 .build();
     }
+
+    /*@PostMapping("/users")
+    public String createUser(@Valid UserCreationRequest request, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "register"; // Nếu có lỗi, hiển thị lại form
+        }
+
+        // Xử lý tạo user ở đây (thêm vào database, v.v.)
+        return "redirect:/success";
+    }*/
+
+    /*@GetMapping("/page/login/oauth2/code/google")
+    public String googleCallback(OAuth2AuthenticationToken authentication) {
+        Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
+        String googleId = (String) attributes.get("sub");
+        String email = (String) attributes.get("email");
+        String fullName = (String) attributes.get("name");
+
+        User user = userService.loginWithGoogle(googleId, email, fullName);
+        session.setAttribute("user", user);
+
+        return "redirect:/news_lv/page/home";
+    }*/
+    /*@GetMapping("/oauth2/callback/google")
+    public String googleCallback(OAuth2AuthenticationToken authentication) {
+        Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
+        String googleId = (String) attributes.get("sub");
+        String email = (String) attributes.get("email");
+        String fullName = (String) attributes.get("name");
+
+        User user = userService.loginWithGoogle(googleId, email, fullName);
+        session.setAttribute("user", user);
+
+        return "redirect:/news_lv/page/home";
+    }*/
 }

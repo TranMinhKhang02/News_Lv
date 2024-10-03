@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>User Registration</h2>
+
+<form id="registrationForm">
+    <div>
+        <label for="userName">Username:</label>
+        <input type="text" id="userName" name="userName" required minlength="4">
+    </div>
+
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required minlength="4">
+    </div>
+
+    <div>
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" required>
+    </div>
+
+    <div>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
+    </div>
+
+    <div>
+        <button type="button" id="submitBtn">Register</button>
+    </div>
+</form>
+
+<!-- jQuery AJAX to send data -->
+<script>
+    $(document).ready(function() {
+        $('#submitBtn').on('click', function(e) {
+            e.preventDefault();
+            // Create a JSON object from form fields
+            let formData = {
+                userName: $('#userName').val(),
+                password: $('#password').val(),
+                fullName: $('#fullName').val(),
+                dob: $('#dob').val()
+            };
+
+            $.ajax({
+                url: '/news_lv/users', // The API endpoint
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    // Handle success, redirect to home
+                    window.location.href = "/news_lv/page/home";
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    alert("Error: " + xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
