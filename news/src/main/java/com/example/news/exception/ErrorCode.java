@@ -17,6 +17,7 @@ public enum ErrorCode {
     UNLOGIN(1007, "Người dùng chưa đăng nhập vào hệ thống.", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1008, "Không có quyền truy cập.", HttpStatus.FORBIDDEN), // 403
     INVALID_DOB(1009, "Bạn không đủ tuổi để tham gia vào hệ thống", HttpStatus.BAD_REQUEST), // 400
+    METHOD_NOT_ALLOWED(1010, "Phương thức yêu cầu của API không đúng hoặc thiếu value.", HttpStatus.METHOD_NOT_ALLOWED), // 400
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

@@ -12,7 +12,6 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-
     String password;
     String fullName;
     LocalDateTime dob;

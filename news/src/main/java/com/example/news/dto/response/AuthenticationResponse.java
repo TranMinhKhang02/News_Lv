@@ -1,6 +1,6 @@
 package com.example.news.dto.response;
 
-import com.example.news.entity.User;
+import com.example.news.dto.response.userResponse.UserResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

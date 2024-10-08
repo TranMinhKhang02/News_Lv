@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,27 +29,32 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     @Lazy
     @Autowired
     private UserService userService;
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users",
+            "/users/**",
             "/auth/**",
-            "/page/**"
-            /*"/auth/log-in",
-            "/auth/register",
-            "/auth/log-out"*/
+            "/page/**",
+            "/role/**",
+            "/news/**",
+            "/comment/**",
+            "/category/**",
+            "/status/**",
+            /*"/users",
+            "/auth/**",
+            "/page/**"*/
     };
 
     private final String[] Get_PUBLIC_ENDPOINTS = {
             "/users/**",
             "role/**",
-            "/page/**",
-            "/user-profile",
-            "/profile"
+            "/page/**"
+            /*"/user-profile",
+            "/profile"*/
     };
 
     @Bean
@@ -60,9 +66,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(request -> request
-                    .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                    .requestMatchers(HttpMethod.GET, Get_PUBLIC_ENDPOINTS).permitAll()
+                    .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+//                    .requestMatchers(HttpMethod.GET, Get_PUBLIC_ENDPOINTS).permitAll()
                     .requestMatchers("/static/**").permitAll() // Cho phép truy cập vào tất cả các tệp tin tĩnh
+                    /*.logout()
+                        .logoutUrl("/page/logout") // Đặt URL cho logout
+                        .logoutSuccessUrl("/home/index") // Chuyển hướng sau khi logout thành công
+                        .permitAll() // Cho phép tất cả mọi người truy cập vào URL logout*/
                     .anyRequest().authenticated()
             )
             // Cấu hình session management
@@ -71,7 +81,7 @@ public class SecurityConfig {
                     .maxSessionsPreventsLogin(false) // Cho phép user login lại nếu hết session
             )
             .oauth2Login(oauth2login -> oauth2login
-                    .loginPage("/page/login")
+//                    .loginPage("/page/home")
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(customOAuth2UserService())
                     )

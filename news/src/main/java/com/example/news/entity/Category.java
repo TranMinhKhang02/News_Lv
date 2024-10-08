@@ -1,5 +1,6 @@
 package com.example.news.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -39,9 +40,11 @@ public class Category extends Base {
     Category parentCategory; // Tham chiếu đến thể loại cha
 
     @OneToMany(mappedBy = "parentCategory") // Quan hệ một-nhiều với chính nó
+    @JsonBackReference // Không trả về danh sách category con trong parentCategory
     List<Category> subcategories; // Danh sách các thể loại con
 
     @ManyToMany(mappedBy = "categories")
+    @JsonBackReference // Không trả về danh sách news trong phản hồi JSON
     Set<News> news;
 
 }

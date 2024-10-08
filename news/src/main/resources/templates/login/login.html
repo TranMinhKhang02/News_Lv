@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/login/login.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card border-0 shadow rounded-3 my-5">
+                <div class="card-body p-4 p-sm-5">
+                    <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
+                    <form id="loginForm">
+<!--                    <form action="/news_lv/auth/log-in" method="post">-->
+                        <div class="form-floating mb-3">
+<!--                            <input class="input100" type="text" id="userName" name="userName" placeholder="Tên đăng nhập">-->
+                            <input type="text" class="form-control" id="userName" name=userName placeholder="Tên đăng nhập">
+                            <label for="userName">Tên đăng nhập</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            <label for="password">Password</label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck">
+                            <label class="form-check-label" for="rememberPasswordCheck">
+                                Remember password
+                            </label>
+                        </div>
+                        <div class="d-grid">
+                            <button id="loginBtn" class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">Sign in</button>
+                        </div>
+                        <hr class="my-4">
+                        <div class="d-grid mb-2">
+                            <a href="/news_lv/oauth2/authorization/google">
+                                <button class="btn btn-google btn-login text-uppercase fw-bold" type="button">
+                                    <i class="fab fa-google me-2"></i> Sign in with Google
+                                </button>
+                            </a>
+                            <!--<button class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
+                                <i class="fab fa-google me-2"></i> Sign in with Google
+                            </button>-->
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-facebook btn-login text-uppercase fw-bold" type="submit">
+                                <i class="fab fa-facebook-f me-2"></i> Sign in with Facebook
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#loginBtn').on('click', function(e) {
+            e.preventDefault();
+
+            // Thu thập dữ liệu từ form
+            let loginData = {
+                userName: $('#userName').val(),
+                password: $('#password').val()
+            };
+
+            // Gửi dữ liệu qua AJAX
+            $.ajax({
+                url: '/news_lv/auth/log-in', // Endpoint xử lý đăng nhập
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(loginData),
+                success: function(response) {
+                    console.log("Đăng nhập thành công");
+
+                    // Lưu thông tin người dùng vào sessionStorage
+                    sessionStorage.setItem('loggedIn', 'true');
+                    sessionStorage.setItem('user', JSON.stringify(response.result.user)); // Lưu user vào sessionStorage
+                    // sessionStorage.setItem('user', response.result.user); // Lưu userId vào sessionStorage
+
+                    // Lấy role của người dùng từ response
+                    let userRoleCode = response.result.user.role.code;
+
+                    // Kiểm tra role và chuyển hướng nếu role có tiền tố là "ADMIN"
+                    if (userRoleCode.startsWith('ADMIN')) {
+                        window.location.href = '/news_lv/page/admin'; // Chuyển hướng đến trang admin
+                    } else if (userRoleCode === 'USER') {
+                        let currentNewsId = sessionStorage.getItem('currentNewsId');
+                        if (currentNewsId) {
+                            window.location.href = '/news_lv/page/single?newsId=' + currentNewsId;
+                        } else {
+                            window.location.href = '/news_lv/page/home';
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Đăng nhập thất bại: " + xhr.responseText);
+                }
+            });
+            /*$.ajax({
+                url: '/news_lv/auth/log-in', // Endpoint xử lý đăng nhập
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(loginData),
+                success: function(response) {
+                    // Dựa trên kiểm tra ở backend, chuyển hướng
+                    console.log("Đăng nhâp thành công");
+                    sessionStorage.setItem('loggedIn', 'true');
+                    window.location.href = response.redirectUrl || sessionStorage.getItem('redirectUrl'); // Chuyển hướng về URL đã gửi
+                    // window.location.href = response.redirectUrl;
+                },
+                error: function(xhr, status, error) {
+                    alert("Đăng nhập thất bại: " + xhr.responseText);
+                }
+            });*/
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.example.news.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +65,7 @@ public class User extends Base {
     Set<News> favoriteNews;
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference // Không trả về danh sách user trong phản hồi JSON
     List<Comment> comments;
 
     @ManyToOne
@@ -70,4 +73,11 @@ public class User extends Base {
     @JsonManagedReference // Tránh vòng lặp
     Role role;
 
+    public void favorite(News news) {
+        if (favoriteNews == null) {
+            favoriteNews = new HashSet<>();
+        }
+        favoriteNews.add(news);
+        news.getUsersFavorited().add(this);
+    }
 }

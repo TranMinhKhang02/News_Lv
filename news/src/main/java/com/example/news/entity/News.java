@@ -1,5 +1,7 @@
 package com.example.news.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +23,7 @@ import java.util.Set;
         @AttributeOverride(name = "modifiedBy", column = @Column(name = "n_modifiedBy")),
         @AttributeOverride(name = "modifiedDate", column = @Column(name = "n_modifiedDate"))
 })
+//@EntityListeners(Base.class)
 @Table(name = "news")
 public class News extends Base {
 
@@ -69,16 +72,19 @@ public class News extends Base {
             joinColumns = @JoinColumn(name = "n_id"),
             inverseJoinColumns = @JoinColumn(name = "c_id")
     )
+    @JsonManagedReference // Tránh vòng lặp dùng cho class chử sở hữu mối quan hệ
     Set<Category> categories;
 
     @ManyToOne
     @JoinColumn(name = "s_id")
+    @JsonManagedReference // Tránh vòng lặp dùng cho class chử sở hữu mối quan hệ
     Status status;
 
     @ManyToMany(mappedBy = "favoriteNews")
     Set<User> usersFavorited;
 
     @OneToMany(mappedBy = "news")
+    @JsonBackReference // Không trả về danh sách news trong phản hồi JSON
     List<Comment> comments;
 
     public void prePersist() {

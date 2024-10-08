@@ -2,20 +2,19 @@ package com.example.news.service;
 
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
-import com.example.news.dto.response.UserResponse;
+import com.example.news.dto.response.userResponse.UserResponse;
+import com.example.news.entity.News;
 import com.example.news.entity.Role;
 import com.example.news.entity.User;
 import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
 import com.example.news.mapper.UserMapper;
+import com.example.news.repository.NewsRepository;
 import com.example.news.repository.RoleRepository;
 import com.example.news.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +32,7 @@ public class UserService {
     UserMapper userMapper;
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
+    NewsRepository newsRepository;
 
     public User createUser(UserCreationRequest request) {
 //        Role role = new Role();
@@ -80,6 +80,15 @@ public class UserService {
     public UserResponse getUserByUsername(String username) {
         return userMapper.toUserResponse(userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user!")));
+    }
+
+    public void favoriteNews(long userId, long newsId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+        News news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy news!"));
+        user.favorite(news);
+        userRepository.save(user);
     }
 
     public User loginWithGoogle(String googleId, String email, String fullName, String avatar, LocalDate dob) {

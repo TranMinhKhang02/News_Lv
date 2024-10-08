@@ -1,5 +1,6 @@
 package com.example.news.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +32,7 @@ public class Status extends Base {
     String description;
 
     @OneToMany(mappedBy = "status")
+    @JsonBackReference // Tránh vòng lặp
     List<News> news;
 
 }

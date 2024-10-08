@@ -16,6 +16,23 @@
         }
         toggleNavbarMethod();
         $(window).resize(toggleNavbarMethod);
+
+        // Lấy thời gian hiện tại của Việt Nam (GMT+7)
+        const currentDate = new Date();
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'Asia/Ho_Chi_Minh' // Múi giờ của Việt Nam
+        };
+
+        // Định dạng ngày tháng
+        const formattedDate = new Intl.DateTimeFormat('vi-VN', options).format(currentDate);
+        // const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
+
+        // Hiển thị vào trong phần tử HTML
+        document.getElementById('current-date').innerText = formattedDate;
     });
     
     
@@ -31,7 +48,6 @@
         $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
         return false;
     });
-
 
     // Tranding carousel
     $(".tranding-carousel").owlCarousel({
@@ -115,7 +131,7 @@
             }
         }
     });
-    
+
 
     // Carousel item 4
     $(".carousel-item-4").owlCarousel({

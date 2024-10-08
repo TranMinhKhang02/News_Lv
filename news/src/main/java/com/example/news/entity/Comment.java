@@ -1,5 +1,8 @@
 package com.example.news.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,17 +29,23 @@ public class Comment extends Base {
 
     @ManyToOne
     @JoinColumn(name = "com_com_id")
+    @JsonIgnore
+//    @JsonBackReference // Tránh tuần hoàn khi ánh xạ comment cha
     Comment parentComment; // Khoá ngoại tham chiếu đến comment ID dùng trả lời bình luận
 
     @OneToMany(mappedBy = "parentComment")
+    @JsonManagedReference // Tránh tuần hoàn khi ánh xạ danh sách trả lời bình luận
     List<Comment> replies; // Các bình luận khi trả lời 1 bình luận
 
     @ManyToOne
     @JoinColumn(name = "n_id")
+    @JsonIgnore // Thêm chú thích này để loại bỏ trường này khỏi JSON
+//    @JsonManagedReference // Tránh vòng lặp dùng cho class chử sở hữu mối quan hệ
     News news;
 
     @ManyToOne
     @JoinColumn(name = "u_id")
+    @JsonManagedReference // Tránh vòng lặp dùng cho class chử sở hữu mối quan hệ
     User user;
 
 }

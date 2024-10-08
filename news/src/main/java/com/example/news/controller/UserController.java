@@ -3,7 +3,8 @@ package com.example.news.controller;
 import com.example.news.dto.response.ApiResponse;
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
-import com.example.news.dto.response.UserResponse;
+import com.example.news.dto.response.userResponse.UserResponse;
+import com.example.news.entity.News;
 import com.example.news.entity.User;
 import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
@@ -18,13 +19,10 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor // Thay thế Autowried
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // Thay thế private final
@@ -48,7 +46,7 @@ public class UserController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -69,15 +67,45 @@ public class UserController {
         return "User has been deleted";
     }
 
+    @PostMapping("/favorite/{newsId}")
+    public void favoriteNews(@PathVariable Long newsId) {
+        User user = (User) session.getAttribute("user");
+        Long userId = user.getId();
+        userService.favoriteNews(userId, newsId);
+    }
+
     @GetMapping("/myInfo")
+    public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // Lấy session hiện tại
+
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new AppException(ErrorCode.UNLOGIN); // Nếu không có user trong session, throw exception
+        }
+
+        // Kiểm tra và in ra các quyền trong SecurityContext
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            System.out.println("User authorities in myInfo: " + authentication.getAuthorities());
+        } else {
+            System.out.println("Authentication is null in myInfo.");
+        }
+
+        UserResponse userResponse = userMapper.toUserResponse(user);
+
+        return ApiResponse.<UserResponse>builder()
+                .result(userResponse)
+                .build();
+    }
+    /*@GetMapping("/myInfo")
     public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // Lấy session hiện tại
         if (session == null || session.getAttribute("user") == null) {
             throw new AppException(ErrorCode.UNLOGIN); // Nếu không có session, throw exception
         }
 
-        log.info("SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        log.info("Session ID in myInfo: {}", session.getId()); // Log ID session
+        var authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        System.out.println("User authorities: " + authorities);
 
         User user = (User) session.getAttribute("user");
         UserResponse userResponse = userMapper.toUserResponse(user);
@@ -85,7 +113,7 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .result(userResponse)
                 .build();
-    }
+    }*/
 
     /*@PostMapping("/users")
     public String createUser(@Valid UserCreationRequest request, BindingResult result, Model model) {
