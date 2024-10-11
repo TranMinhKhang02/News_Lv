@@ -23,6 +23,8 @@ public interface NewsMapper {
     News toNews(NewsRequest request);
 
     @Mapping(target = "countComment", expression = "java(news.getComments() != null ? news.getComments().size() : 0)")
+    @Mapping(target = "countView", source = "viewCount")
+    @Mapping(target = "countLike", source = "likeCount")
     NewsResponse toNewsResponse(News news);
 
     @Mapping(target = "categories", source = "categories")

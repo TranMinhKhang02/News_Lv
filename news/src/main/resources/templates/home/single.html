@@ -53,6 +53,7 @@
     <div class="container">
         <div class="favorite-icon">
             <i class="far fa-heart" id="favorite-icon"></i>
+            <button id="incrementViewButton">Increment View</button>
         </div>
     </div>
 </div>
@@ -66,10 +67,9 @@
                 <div class="position-relative mb-3">
                     <img id="news-thumbnail" class="img-fluid w-100" style="object-fit: cover;">
                     <div class="d-flex justify-content-between">
-                        <a href="#" class="text-dark link-hover me-3"><i class="fa fa-clock"></i> 06 minute read</a>
-                        <a href="#" class="text-dark link-hover me-3"><i class="fa fa-eye"></i> 3.5k Views</a>
-                        <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>
-                        <a href="#" class="text-dark link-hover"><i class="fa fa-arrow-up"></i> 1.5k Share</a>
+                        <a href="#" id="like-count" class="text-dark link-hover me-3"><i class="fa fa-heart"></i></a>
+                        <a href="#" id="view-count" class="text-dark link-hover me-3"><i class="fa fa-eye"></i></a>
+<!--                        <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>-->
                     </div>
                     <div class="overlay position-relative bg-light">
                         <div class="mb-3">

@@ -33,8 +33,64 @@
 
         // Hiển thị vào trong phần tử HTML
         document.getElementById('current-date').innerText = formattedDate;
+        sessionFail();
+        localStorageFail();
     });
-    
+
+    function sessionFail() {
+        const userLogin = sessionStorage.getItem('userLogin');
+        if(userLogin == null) {
+            $('#userDropdownToggle').hide();
+            $('#userDropdownMenu').hide();
+            $('#notification-icon').hide();
+            $('#logoutButton').hide();
+        }else {
+            $('#login-btn').hide();
+            $('#logoutButton').show();
+            $('#userDropdownToggle').show();
+            $('#notification-icon').show();
+        }
+    }
+
+    function localStorageFail() {
+        const userLocal = localStorage.getItem('userLocal');
+        if (userLocal == null) {
+            $('#login-btn').show();
+            $('#logoutButton').show();
+        }
+    }
+
+    //============================LOGOUT============================
+    $('#logoutButton').on('click', function(event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định
+
+        sessionStorage.removeItem('userLogin');
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('currentNewsId');
+
+        // Xóa local storage
+        sessionStorage.clear();
+
+        localStorage.clear();
+        /*$.ajax({
+            url: '/news_lv/page/logout',
+            method: 'GET',
+            success() {
+                console.log('Logout successfully');
+                /!*$('#userDropdownToggle').hide();
+                $('#userDropdownMenu').hide();
+                $('#notification-icon').hide();*!/
+            },
+            error() {
+                console.log('Error when logging out');
+            }
+        })*/
+
+        // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
+        window.location.href = '/news_lv/page/home';
+        $('#login-btn').hide();
+    });
     
     // Back to top button
     $(window).scroll(function () {

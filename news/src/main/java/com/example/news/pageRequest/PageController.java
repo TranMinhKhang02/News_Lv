@@ -1,5 +1,6 @@
 package com.example.news.pageRequest;
 
+import com.example.news.dto.response.ApiResponse;
 import com.example.news.entity.User;
 import com.example.news.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,13 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,10 +28,24 @@ import java.util.Map;
 @RequestMapping("/page")
 @Controller
 public class PageController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private HttpSession session;
+
+    @ModelAttribute
+    public void addUserInfoToModel(HttpSession session, Model model, HttpServletRequest httpRequest) {
+        User user = (User) httpRequest.getSession().getAttribute("user");
+
+        // Kiểm tra nếu người dùng đã đăng nhập
+        if (user != null) {
+            model.addAttribute("fullName", user.getFullName());
+            model.addAttribute("userInfo", user);
+        } else {
+            model.addAttribute("userInfo", null);  // Người dùng chưa đăng nhập
+        }
+    }
+
+    private void clearModelAttributes(Model model) {
+        model.addAttribute("fullName", null);
+        model.addAttribute("userInfo", null);
+    }
 
     @GetMapping("/login")
     public String login() {
@@ -42,46 +58,34 @@ public class PageController {
     }
 
     @GetMapping("/logout")
+    public ApiResponse<Object> logout(Model model) {
+//        session.invalidate();
+        clearModelAttributes(model);
+        return ApiResponse.builder().message("Logout successfully").build();
+    }
+    /*@GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/home/index";  // Chuyển hướng đến trang home
-    }
-
-    /*@GetMapping("/home")
-    public String showHomePage(HttpSession session, Model model, HttpServletRequest httpRequest) {
-        // Lấy thông tin người dùng từ kết quả xác thực
-        User user = (User) httpRequest.getSession().getAttribute("user");
-        // Lấy thông tin từ session
-//        String fullName = (String) session.getAttribute("fullName");
-
-        // Thêm vào model
-        model.addAttribute("fullName", user.getFullName());
-        return "home/index";
     }*/
 
     @GetMapping("/home")
-    public String showHomePage(HttpSession session, Model model, HttpServletRequest httpRequest) {
-        // Lấy thông tin người dùng từ kết quả xác thực
-        User user = (User) httpRequest.getSession().getAttribute("user");
-
-        // Kiểm tra xem người dùng đã đăng nhập chưa
-        if (user != null) {
-            // Nếu người dùng đã đăng nhập, lấy tên đầy đủ
-            model.addAttribute("fullName", user.getFullName());
-        } else {
-            // Nếu người dùng chưa đăng nhập, có thể thiết lập một giá trị mặc định cho fullName
-            model.addAttribute("fullName", "Login"); // Hoặc giá trị mặc định khác
-        }
-
+    public String showHomePage() {
         return "home/index"; // Trả về trang home
     }
 
+    @GetMapping("/myInfo")
+    public String showMyInfoPage() {
+        return "home/myInfo";
+    }
+
     @GetMapping("/single")
-    public String showSinglePage(HttpSession session, Model model, HttpServletRequest httpRequest) {User user = (User) session.getAttribute("user");
+    public String showSinglePage(HttpSession session, Model model, HttpServletRequest httpRequest) {
+        User user = (User) session.getAttribute("user");
         if (user != null) {
             model.addAttribute("fullName", user.getFullName());
         } else {
-            model.addAttribute("fullName", "Guest"); // Hoặc một giá trị mặc định khác
+            model.addAttribute("fullName"); // Hoặc một giá trị mặc định khác
         }
         return "home/single";
     }
@@ -96,6 +100,17 @@ public class PageController {
         // Thêm vào model
         model.addAttribute("fullName", user.getFullName());
         return "admin/index";
+    }
+
+    @GetMapping("/newsTable")
+    public String getNewsTable() {
+        // Thêm dữ liệu vào model nếu cần
+        return "admin/newsTable";
+    }
+
+    @GetMapping("editNews")
+    public  String getEditNews() {
+        return "admin/editNews";
     }
 
     @GetMapping("/profile")

@@ -22,53 +22,71 @@
                 <a href="#" class="nav-item nav-link">Contact</a>
                 <a href="#" class="nav-item nav-link">Contact</a>
             </div>
-            <div class="input-group ml-auto" style="width: 100%; max-width: 300px;">
+            <div class="py-0 mr-5">
+
+                <!--<div class="navbar-nav mr-auto py-0">
+                    <a th:href="@{/page/login}" id="login-btn"
+                       class="nav-item nav-link icon-custom-hover">
+                        <i class="fa fa-sign-in-alt"></i> Đăng nhập
+                    </a>
+                    <a id="logoutButton"
+                       class="nav-item nav-link icon-custom-hover">
+                        Thoát <i class="fa fa-sign-out-alt"></i>
+                    </a>
+                </div>-->
+
+                <div class="navbar-nav mr-auto py-0">
+                    <div class="nav-item dropdown">
+                        <a th:if="${userInfo != null}" href="#" class="nav-item nav-link dropdown-toggle dropdown icon-custom-hover"
+                           id="userDropdownToggle" role="button" data-toggle="dropdown">
+                            <i class="fa fa-user"></i>
+                        </a>
+
+                        <!-- Dropdown Menu -->
+                        <ul class="dropdown-menu rounded-0 m-0" id="userDropdownMenu" th:if="${userInfo != null}">
+                            <li class="dropdown-item text-center">
+<!--                                <img th:src="${userInfo.avatar}" alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;">-->
+                                <img th:if="${userInfo.avatar != null}" th:src="${userInfo.avatar}"
+                                     alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
+                                <img th:unless="${userInfo.avatar != null}" th:src="@{/static/customer/img/user-avatar.png}"
+                                     alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
+                                <span class="d-block mt-2" th:text="${userInfo.fullName}"></span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/page/myInfo}">Thông tin chung</a></li>
+                            <li><a class="dropdown-item" th:href="@{/page/feedback}">Ý kiến của bạn</a></li>
+                            <li><a class="dropdown-item" th:href="@{/page/favorite-news}">Tin đã lưu</a></li>
+                            <li><a class="dropdown-item" th:href="@{/page/viewed-news}">Tin đã xem</a></li>
+<!--                            <li><hr class="dropdown-divider"></li>-->
+                            <!--<li><a id="logoutButton" class="dropdown-item">
+                                    <i class="fa fa-sign-out-alt"></i>Thoát
+                                </a>
+                            </li>-->
+                        </ul>
+                    </div>
+
+                    <a th:if="${userInfo != null}" href="#" id="notification-icon" class="nav-item nav-link icon-custom-hover">
+                        <i class="fa fa-bell"></i> <!-- Biểu tượng người dùng -->
+                    </a>
+
+                    <a th:href="@{/page/login}" id="login-btn"
+                       class="nav-item nav-link icon-custom-hover">
+                        <i class="fa fa-sign-in-alt"></i> Đăng nhập
+                    </a>
+
+                    <a id="logoutButton"
+                       class="nav-item nav-link icon-custom-hover">
+                        Thoát <i class="fa fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <!--<div class="input-group ml-auto" style="width: 100%; max-width: 300px;">
                 <input type="text" class="form-control" placeholder="Keyword">
                 <div class="input-group-append">
                     <button class="input-group-text text-secondary"><i
                             class="fa fa-search"></i></button>
                 </div>
-            </div>
-            <a th:href="@{/page/login}" class="nav-item nav-link d-lg-inline d-none">
-                <span class="d-sm-inline d-none" th:text="${fullName} ?: 'Đăng nhập'"></span>
-            </a>
-            <a th:href="@{/page/logout}">
-                <span class="d-sm-inline d-none">Logout</span>
-            </a>
+            </div>-->
         </div>
     </nav>
 </div>
-<!--
-<div th:fragment="navbar" class="container-fluid p-0 mb-3">
-    <nav class="navbar navbar-expand-lg bg-light navbar-light py-2 py-lg-0 px-lg-5">
-        <a href="" class="navbar-brand d-block d-lg-none">
-            <h1 class="m-0 display-5 text-uppercase"><span class="text-primary">News</span>Room</h1>
-        </a>
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between px-0 px-lg-3" id="navbarCollapse">
-            <div class="navbar-nav mr-auto py-0">
-                <a href="index.html" class="nav-item nav-link">Home</a>
-                <a href="category.html" class="nav-item nav-link">Categories</a>
-                <a href="single.html" class="nav-item nav-link active">Single News</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Dropdown</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="#" class="dropdown-item">Menu item 1</a>
-                        <a href="#" class="dropdown-item">Menu item 2</a>
-                        <a href="#" class="dropdown-item">Menu item 3</a>
-                    </div>
-                </div>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
-            </div>
-            <div class="input-group ml-auto" style="width: 100%; max-width: 300px;">
-                <input type="text" class="form-control" placeholder="Keyword">
-                <div class="input-group-append">
-                    <button class="input-group-text text-secondary"><i
-                            class="fa fa-search"></i></button>
-                </div>
-            </div>
-        </div>
-    </nav>
-</div>-->

@@ -2,12 +2,14 @@ package com.example.news.service;
 
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
+import com.example.news.dto.response.NewsResponse;
 import com.example.news.dto.response.userResponse.UserResponse;
 import com.example.news.entity.News;
 import com.example.news.entity.Role;
 import com.example.news.entity.User;
 import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
+import com.example.news.mapper.NewsMapper;
 import com.example.news.mapper.UserMapper;
 import com.example.news.repository.NewsRepository;
 import com.example.news.repository.RoleRepository;
@@ -15,12 +17,17 @@ import com.example.news.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 //@Slf4j
 @RequiredArgsConstructor // Thay thế Autowried
@@ -33,6 +40,7 @@ public class UserService {
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
     NewsRepository newsRepository;
+    NewsMapper newsMapper;
 
     public User createUser(UserCreationRequest request) {
 //        Role role = new Role();
@@ -87,7 +95,50 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy news!"));
+        if (user.getFavoriteNews().contains(news)) {
+            throw new AppException(ErrorCode.NEWS_EXISTED);
+        }
         user.favorite(news);
+        // Start tăng likeCount của bài viết
+        if (news.getLikeCount() == null) {
+            news.setLikeCount(0L);
+        }
+        news.setLikeCount(news.getLikeCount() + 1); // Tăng likeCount
+        newsRepository.save(news); // Lưu lại bản ghi News đã cập nhật
+        // End tăng likeCount
+        userRepository.save(user);
+    }
+
+    public List<NewsResponse> getFavoriteNewsPageable(long userId, int page, int size) {
+        // Tạo PageRequest cho phân trang
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        // Tìm các tin tức yêu thích của user và phân trang
+        Page<News> newsPage = newsRepository.findByUsersFavorited_Id(userId, pageable);
+
+        return newsPage.getContent().stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+
+    public int countAllFavoriteNews(long userId) {
+        return (int) newsRepository.countByUsersFavorited_Id(userId);
+    }
+
+    public Set<NewsResponse> getFavoriteNews(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+        return user.getFavoriteNews().stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toSet());
+    }
+
+    public void deleteFavoriteNews(long userId, long newsId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+        News news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy news!"));
+        user.getFavoriteNews().remove(news);
         userRepository.save(user);
     }
 

@@ -1,8 +1,10 @@
 package com.example.news.controller;
 
+import com.example.news.dto.response.ApiNewsResponse;
 import com.example.news.dto.response.ApiResponse;
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
+import com.example.news.dto.response.NewsResponse;
 import com.example.news.dto.response.userResponse.UserResponse;
 import com.example.news.entity.News;
 import com.example.news.entity.User;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor // Thay thế Autowried
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // Thay thế private final
@@ -68,11 +71,48 @@ public class UserController {
     }
 
     @PostMapping("/favorite/{newsId}")
-    public void favoriteNews(@PathVariable Long newsId) {
-        User user = (User) session.getAttribute("user");
-        Long userId = user.getId();
+    public void favoriteNews(@PathVariable Long newsId, @RequestParam Long userId) {
+//        User user = (User) session.getAttribute("user");
+//        Long userId = user.getId();
         userService.favoriteNews(userId, newsId);
     }
+
+    /*@GetMapping("/favorite")
+    public ApiNewsResponse<Set<NewsResponse>> getFavoriteNews() {
+        User user = (User) session.getAttribute("user");
+        if(user == null) {
+            throw new AppException(ErrorCode.UNLOGIN);
+        }
+        Set<NewsResponse> favoriteNews = userService.getFavoriteNews(user.getId());
+        return ApiNewsResponse.<Set<NewsResponse>>builder()
+                .result(favoriteNews)
+                .build();
+    }*/
+    @GetMapping("/favorite")
+    public ApiNewsResponse<Set<NewsResponse>> getFavoriteNews(
+            @RequestParam Long userId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+//        User user = (User) session.getAttribute("user");
+        if(userId == null) {
+            throw new AppException(ErrorCode.UNLOGIN);
+        }
+        List<NewsResponse> newsResponses = userService.getFavoriteNewsPageable(userId, page, size);
+        int totalNewsByUserId = userService.countAllFavoriteNews(userId);
+        int totalPage = (int) Math.ceil((double) totalNewsByUserId / size);
+        return ApiNewsResponse.<Set<NewsResponse>>builder()
+                .code(1000)
+                .page(page)
+                .totalPage(totalPage)
+                .result(new HashSet<>(newsResponses))
+                .build();
+    }
+
+    @PutMapping("/favorite/{newsId}")
+    public void deleteFavoriteNews(@PathVariable Long newsId, @RequestParam Long userId) {
+        userService.deleteFavoriteNews(newsId, userId);
+    }
+
 
     @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {

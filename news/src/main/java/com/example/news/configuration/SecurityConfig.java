@@ -81,7 +81,7 @@ public class SecurityConfig {
                     .maxSessionsPreventsLogin(false) // Cho phép user login lại nếu hết session
             )
             .oauth2Login(oauth2login -> oauth2login
-//                    .loginPage("/page/home")
+                    .loginPage("/page/home")
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(customOAuth2UserService())
                     )

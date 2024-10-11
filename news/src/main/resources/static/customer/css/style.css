@@ -526,16 +526,9 @@ mark,
   content: "\2014\00A0";
 }
 
-/*.img-fluid {
+.img-fluid {
   max-width: 100%;
   height: auto;
-}*/
-
-.img-fluid {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  aspect-ratio: 16 / 9; /* Ensures the images are rectangular with a 16:9 aspect ratio */
 }
 
 .img-thumbnail {

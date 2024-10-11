@@ -9,7 +9,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 text-right d-none d-md-block" id="current-date">
+        <div class="col-md-4 text-right d-none d-md-block current-date" id="current-date">
 <!--            Monday, January 01, 2045-->
         </div>
     </div>
@@ -29,14 +29,14 @@
         </div>
         </div>
         <div class="col-lg-2 text-center">
-            <div class="d-flex flex-nowrap pt-3 pt-xl-0">
+            <div class="d-flex flex-nowrap pt-3 pt-xl-0 weather">
                 <div class="d-flex">
-                    <img th:src="@{/static/customer/img/weather-icon.png}" class="img-fluid w-100 me-2" alt="">
+                    <img th:src="@{/static/customer/img/weather-icon.png}" class="img-fluid me-2" alt="">
                     <div class="d-flex align-items-center">
                         <strong class="fs-4 text-secondary">31°C</strong>
                         <div class="d-flex flex-column ms-2" style="width: 150px;">
-                            <span class="text-body">NEW YORK,</span>
-                            <small>Mon. 10 jun 2024</small>
+                            <span class="text-body">Cần thơ</span>
+                            <small class="current-date"></small>
                         </div>
                     </div>
                 </div>

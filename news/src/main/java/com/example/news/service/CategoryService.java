@@ -36,10 +36,16 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
+    // Lấy danh sách category có parentId là not null
     public List<CategoryResponse> getAll() {
-        var categories = categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAllByParentCategoryNotNull();
+        // Chuyển đổi từ Category sang CategoryResponse nếu cần
         return categories.stream().map(categoryMapper::toCategoryResponse).toList();
     }
+    /*public List<CategoryResponse> getAll() {
+        var categories = categoryRepository.findAll();
+        return categories.stream().map(categoryMapper::toCategoryResponse).toList();
+    }*/
 
     public CategoryResponse getById(Long categoryId) {
         var category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Không tìm thấy category!"));

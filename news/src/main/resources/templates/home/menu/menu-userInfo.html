@@ -1,0 +1,16 @@
+<ul th:fragment="menu-user" class="dropdown-menu rounded-0 m-0" id="userDropdownMenu" th:if="${userInfo != null}">
+    <li class="dropdown-item text-center">
+        <img th:src="${userInfo.avatar}" alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
+        <span class="d-block mt-2" th:text="${userInfo.fullName}"></span>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" th:href="@{/page/myInfo}">Thông tin chung</a></li>
+    <li><a class="dropdown-item" th:href="@{/page/feedback}">Ý kiến của bạn</a></li>
+    <li><a class="dropdown-item" th:href="@{/page/favorite-news}">Tin đã lưu</a></li>
+    <li><a class="dropdown-item" th:href="@{/page/viewed-news}">Tin đã xem</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a id="logoutButton" class="dropdown-item">
+        <i class="fa fa-sign-out-alt"></i>Thoát
+    </a>
+    </li>
+</ul>

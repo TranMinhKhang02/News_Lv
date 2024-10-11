@@ -18,6 +18,8 @@ public enum ErrorCode {
     UNAUTHORIZED(1008, "Không có quyền truy cập.", HttpStatus.FORBIDDEN), // 403
     INVALID_DOB(1009, "Bạn không đủ tuổi để tham gia vào hệ thống", HttpStatus.BAD_REQUEST), // 400
     METHOD_NOT_ALLOWED(1010, "Phương thức yêu cầu của API không đúng hoặc thiếu value.", HttpStatus.METHOD_NOT_ALLOWED), // 400
+    NEWS_EXISTED(1011, "Tin tức đã tồn tại trong danh sách yêu thích.", HttpStatus.BAD_REQUEST), // 400
+    INVALID_STATE(1012, "Không tìm thấy file insert hoặc sai đường dẫn.", HttpStatus.BAD_REQUEST), // 400
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

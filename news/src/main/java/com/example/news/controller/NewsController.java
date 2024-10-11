@@ -13,10 +13,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor // Thay thế Autowried
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // Thay thế private final
@@ -93,6 +96,28 @@ public class NewsController {
                 .build();
     }
 
+    @GetMapping("/by-category-and-status")
+    public ApiNewsResponse<List<NewsResponse>> getAllNewsByCategoryAndStatus(
+            @RequestParam(value = "category") String categoryCode,
+            @RequestParam(value = "status", defaultValue = "1") String statusCode,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<NewsResponse> newsList;
+        int totalNewsByCategoryAndStatus;
+
+        newsList = newsService.getAllByCategoryCodeAndStatusCode(categoryCode, statusCode, page, size);
+        totalNewsByCategoryAndStatus = newsService.countAllByCategoryCodeAndStatusCode(categoryCode, statusCode);
+
+        int totalPage = (int) Math.ceil((double) totalNewsByCategoryAndStatus / size);
+
+        return ApiNewsResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .page(page)
+                .totalPage(totalPage)
+                .result(newsList)
+                .build();
+    }
+
     @GetMapping("/single/{newsId}")
     public ApiResponse<NewsResponse> getNews(@PathVariable Long newsId) {
         var news = newsService.getNewsById(newsId);
@@ -125,6 +150,36 @@ public class NewsController {
         return ApiResponse.<String>builder()
                 .code(1000)
                 .message("Cập nhật trạng thái của bài viết thành công.")
+                .build();
+    }
+
+    @GetMapping("/like/{newsId}")
+    public ApiResponse<Integer> getLikeCount(@PathVariable Long newsId) {
+        return ApiResponse.<Integer>builder()
+                .code(1000)
+                .result(newsService.getLikeCount(newsId))
+                .build();
+    }
+
+    @PostMapping("/view/{newsId}")
+    public ApiResponse<Integer> incrementViewCount(@PathVariable Long newsId) {
+        int updateViewsCount = newsService.incrementViewCount(newsId);
+        return ApiResponse.<Integer>builder()
+                .code(1000)
+                .result(updateViewsCount)
+                .build();
+    }
+
+    @GetMapping("/counts/{newsId}")
+    public ApiResponse<Map<String, Integer>> getCounts(@PathVariable Long newsId) {
+        int likeCount = newsService.getLikeCount(newsId);
+        int viewCount = newsService.getViewCount(newsId);
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put("likeCount", likeCount);
+        counts.put("viewCount", viewCount);
+        return ApiResponse.<Map<String, Integer>>builder()
+                .code(1000)
+                .result(counts)
                 .build();
     }
 }

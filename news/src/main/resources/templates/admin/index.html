@@ -21,7 +21,7 @@
   <link rel="apple-touch-icon" sizes="76x76" th:href="@{/static/admin/assets/img/apple-icon.png}">
   <link rel="icon" type="image/png" th:href="@{/static/admin/assets/img/favicon.png}">
   <title>
-    Argon Dashboard 2 by Creative Tim
+    NEWSBIG - Admin Dashboard
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -29,10 +29,11 @@
   <link th:href="@{/static/admin/assets/css/nucleo-icons.css}" rel="stylesheet" />
   <link th:href="@{/static/admin/assets/css/nucleo-svg.css}" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js}" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link th:href="@{/static/admin/assets/css/nucleo-svg.css}" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" th:href="@{/static/admin/assets/css/argon-dashboard.css}" rel="stylesheet" />
+  <link th:href="@{/static/admin/assets/css/custom.css}" rel="stylesheet" />
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -42,7 +43,7 @@
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
     <a class="navbar-brand m-0" href="https://demos.creative-tim.com/argon-dashboard/pages/dashboard.html" target="_blank">
       <img th:src="@{/static/admin/assets/img/logo-ct-dark.png}" class="navbar-brand-img h-100" alt="main_logo">
-      <span class="ms-1 font-weight-bold">Argon Dashboard 2</span>
+      <span class="ms-1 font-weight-bold">NEWSBIG</span>
     </a>
   </div>
   <hr class="horizontal dark mt-0">
@@ -53,7 +54,7 @@
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
           </div>
-          <span class="nav-link-text ms-1">Dashboard</span>
+          <span class="nav-link-text ms-1">Thống kê</span>
         </a>
       </li>
       <li class="nav-item">
@@ -61,15 +62,22 @@
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i>
           </div>
-          <span class="nav-link-text ms-1">Tables</span>
+          <span class="menu-title" data-bs-toggle="collapse" href="#ui-news" aria-expanded="false" aria-controls="ui-news">Quản lý tin tức</span>
         </a>
+        <div class="collapse" id="ui-news">
+          <ul class="nav flex-column sub-menu">
+            <li class="nav-item"> <a class="nav-link" id="approved-articles" href="#">Tin tức đã duyệt</a></li>
+            <li class="nav-item"> <a class="nav-link" href="#">Tin tức chờ duyệt</a></li>
+            <li class="nav-item"> <a class="nav-link" href="#">Tin tức từ chối</a></li>
+          </ul>
+        </div>
       </li>
       <li class="nav-item">
         <a class="nav-link " href="#">
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
           </div>
-          <span class="nav-link-text ms-1">Billing</span>
+          <span class="nav-link-text ms-1">Quản lý bình luận</span>
         </a>
       </li>
       <li class="nav-item">
@@ -77,7 +85,7 @@
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-app text-info text-sm opacity-10"></i>
           </div>
-          <span class="nav-link-text ms-1">Virtual Reality</span>
+          <span class="nav-link-text ms-1">Quản lý thể loại</span>
         </a>
       </li>
       <li class="nav-item">
@@ -85,7 +93,7 @@
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-world-2 text-danger text-sm opacity-10"></i>
           </div>
-          <span class="nav-link-text ms-1">RTL</span>
+          <span class="nav-link-text ms-1">Quản lý người dùng</span>
         </a>
       </li>
       <li class="nav-item mt-3">
@@ -108,7 +116,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link " th:href="@{/page/logout}">
+        <a class="nav-link " href="#">
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-collection text-info text-sm opacity-10"></i>
           </div>
@@ -117,7 +125,7 @@
       </li>
     </ul>
   </div>
-  <div class="sidenav-footer mx-3 ">
+  <!--<div class="sidenav-footer mx-3 ">
     <div class="card card-plain shadow-none" id="sidenavCard">
       <img class="w-50 mx-auto" th:src="@{/static/admin/assets/img/illustrations/icon-documentation.svg}" alt="sidebar_illustration">
       <div class="card-body text-center p-3 w-100 pt-0">
@@ -129,7 +137,7 @@
     </div>
     <a href="https://www.creative-tim.com/learning-lab/bootstrap/license/argon-dashboard" target="_blank" class="btn btn-dark btn-sm w-100 mb-3">Documentation</a>
     <a class="btn btn-primary btn-sm mb-0 w-100" href="https://www.creative-tim.com/product/argon-dashboard-pro?ref=sidebarfree" type="button">Upgrade to pro</a>
-  </div>
+  </div>-->
 </aside>
 <main class="main-content position-relative border-radius-lg ">
   <!-- Navbar -->
@@ -251,7 +259,7 @@
     </div>
   </nav>
   <!-- End Navbar -->
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-4" id="content-container">
     <div class="row">
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <div class="card">
@@ -370,7 +378,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-5">
+      <!--<div class="col-lg-5">
         <div class="card card-carousel overflow-hidden h-100 p-0">
           <div id="carouselExampleCaptions" class="carousel slide h-100" data-bs-ride="carousel">
 
@@ -409,7 +417,7 @@
               </div>
             </div>
 
-            <!--<div class="carousel-inner border-radius-lg h-100">
+            &lt;!&ndash;<div class="carousel-inner border-radius-lg h-100">
               <div class="carousel-item h-100 active" style="background-image: url('./assets/img/carousel-1.jpg');
       background-size: cover;">
                 <div class="carousel-caption d-none d-md-block bottom-0 text-start start-0 ms-5">
@@ -440,7 +448,7 @@
                   <p>Don’t be afraid to be wrong because you can’t learn anything from a compliment.</p>
                 </div>
               </div>
-            </div>-->
+            </div>&ndash;&gt;
             <button class="carousel-control-prev w-5 me-3" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Previous</span>
@@ -451,9 +459,9 @@
             </button>
           </div>
         </div>
-      </div>
+      </div>-->
     </div>
-    <div class="row mt-4">
+    <!--<div class="row mt-4">
       <div class="col-lg-7 mb-lg-0 mb-4">
         <div class="card ">
           <div class="card-header pb-0 p-3">
@@ -660,8 +668,8 @@
           </div>
         </div>
       </div>
-    </div>
-    <footer class="footer pt-3  ">
+    </div>-->
+    <!--<footer class="footer pt-3  ">
       <div class="container-fluid">
         <div class="row align-items-center justify-content-lg-between">
           <div class="col-lg-6 mb-lg-0 mb-4">
@@ -670,14 +678,14 @@
               document.write(new Date().getFullYear())
             </script>,
               made with <i class="fa fa-heart"></i> by
-              <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
+              <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">NEWS BIG</a>
               for a better web.
             </div>
           </div>
           <div class="col-lg-6">
             <ul class="nav nav-footer justify-content-center justify-content-lg-end">
               <li class="nav-item">
-                <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
+                <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">NEWS BIG</a>
               </li>
               <li class="nav-item">
                 <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
@@ -692,7 +700,7 @@
           </div>
         </div>
       </div>
-    </footer>
+    </footer>-->
   </div>
 </main>
 <div class="fixed-plugin">
@@ -773,6 +781,7 @@
 <script th:src="@{/static/admin/assets/js/plugins/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/static/admin/assets/js/plugins/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/static/admin/assets/js/plugins/chartjs.min.js}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   var ctx1 = document.getElementById("chart-line").getContext("2d");
 
@@ -869,6 +878,7 @@
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/static/admin/assets/js/argon-dashboard.min.js}"></script>
+<script th:src="@{/static/admin/assets/js/newsAdmin.js}"></script>
 </body>
 
 </html>

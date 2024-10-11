@@ -10,6 +10,7 @@ import com.example.news.mapper.NewsMapper;
 import com.example.news.repository.CategoryRepository;
 import com.example.news.repository.NewsRepository;
 import com.example.news.repository.StatusRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -115,9 +116,40 @@ public class NewsService {
         return (int) newsRepository.countAllByStatusCode(statusCode);
     }
 
-    /*public int countAllByCategoryCode(String categoryCode) {
+    public int countAllByCategoryCode(String categoryCode) {
         return (int) newsRepository.countByCategories_Code(categoryCode);
-    }*/
+    }
+
+    public int countAllByCategoryCodeAndStatusCode(String categoryCode, String statusCode) {
+        return (int) newsRepository.countAllByCategories_codeAndStatusCode(categoryCode, statusCode);
+    }
+
+    public int getLikeCount(Long newsId) {
+        /*News news = new News();
+        long likeCount = newsRepository.countLikesByNewsId(newsId);
+        news.setLikeCount(likeCount);
+        return (int) likeCount;*/
+        return (int) newsRepository.countLikesByNewsId(newsId);
+    }
+
+    public int getViewCount(Long newsId) {
+        return newsRepository.findById(newsId)
+                .map(News::getViewCount)
+                .orElse(0L)
+                .intValue();
+    }
+
+    @Transactional
+    public int incrementViewCount(Long newsId) {
+        News news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new RuntimeException("News not found"));
+        if (news.getViewCount() == null) {
+            news.setViewCount(0L);
+        }
+        news.setViewCount(news.getViewCount() + 1);
+        newsRepository.save(news);
+        return news.getViewCount().intValue();
+    }
 
     public List<NewsResponse> getAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
@@ -130,6 +162,15 @@ public class NewsService {
     public List<NewsResponse> getAllByStatusCode(String statusCode, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         List<News> newsList = newsRepository.findAllByStatusCode(statusCode, pageRequest).getContent();
+        return newsList.stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<NewsResponse> getAllByCategoryCodeAndStatusCode
+            (String categoryCode, String statusCode, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        List<News> newsList = newsRepository.findAllByCategories_codeAndStatusCode(categoryCode, statusCode, pageRequest).getContent();
         return newsList.stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());

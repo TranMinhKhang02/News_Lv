@@ -86,7 +86,7 @@
     function createNewsItem(news) {
         return `
             <div class="position-relative">
-                <img class="img-fluid w-100" src="${news.thumbnail}" style="object-fit: cover;">
+                <img class="img-fluid-custom w-100" src="${news.thumbnail}" style="object-fit: cover;">
                 <div class="overlay position-relative bg-light">
                     <div class="mb-2" style="font-size: 13px;">
                         <a href="">${news.categories[0].name}</a>

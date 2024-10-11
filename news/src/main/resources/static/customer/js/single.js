@@ -10,7 +10,7 @@ $(document).ready(function () {
         console.error('newsId is null or undefined');
     }
 
-// ===============================SINGLE NEWS================================
+    // ===============================SINGLE NEWS================================
     function fetchNewsById(newsId) {
         $.ajax({
             url: '/news_lv/news/single/' + newsId,
@@ -18,6 +18,7 @@ $(document).ready(function () {
             success: function(response) {
                 if (response.code === 1000 && response.result) {
                     renderNewsDetails(response.result);
+                    console.log('News details:', response.result);
                 } else {
                     console.error('Unexpected response format:', response);
                 }
@@ -35,6 +36,8 @@ $(document).ready(function () {
         $('#news-date').text(new Date(news.modifiedDate).toLocaleDateString());
         $('#news-category').text(news.categories[0].name);
         $('#news-comments-count').text(news.countComment + ' Comments');
+        $('#like-count').text(news.countLike + ' Yêu thích');
+        $('#view-count').text(news.countView + ' Luợt xem');
 
         var categoryHtml = '';
         if (news.categories.length > 0) {
@@ -52,15 +55,8 @@ $(document).ready(function () {
         $('#breadcrumb-category').html(categoryHtml);
     }
 
-    // =============================URL PARAMS================================
 
-    function getNewsIdFromUrl() {
-        var urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('newsId');
-    }
-
-
-//     ===============================COMMENT================================
+    //===============================COMMENT================================
     function fetchComments(newsId) {
         $.ajax({
             url: '/news_lv/comment/' + newsId,
@@ -106,37 +102,144 @@ $(document).ready(function () {
     `;
     }
 
-    // Event delegation to handle dynamically created reply buttons
-    $(document).on('click', '.reply-btn', function () {
-        const user = JSON.parse(sessionStorage.getItem('user')); // Lấy user từ sessionStorage và parse lại thành đối tượng
-        const userId = user.id; // Lấy userId
-        // const userId = sessionStorage.getItem('userId');
+    function checkFavoriteNews() {
+        // Kiểm tra nếu người dùng đã đăng nhập
         if (userId) {
-            alert('User ID: ' + userId + "Full Name: " + user.fullName);
-        } else {
-            alert('Please log in to comment.');
+            var currentNewsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL
+
+            // Gọi API để lấy danh sách tin yêu thích của user
+            $.ajax({
+                url: '/news_lv/users/favorite',
+                method: 'GET',
+                data: {
+                    userId: userId
+                },
+                success: function(response) {
+                    const favoriteNews = response.result; // Danh sách tin yêu thích của user
+
+                    // Kiểm tra nếu newsId hiện tại nằm trong danh sách yêu thích
+                    const isFavorite = favoriteNews.some(news => news.id == currentNewsId);
+
+                    if (isFavorite) {
+                        // Thêm class active-favorite khi icon được yêu thích
+                        $('#favorite-icon').addClass('active-favorite');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error fetching favorite news:', error);
+                }
+            });
         }
-    });
+    }
+    checkFavoriteNews();
     // ============================LIKE================================
 
-    /*$('#favorite-icon').click(function () {
-        if (isUserLoggedIn()) {
-            alert('Vui lòng đăng nhập để sử dụng chức năng này.');
-        } else {
-            // Xử lý logic yêu thích tin tức ở đây
-            const fullName = sessionStorage.getItem('fullName');
-            console.log('Welcome back,', fullName); // In thông tin tên người dùng ra console
-            alert('Tin tức đã được thêm vào danh sách yêu thích. usedId = ' + sessionStorage.getItem('userId'));
-        }
-    });*/
-
-    /*function isUserLoggedIn() {
-        // Kiểm tra session hoặc cookie để xác định người dùng đã đăng nhập hay chưa
-        // Đây là ví dụ đơn giản, bạn có thể thay đổi logic kiểm tra theo yêu cầu của bạn
-        return sessionStorage.getItem('user') === 'true';
-    }
-    if (isUserLoggedIn()) {
-        const fullName = sessionStorage.getItem('fullName');
-        console.log('Welcome back,', fullName); // In thông tin tên người dùng ra console
-    }*/
+    // Gọi hàm updateCounts khi trang được tải
+    // updateCounts();
+    // Tăng view
+    $('#incrementViewButton').click(function () {
+        viewCount();
+    });
 });
+
+const userId = sessionStorage.getItem('userId');
+
+// Event delegation to handle dynamically created reply buttons
+$(document).on('click', '.reply-btn', function () {
+    // const userId = sessionStorage.getItem('userId');
+    if (userId) {
+        alert('User ID: ' + userId);
+    } else {
+        alert('Please log in to comment.');
+    }
+});
+
+$('#favorite-icon').click(function () {
+    // const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+        alert('Vui lòng đăng nhập để sử dụng chức năng này.');
+    } else {
+        // alert('Đã đăng nhập.');
+        var newsId = getNewsIdFromUrl(); // Lấy newsId từ URL hoặc từ một nguồn khác
+        $.ajax({
+            url: '/news_lv/users/favorite/' + newsId,
+            method: 'POST',
+            data: {
+                userId: userId
+            },
+            success: function(response) {
+                $('#favorite-icon').addClass('active-favorite');
+                alert('Tin tức đã được thêm vào danh sách yêu thích.');
+            },
+            error: function(error) {
+                console.error('Error favoriting news:', error);
+                alert('Có lỗi xảy ra khi thêm tin tức vào danh sách yêu thích.');
+            }
+        });
+    }
+});
+
+function isUserLoggedIn() {
+    // Kiểm tra session hoặc cookie để xác định người dùng đã đăng nhập hay chưa
+    // Đây là ví dụ đơn giản, bạn có thể thay đổi logic kiểm tra theo yêu cầu của bạn
+    return sessionStorage.getItem('userLogin') === 'true';
+}
+
+// =============================URL PARAMS================================
+
+function getNewsIdFromUrl() {
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('newsId');
+}
+
+function viewCount() {
+    var newsId = getNewsIdFromUrl();
+    $.ajax({
+        url: `/news_lv/news/view/${newsId}`,
+        method: 'POST',
+        success: function() {
+            console.log('View count incremented');
+        },
+        error: function(error) {
+            console.error('Error incrementing view count:', error);
+            if (error.responseJSON && error.responseJSON.message) {
+                console.error('Error message:', error.responseJSON.message);
+            }
+        }
+    });
+}
+/*function viewCount() {
+    var newsId = getNewsIdFromUrl();
+    setTimeout(function() {
+        $.ajax({
+            url: `/news_lv/news/view/${newsId}`,
+            method: 'POST',
+            success: function() {
+                console.log('View count incremented');
+            },
+            error: function(error) {
+                console.error('Error incrementing view count:', error);
+                if (error.responseJSON && error.responseJSON.message) {
+                    console.error('Error message:', error.responseJSON.message);
+                }
+            }
+        });
+    }, 30000); // 300000 milliseconds = 5 minutes
+}*/
+
+// Hàm để cập nhật like_count và view_count
+/*
+function updateCounts() {
+    var newsId = getNewsIdFromUrl();
+    $.ajax({
+        url: `/news_lv/news/counts/${newsId}`,
+        method: 'GET',
+        success: function(response) {
+            $('#like-count').html(`<i class="fa fa-heart"></i> ${response.likeCount} Yêu thích`);
+            $('#view-count').html(`<i class="fa fa-eye"></i> ${response.viewCount} Lượt xem`);
+        },
+        error: function(error) {
+            console.error('Error fetching counts:', error);
+        }
+    });
+}*/

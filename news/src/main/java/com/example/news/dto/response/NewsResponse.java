@@ -29,6 +29,8 @@ public class NewsResponse extends BaseResponse<NewsResponse> {
     String audioPath;
     LocalDateTime summary_createDate;
     int countComment;
+    int countView;
+    int countLike;
 //    CommentResponse comment;
     Set<CategoryNewsResponse> categories;
 //    Set<CategoryResponse> categories;

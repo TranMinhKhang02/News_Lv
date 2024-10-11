@@ -1,10 +1,35 @@
-/*
-.title-news {
-    height: 100%; !* Đặt chiều rộng phù hợp *!
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}*/
+:root {
+    --blue: #007bff;
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #e83e8c;
+    --red: #dc3545;
+    --orange: #fd7e14;
+    --yellow: #ffc107;
+    --green: #28a745;
+    --teal: #20c997;
+    --cyan: #17a2b8;
+    --white: #fff;
+    --gray: #6c757d;
+    --gray-dark: #343a40;
+    /*--primary: #9f224e;*/
+    --bs-primary: #1B7DFF;
+    --primary: #9f224e;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #ffffff;
+    --dark: #343a40;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --font-family-sans-serif: "Roboto", sans-serif;
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
 
 .title-news {
     display: -webkit-box;
@@ -23,13 +48,73 @@
     top: 10px;
     right: 10px;
     cursor: pointer;
-}
-
-.favorite-icon i {
     font-size: 24px;
     color: #333;
+    transition: all 0.3s ease;
 }
+
+/* Trạng thái khi icon được active */
+.active-favorite {
+    color: #fff; /* Màu của icon khi active */
+    background-color: #9f224e; /* Màu background khi active */
+    border-radius: 50%; /* Làm tròn nền cho icon */
+    padding: 10px;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+/*.favorite-icon i {
+    font-size: 24px;
+    color: #333;
+}*/
 
 .favorite-icon i:hover {
     color: #007bff;
+}
+
+.weather {
+    float: right;
+}
+
+.text-dark{
+    color:#111 !important
+}
+
+.link-hover {
+    transition: 0.5s;
+}
+
+.link-hover:hover {
+    color: var(--bs-primary) !important;
+}
+
+.dropdown-item img {
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.dropdown-item span {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.dropdown-menu {
+    width: 200px;
+    padding: 10px;
+}
+
+#userDropdownContainer {
+    margin-right: 30px;
+}
+
+.icon-custom-hover:hover {
+    color: var(--bs-primary) !important;
+    background-color: #ffffff !important;
+}
+
+.img-fluid-custom {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 16 / 9; /* Ensures the images are rectangular with a 16:9 aspect ratio */
 }

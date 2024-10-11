@@ -80,9 +80,13 @@
                     console.log("Đăng nhập thành công");
 
                     // Lưu thông tin người dùng vào sessionStorage
-                    sessionStorage.setItem('loggedIn', 'true');
+                    sessionStorage.setItem('userLogin', 'true');
+
+                    localStorage.setItem('userLocal', 'true');
+                    // Lưu thông tin người dùng vào sessionStorage để lấy thông tin user
                     sessionStorage.setItem('user', JSON.stringify(response.result.user)); // Lưu user vào sessionStorage
-                    // sessionStorage.setItem('user', response.result.user); // Lưu userId vào sessionStorage
+                    // Lưu user vào sessionStorage để yêu thích tin tức và bình luận
+                    sessionStorage.setItem('userId', response.result.user.id);
 
                     // Lấy role của người dùng từ response
                     let userRoleCode = response.result.user.role.code;

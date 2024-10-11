@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-    /*@ExceptionHandler(value = IllegalStateException.class)
+    @ExceptionHandler(value = IllegalStateException.class)
     ResponseEntity<ApiResponse> handleIllegalStateException(IllegalStateException exception) {
         ErrorCode errorCode = ErrorCode.INVALID_STATE;
 
@@ -88,5 +88,5 @@ public class GlobalExceptionHandler {
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .build());
-    }*/
+    }
 }
