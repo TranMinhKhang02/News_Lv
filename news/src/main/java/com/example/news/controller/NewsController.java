@@ -174,9 +174,11 @@ public class NewsController {
     public ApiResponse<Map<String, Integer>> getCounts(@PathVariable Long newsId) {
         int likeCount = newsService.getLikeCount(newsId);
         int viewCount = newsService.getViewCount(newsId);
+        int commentCount = newsService.getCommentCount(newsId);
         Map<String, Integer> counts = new HashMap<>();
         counts.put("likeCount", likeCount);
         counts.put("viewCount", viewCount);
+        counts.put("commentCount", commentCount);
         return ApiResponse.<Map<String, Integer>>builder()
                 .code(1000)
                 .result(counts)

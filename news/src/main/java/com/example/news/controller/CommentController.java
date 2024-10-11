@@ -28,6 +28,24 @@ public class CommentController {
     @PostMapping("/{newsId}")
     public ApiResponse<CommentResponse> createComment(
             @PathVariable Long newsId,
+//            @RequestParam(value = "parentId", required = false) Long parentId,
+            @RequestParam Long userId,
+            @RequestBody CommentRequest request) {
+
+        if(userId == null) {
+            throw new AppException(ErrorCode.UNLOGIN);
+        }
+//        request.setParentComment(parentId);
+
+        var comment = commentService.create(newsId, userId, request);
+        return ApiResponse.<CommentResponse>builder()
+                .code(1000)
+                .result(comment)
+                .build();
+    }
+    /*@PostMapping("/{newsId}")
+    public ApiResponse<CommentResponse> createComment(
+            @PathVariable Long newsId,
             @RequestParam(value = "parentId", required = false) Long parentId,
             @RequestBody CommentRequest request) {
         // Lấy thông tin người dùng từ kết quả xác thực
@@ -47,7 +65,7 @@ public class CommentController {
                 .code(1000)
                 .result(comment)
                 .build();
-    }
+    }*/
 
     @GetMapping("/{newsId}")
     public ApiResponse<List<CommentResponse>> getAllComment(@PathVariable Long newsId) {

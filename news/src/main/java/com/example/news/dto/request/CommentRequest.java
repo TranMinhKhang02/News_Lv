@@ -11,6 +11,6 @@ import lombok.experimental.FieldDefaults;
 public class CommentRequest {
     String content;
     Long parentComment; // Khoá ngoại tham chiếu đến comment ID dùng trả lời bình luận
-    Long newsId;
-    Long userId;
+    /*Long newsId;
+    Long userId;*/
 }

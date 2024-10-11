@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
 
-    @Mapping(target = "news", source = "newsId")
-    @Mapping(target = "user", source = "userId")
+    /*@Mapping(target = "news", source = "newsId")
+    @Mapping(target = "user", source = "userId")*/
     @Mapping(target = "parentComment", expression = "java(map(request.getParentComment()))")
 //    @Mapping(target = "parentComment", source = "parentComment")
     Comment toComment(CommentRequest request);

@@ -109,8 +109,10 @@ public class UserController {
     }
 
     @PutMapping("/favorite/{newsId}")
-    public void deleteFavoriteNews(@PathVariable Long newsId, @RequestParam Long userId) {
-        userService.deleteFavoriteNews(newsId, userId);
+    public void deleteFavoriteNews(
+            @PathVariable Long newsId,
+            @RequestParam Long userId) {
+        userService.deleteFavoriteNews(userId, newsId);
     }
 
 

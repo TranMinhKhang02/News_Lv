@@ -139,6 +139,10 @@ public class NewsService {
                 .intValue();
     }
 
+    public int getCommentCount(Long newsId) {
+        return (int) newsRepository.countCommentsByNewId(newsId);
+    }
+
     @Transactional
     public int incrementViewCount(Long newsId) {
         News news = newsRepository.findById(newsId)

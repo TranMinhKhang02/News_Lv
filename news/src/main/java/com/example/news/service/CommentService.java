@@ -64,7 +64,7 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public CommentResponse create(Long newsId, CommentRequest request) {
+    public CommentResponse create(Long newsId, Long userId, CommentRequest request) {
         // Truy vấn News từ newsId
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new RuntimeException("News not found"));
@@ -77,7 +77,7 @@ public class CommentService {
 
         // Gán user cho comment dựa trên userId từ request
         User user = new User();
-        user.setId(request.getUserId()); // Lấy userId từ request
+        user.setId(userId); // Lấy userId
         comment.setUser(user);
 
         // Lưu comment vào cơ sở dữ liệu

@@ -65,7 +65,7 @@
             <div class="col-lg-8">
                 <!-- News Detail Start -->
                 <div class="position-relative mb-3">
-                    <img id="news-thumbnail" class="img-fluid w-100" style="object-fit: cover;">
+                    <img id="news-thumbnail" class="img-fluid-custom w-100" style="object-fit: cover;">
                     <div class="d-flex justify-content-between">
                         <a href="#" id="like-count" class="text-dark link-hover me-3"><i class="fa fa-heart"></i></a>
                         <a href="#" id="view-count" class="text-dark link-hover me-3"><i class="fa fa-eye"></i></a>
@@ -86,34 +86,34 @@
                 <!-- News Detail End -->
 
                 <!-- Comment List Start -->
-                <div id="comments-container" class="bg-light mb-3" style="padding: 30px;">
+                <div class="bg-light mb-3" style="padding: 30px;">
                     <h3 id="news-comments-count" class="mb-4"></h3>
+                    <div id="comments-container">
+
+                    </div>
                 </div>
                 <!-- Comment List End -->
 
                 <!-- Comment Form Start -->
                 <div class="bg-light mb-3" style="padding: 30px;">
-                    <h3 class="mb-4">Leave a comment</h3>
+                    <h3 class="mb-4">Bình luận</h3>
                     <form>
-                        <div class="form-group">
-                            <label for="name">Name *</label>
-                            <input type="text" class="form-control" id="name">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" class="form-control" id="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="website">Website</label>
-                            <input type="url" class="form-control" id="website">
-                        </div>
+                        <!--<div class="form-group">
+&lt;!&ndash;                            <label for="sent-comment">Bình luận</label>&ndash;&gt;
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Bình luận ...">
+                                <div class="input-group-append">
+                                    <button class="input-group-text text-secondary"><i class="fa fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>-->
 
                         <div class="form-group">
-                            <label for="message">Message *</label>
-                            <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
+                            <label for="message">Bình luận</label>
+                            <textarea id="message" cols="30" rows="3" class="form-control"></textarea>
                         </div>
                         <div class="form-group mb-0">
-                            <input type="submit" value="Leave a comment"
+                            <input id="submit-comment" type="submit" value="Bình luận"
                                    class="btn btn-primary font-weight-semi-bold py-2 px-3">
                         </div>
                     </form>
@@ -290,6 +290,9 @@
 <script th:src="@{/static/customer/js/main.js}"></script>
 <!--<script th:src="@{/static/customer/js/homePage.js}"></script>-->
 <script th:src="@{/static/customer/js/single.js}"></script>
+<script th:inline="javascript">
+    var defaultAvatarPath = /*[[@{/static/customer/img/user-avatar.png}]]*/ '/static/customer/img/user-avatar.png';
+</script>
 </body>
 
 </html>

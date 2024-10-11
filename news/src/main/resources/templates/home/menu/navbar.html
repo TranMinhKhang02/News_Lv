@@ -74,7 +74,7 @@
                         <i class="fa fa-sign-in-alt"></i> Đăng nhập
                     </a>
 
-                    <a id="logoutButton"
+                    <a th:if="${userInfo != null}" href="#" id="logoutButton"
                        class="nav-item nav-link icon-custom-hover">
                         Thoát <i class="fa fa-sign-out-alt"></i>
                     </a>

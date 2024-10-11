@@ -40,10 +40,10 @@
     function sessionFail() {
         const userLogin = sessionStorage.getItem('userLogin');
         if(userLogin == null) {
+            $('#logoutButton').hide();
             $('#userDropdownToggle').hide();
             $('#userDropdownMenu').hide();
             $('#notification-icon').hide();
-            $('#logoutButton').hide();
         }else {
             $('#login-btn').hide();
             $('#logoutButton').show();

@@ -2,6 +2,7 @@ $(document).ready(function () {
 
     // Fetch news by ID when the page loads
     var newsId = getNewsIdFromUrl();
+
     if (newsId) {
         sessionStorage.setItem('currentNewsId', newsId); // lưu newsId vào sessionStorage
         fetchNewsById(newsId);
@@ -57,82 +58,9 @@ $(document).ready(function () {
 
 
     //===============================COMMENT================================
-    function fetchComments(newsId) {
-        $.ajax({
-            url: '/news_lv/comment/' + newsId,
-            method: 'GET',
-            success: function (response) {
-                if (response.code === 1000) {
-                    renderComments(response.result);
-                }
-            },
-            error: function (error) {
-                console.error('Error fetching comments:', error);
-            }
-        });
-    }
-
-    function renderComments(comments) {
-        var commentsContainer = $('#comments-container');
-        commentsContainer.empty();
-        comments.forEach(function (comment) {
-            var commentHtml = createCommentHtml(comment);
-            commentsContainer.append(commentHtml);
-        });
-    }
-
-    function createCommentHtml(comment) {
-        var repliesHtml = '';
-        if (comment.replies && comment.replies.length > 0) {
-            comment.replies.forEach(function (reply) {
-                repliesHtml += createCommentHtml(reply);
-            });
-        }
-
-        return `
-        <div class="media mb-4">
-            <img src="${comment.user.avatar}" alt="Image" class="img-fluid-comment mr-3 mt-1" style="width: 45px;">
-            <div class="media-body">
-                <h6><a href="#">${comment.user.fullName}</a> <small><i>${new Date(comment.createdDate).toLocaleString()}</i></small></h6>
-                <p>${comment.content}</p>
-                <button class="btn btn-sm btn-outline-secondary reply-btn">Reply</button>
-                ${repliesHtml ? `<div class="ml-4">${repliesHtml}</div>` : ''}
-            </div>
-        </div>
-    `;
-    }
-
-    function checkFavoriteNews() {
-        // Kiểm tra nếu người dùng đã đăng nhập
-        if (userId) {
-            var currentNewsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL
-
-            // Gọi API để lấy danh sách tin yêu thích của user
-            $.ajax({
-                url: '/news_lv/users/favorite',
-                method: 'GET',
-                data: {
-                    userId: userId
-                },
-                success: function(response) {
-                    const favoriteNews = response.result; // Danh sách tin yêu thích của user
-
-                    // Kiểm tra nếu newsId hiện tại nằm trong danh sách yêu thích
-                    const isFavorite = favoriteNews.some(news => news.id == currentNewsId);
-
-                    if (isFavorite) {
-                        // Thêm class active-favorite khi icon được yêu thích
-                        $('#favorite-icon').addClass('active-favorite');
-                    }
-                },
-                error: function(error) {
-                    console.error('Error fetching favorite news:', error);
-                }
-            });
-        }
-    }
-    checkFavoriteNews();
+    // fetchComments(newsId);
     // ============================LIKE================================
+    checkFavoriteNews();
 
     // Gọi hàm updateCounts khi trang được tải
     // updateCounts();
@@ -144,6 +72,88 @@ $(document).ready(function () {
 
 const userId = sessionStorage.getItem('userId');
 
+//======================================COMMENT================================
+$('#submit-comment').click(function(e) {
+    e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+
+    var message = $('#message').val(); // Lấy nội dung bình luận
+    var newsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL hoặc từ một nguồn khác
+
+    if (!userId) {
+        alert('Vui lòng đăng nhập để sử dụng chức năng này.');
+        return;
+    }
+
+    console.log('User ID:', userId);
+
+    $.ajax({
+        url: '/news_lv/comment/' + newsId + '?userId=' + userId,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            content: message,
+            parentComment: null // Hoặc giá trị parentId nếu có
+        }),
+        success: function(response) {
+            alert('Bình luận của bạn đã được gửi.');
+            $('#message').val('');
+            fetchComments(newsId);
+            getAllInteract();
+        },
+        error: function(error) {
+            console.error('Error posting comment:', error);
+            alert('Có lỗi xảy ra khi gửi bình luận.');
+        }
+    });
+});
+
+function fetchComments(newsId) {
+    $.ajax({
+        url: '/news_lv/comment/' + newsId,
+        method: 'GET',
+        success: function (response) {
+            if (response.code === 1000) {
+                renderComments(response.result);
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching comments:', error);
+        }
+    });
+}
+
+function renderComments(comments) {
+    var commentsContainer = $('#comments-container');
+    commentsContainer.empty();
+    comments.forEach(function (comment) {
+        var commentHtml = createCommentHtml(comment);
+        commentsContainer.append(commentHtml);
+    });
+}
+
+function createCommentHtml(comment) {
+    var repliesHtml = '';
+    if (comment.replies && comment.replies.length > 0) {
+        comment.replies.forEach(function (reply) {
+            repliesHtml += createCommentHtml(reply);
+        });
+    }
+
+    var avatarSrc = comment.user.avatar ? comment.user.avatar : defaultAvatarPath;
+
+    return `
+        <div class="media mb-4">
+            <img src="${avatarSrc}" alt="Image" class="img-fluid-comment mr-3 mt-1" style="width: 45px;">
+            <div class="media-body">
+                <h6><a href="#">${comment.user.fullName}</a> <small><i>${new Date(comment.createdDate).toLocaleString()}</i></small></h6>
+                <p>${comment.content}</p>
+                <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="${comment.id}">Reply</button>
+                ${repliesHtml ? `<div class="ml-4">${repliesHtml}</div>` : ''}
+            </div>
+        </div>
+    `;
+}
+
 // Event delegation to handle dynamically created reply buttons
 $(document).on('click', '.reply-btn', function () {
     // const userId = sessionStorage.getItem('userId');
@@ -154,6 +164,40 @@ $(document).on('click', '.reply-btn', function () {
     }
 });
 
+//======================================FAOVORITE================================
+
+let isFavorite = false;
+
+function checkFavoriteNews() {
+    // Kiểm tra nếu người dùng đã đăng nhập
+    if (userId) {
+        var currentNewsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL
+
+        // Gọi API để lấy danh sách tin yêu thích của user
+        $.ajax({
+            url: '/news_lv/users/favorite',
+            method: 'GET',
+            data: {
+                userId: userId
+            },
+            success: function(response) {
+                const favoriteNews = response.result; // Danh sách tin yêu thích của user
+
+                // Kiểm tra nếu newsId hiện tại nằm trong danh sách yêu thích
+                isFavorite = favoriteNews.some(news => news.id == currentNewsId);
+
+                if (isFavorite) {
+                    // Thêm class active-favorite khi icon được yêu thích
+                    $('#favorite-icon').addClass('active-favorite');
+                }
+            },
+            error: function(error) {
+                console.error('Error fetching favorite news:', error);
+            }
+        });
+    }
+}
+
 $('#favorite-icon').click(function () {
     // const userId = sessionStorage.getItem('userId');
     if (!userId) {
@@ -161,21 +205,42 @@ $('#favorite-icon').click(function () {
     } else {
         // alert('Đã đăng nhập.');
         var newsId = getNewsIdFromUrl(); // Lấy newsId từ URL hoặc từ một nguồn khác
-        $.ajax({
-            url: '/news_lv/users/favorite/' + newsId,
-            method: 'POST',
-            data: {
-                userId: userId
-            },
-            success: function(response) {
-                $('#favorite-icon').addClass('active-favorite');
-                alert('Tin tức đã được thêm vào danh sách yêu thích.');
-            },
-            error: function(error) {
-                console.error('Error favoriting news:', error);
-                alert('Có lỗi xảy ra khi thêm tin tức vào danh sách yêu thích.');
-            }
-        });
+        if (isFavorite) {
+            // Nếu đã yêu thích, xóa khỏi danh sách yêu thích
+            $.ajax({
+                url: '/news_lv/users/favorite/' + newsId,
+                method: 'PUT',
+                data: {
+                    userId: userId
+                },
+                success: function(response) {
+                    $('#favorite-icon').removeClass('active-favorite');
+                    alert('Tin tức đã được xóa khỏi danh sách yêu thích.');
+                    isFavorite = false; // Cập nhật trạng thái
+                },
+                error: function(error) {
+                    console.error('Error unfavoriting news:', error);
+                    alert('Có lỗi xảy ra khi xóa tin tức khỏi danh sách yêu thích.');
+                }
+            });
+        } else {
+            $.ajax({
+                url: '/news_lv/users/favorite/' + newsId,
+                method: 'POST',
+                data: {
+                    userId: userId
+                },
+                success: function(response) {
+                    $('#favorite-icon').addClass('active-favorite');
+                    alert('Tin tức đã được thêm vào danh sách yêu thích.');
+                    isFavorite = true; // Cập nhật trạng thái
+                },
+                error: function(error) {
+                    console.error('Error favoriting news:', error);
+                    alert('Có lỗi xảy ra khi thêm tin tức vào danh sách yêu thích.');
+                }
+            });
+        }
     }
 });
 
@@ -192,8 +257,10 @@ function getNewsIdFromUrl() {
     return urlParams.get('newsId');
 }
 
+const newsId = getNewsIdFromUrl();
+
 function viewCount() {
-    var newsId = getNewsIdFromUrl();
+    // var newsId = getNewsIdFromUrl();
     $.ajax({
         url: `/news_lv/news/view/${newsId}`,
         method: 'POST',
@@ -205,6 +272,24 @@ function viewCount() {
             if (error.responseJSON && error.responseJSON.message) {
                 console.error('Error message:', error.responseJSON.message);
             }
+        }
+    });
+}
+
+function getAllInteract() {
+    // var newsId = getNewsIdFromUrl();
+    $.ajax({
+        url: `/news_lv/news/counts/${newsId}`,
+        method: 'GET',
+        success: function(data) {
+            console.log('View count incremented');
+            console.log(data);
+            $('#news-comments-count').text(data.result.commentCount + ' Comments');
+            $('#like-count').text(data.result.likeCount + ' Yêu thích');
+            $('#view-count').text(data.result.viewCount + ' Luợt xem');
+        },
+        error: function(error) {
+            console.error('Error incrementing view count:', error);
         }
     });
 }
