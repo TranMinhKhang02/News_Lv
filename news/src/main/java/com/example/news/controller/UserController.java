@@ -77,17 +77,6 @@ public class UserController {
         userService.favoriteNews(userId, newsId);
     }
 
-    /*@GetMapping("/favorite")
-    public ApiNewsResponse<Set<NewsResponse>> getFavoriteNews() {
-        User user = (User) session.getAttribute("user");
-        if(user == null) {
-            throw new AppException(ErrorCode.UNLOGIN);
-        }
-        Set<NewsResponse> favoriteNews = userService.getFavoriteNews(user.getId());
-        return ApiNewsResponse.<Set<NewsResponse>>builder()
-                .result(favoriteNews)
-                .build();
-    }*/
     @GetMapping("/favorite")
     public ApiNewsResponse<Set<NewsResponse>> getFavoriteNews(
             @RequestParam Long userId,
@@ -139,56 +128,4 @@ public class UserController {
                 .result(userResponse)
                 .build();
     }
-    /*@GetMapping("/myInfo")
-    public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {
-        HttpSession session = request.getSession(false); // Lấy session hiện tại
-        if (session == null || session.getAttribute("user") == null) {
-            throw new AppException(ErrorCode.UNLOGIN); // Nếu không có session, throw exception
-        }
-
-        var authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        System.out.println("User authorities: " + authorities);
-
-        User user = (User) session.getAttribute("user");
-        UserResponse userResponse = userMapper.toUserResponse(user);
-
-        return ApiResponse.<UserResponse>builder()
-                .result(userResponse)
-                .build();
-    }*/
-
-    /*@PostMapping("/users")
-    public String createUser(@Valid UserCreationRequest request, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "register"; // Nếu có lỗi, hiển thị lại form
-        }
-
-        // Xử lý tạo user ở đây (thêm vào database, v.v.)
-        return "redirect:/success";
-    }*/
-
-    /*@GetMapping("/page/login/oauth2/code/google")
-    public String googleCallback(OAuth2AuthenticationToken authentication) {
-        Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
-        String googleId = (String) attributes.get("sub");
-        String email = (String) attributes.get("email");
-        String fullName = (String) attributes.get("name");
-
-        User user = userService.loginWithGoogle(googleId, email, fullName);
-        session.setAttribute("user", user);
-
-        return "redirect:/news_lv/page/home";
-    }*/
-    /*@GetMapping("/oauth2/callback/google")
-    public String googleCallback(OAuth2AuthenticationToken authentication) {
-        Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
-        String googleId = (String) attributes.get("sub");
-        String email = (String) attributes.get("email");
-        String fullName = (String) attributes.get("name");
-
-        User user = userService.loginWithGoogle(googleId, email, fullName);
-        session.setAttribute("user", user);
-
-        return "redirect:/news_lv/page/home";
-    }*/
 }

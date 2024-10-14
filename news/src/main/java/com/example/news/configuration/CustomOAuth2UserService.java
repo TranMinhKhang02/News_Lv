@@ -2,6 +2,7 @@ package com.example.news.configuration;
 
 import com.example.news.entity.User;
 import com.example.news.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

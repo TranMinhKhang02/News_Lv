@@ -66,9 +66,9 @@
         </a>
         <div class="collapse" id="ui-news">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" id="approved-articles" href="#">Tin tức đã duyệt</a></li>
-            <li class="nav-item"> <a class="nav-link" href="#">Tin tức chờ duyệt</a></li>
-            <li class="nav-item"> <a class="nav-link" href="#">Tin tức từ chối</a></li>
+            <li class="nav-item"> <a class="nav-link" id="approved-articles" data-status="1" href="#">Tin tức đã duyệt</a></li>
+            <li class="nav-item"> <a class="nav-link" id="news-waitApprove" data-status="2" href="#">Tin tức chờ duyệt</a></li>
+            <li class="nav-item"> <a class="nav-link" id="news-refused" data-status="3" href="#">Tin tức từ chối</a></li>
           </ul>
         </div>
       </li>
@@ -161,7 +161,7 @@
           <li class="nav-item d-flex align-items-center">
             <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
               <i class="fa fa-user me-sm-1"></i>
-              <span class="d-sm-inline d-none">Sign In</span>
+              <span class="d-sm-inline d-none" th:text="${fullName}"></span>
             </a>
           </li>
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -879,6 +879,7 @@
 <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/static/admin/assets/js/argon-dashboard.min.js}"></script>
 <script th:src="@{/static/admin/assets/js/newsAdmin.js}"></script>
+
 </body>
 
 </html>

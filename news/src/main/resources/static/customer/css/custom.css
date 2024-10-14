@@ -118,3 +118,8 @@
     object-fit: cover;
     aspect-ratio: 16 / 9; /* Ensures the images are rectangular with a 16:9 aspect ratio */
 }
+
+#btn-replyComment {
+    min-height: 36px;
+    max-height: 38px;
+}

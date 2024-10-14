@@ -5,6 +5,8 @@
     $(document).ready(function () {
         // Fetch and render categories
         fetchCategories();
+        fetchNewsByCreatedDate()
+        fetchNewsByView()
     });
 
     // Fetch categories
@@ -44,6 +46,79 @@
                 </div>
                 <div class="owl-carousel owl-carousel-3 carousel-item-2 position-relative" id="${category.code}-news">
                     <!-- News items will be dynamically added here -->
+                </div>
+            </div>
+        `;
+    }
+
+    //Fetch news by createdDate
+    function fetchNewsByCreatedDate() {
+        let latestNewsContainer = $('#latest-news-carousel');
+        latestNewsContainer.empty();
+        $.ajax({
+            url: '/news_lv/news/top10ByCreatedDate',
+            method: 'GET',
+            success: function(response) {
+                if (response.code === 1000 && Array.isArray(response.result)) {
+                    response.result.forEach(function(news) {
+                        var newsItem = renderNewsByCreatedDate(news);
+                        latestNewsContainer.append(newsItem);
+                    });
+                    initializeCarousel4Item(latestNewsContainer)
+                } else {
+                    console.error('Unexpected response format:', response);
+                }
+            },
+        })
+    }
+
+    function renderNewsByCreatedDate(news) {
+        return `
+            <div class="position-relative overflow-hidden" style="height: 300px;">
+                <img class="img-fluid w-100 h-100" src="${news.thumbnail}" style="object-fit: cover;">
+                <div class="overlay">
+                    <div class="mb-1" style="font-size: 13px;">
+                        <a class="text-white" href="">${news.categories[0].name}</a>
+                        <span class="px-1 text-white">/</span>
+                        <a class="text-white" href="">${new Date(news.createdDate).toLocaleDateString()}</a>
+                    </div>
+                    <a class="h4 m-0 text-white" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
+                </div>
+            </div>
+        `;
+    }
+
+    function fetchNewsByView() {
+        let mostViewNewsContainer = $('#views-news-carousel');
+        mostViewNewsContainer.empty();
+        $.ajax({
+            url: '/news_lv/news/top5ByViewCount',
+            method: 'GET',
+            success: function(response) {
+                if (response.code === 1000 && Array.isArray(response.result)) {
+                    response.result.forEach(function(news) {
+                        var newsItem = renderNewsByViews(news);
+                        mostViewNewsContainer.append(newsItem);
+                    });
+                    initializeCarousel1Item(mostViewNewsContainer)
+                } else {
+                    console.error('Unexpected response format:', response);
+                }
+            },
+        })
+    }
+
+    function renderNewsByViews(news) {
+        return `
+            <div class="position-relative overflow-hidden" style="height: 435px;">
+                <img class="img-fluid h-100" src="${news.thumbnail}" style="object-fit: cover;">
+                <div class="overlay">
+                    <div class="mb-1">
+                        <a class="text-white" href="">${news.categories[0].name}</a>
+                        <span class="px-2 text-white">/</span>
+                        <a class="text-white" href="">${new Date(news.createdDate).toLocaleDateString()}</a>
+                    </div>
+                    <a class="h2 m-0 text-white font-weight-bold" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
                 </div>
             </div>
         `;
@@ -94,7 +169,6 @@
                         <span>${new Date(news.modifiedDate).toLocaleDateString()}</span>
                     </div>
                     <a class="h4 m-0 title-news" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
-<!--                    <a class="h4 m-0 title-news" href="">${news.title}</a>-->
                 </div>
             </div>
         `;
@@ -103,6 +177,22 @@
 
     // =================================CAROUSEL================================
 
+
+    function initializeCarousel1Item(elementId) {
+        $(elementId).owlCarousel('destroy'); // Destroy existing carousel
+        $(elementId).owlCarousel({
+            autoplay: true,
+            smartSpeed: 1500,
+            items: 1,
+            dots: false,
+            loop: true,
+            nav : true,
+            navText : [
+                '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+            ]
+        });
+    }
     // Initialize carousel
     function initializeCarousel(elementId) {
         $(elementId).owlCarousel('destroy'); // Destroy existing carousel
@@ -126,6 +216,39 @@
                 },
                 768:{
                     items:2
+                }
+            }
+        });
+    }
+
+    function initializeCarousel4Item(elementId) {
+        $(elementId).owlCarousel('destroy'); // Destroy existing carousel
+        $(elementId).owlCarousel({
+            autoplay: true,
+            smartSpeed: 1000,
+            margin: 30,
+            dots: false,
+            loop: true,
+            nav : true,
+            navText : [
+                '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+            ],
+            responsive: {
+                0:{
+                    items:1
+                },
+                576:{
+                    items:1
+                },
+                768:{
+                    items:2
+                },
+                992:{
+                    items:3
+                },
+                1200:{
+                    items:4
                 }
             }
         });

@@ -168,16 +168,4 @@ public class UserService {
             return userRepository.save(newUser);
         }
     }
-    /*public User loginWithGoogle(String googleId, String email, String fullName) {
-        User user = userRepository.findByGoogleId(googleId)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setGoogleId(googleId);
-                    newUser.setEmail(email);
-                    newUser.setFullName(fullName);
-                    newUser.setStatus(1);
-                    return userRepository.save(newUser);
-                });
-        return user;
-    }*/
 }

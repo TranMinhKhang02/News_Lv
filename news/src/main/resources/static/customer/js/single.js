@@ -75,16 +75,14 @@ const userId = sessionStorage.getItem('userId');
 //======================================COMMENT================================
 $('#submit-comment').click(function(e) {
     e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
-
     var message = $('#message').val(); // Lấy nội dung bình luận
-    var newsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL hoặc từ một nguồn khác
-
     if (!userId) {
         alert('Vui lòng đăng nhập để sử dụng chức năng này.');
         return;
     }
+    submitComment(message);
 
-    console.log('User ID:', userId);
+    /*console.log('User ID:', userId);
 
     $.ajax({
         url: '/news_lv/comment/' + newsId + '?userId=' + userId,
@@ -95,7 +93,7 @@ $('#submit-comment').click(function(e) {
             parentComment: null // Hoặc giá trị parentId nếu có
         }),
         success: function(response) {
-            alert('Bình luận của bạn đã được gửi.');
+            // alert('Bình luận của bạn đã được gửi.');
             $('#message').val('');
             fetchComments(newsId);
             getAllInteract();
@@ -104,8 +102,32 @@ $('#submit-comment').click(function(e) {
             console.error('Error posting comment:', error);
             alert('Có lỗi xảy ra khi gửi bình luận.');
         }
-    });
+    });*/
 });
+
+function submitComment(message, parentCommentId = null) {
+    var newsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL hoặc từ một nguồn khác
+
+    $.ajax({
+        url: '/news_lv/comment/' + newsId + '?userId=' + userId,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            content: message,
+            parentComment: parentCommentId
+        }),
+        success: function(response) {
+            // alert('Bình luận của bạn đã được gửi.');
+            fetchComments(newsId);
+            getAllInteract();
+        },
+        error: function(error) {
+            console.error('Error posting comment:', error);
+            alert('Có lỗi xảy ra khi gửi bình luận.');
+        }
+    });
+
+}
 
 function fetchComments(newsId) {
     $.ajax({
@@ -154,16 +176,62 @@ function createCommentHtml(comment) {
     `;
 }
 
-// Event delegation to handle dynamically created reply buttons
 $(document).on('click', '.reply-btn', function () {
-    // const userId = sessionStorage.getItem('userId');
-    if (userId) {
-        alert('User ID: ' + userId);
-    } else {
-        alert('Please log in to comment.');
+    if (!userId) {
+        alert('Vui lòng đăng nhập để bình luận.');
+        return;
     }
+
+    var commentId = $(this).data('comment-id');
+    var replyFormHtml = `
+        <div class="form-group reply-form">
+            <div class="input-group">
+                <textarea id="reply-textArea-${commentId}" class="form-control auto-resize" placeholder="Bình luận ..." rows="1"></textarea>
+                <div class="input-group-append">
+                    <button data-parent-comment-id="${commentId}" class="btn-replyComment input-group-text text-secondary"><i class="fa fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Thay thế nút "Reply" bằng form bình luận
+    $(this).replaceWith(replyFormHtml);
+
+    // Thêm sự kiện input để tự động điều chỉnh chiều cao của textarea
+    $('.auto-resize').on('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
 });
 
+$(document).on('click', '.btn-replyComment', function () {
+    var parentCommentId = $(this).data('parent-comment-id');
+    var replyComment = $(`#reply-textArea-${parentCommentId}`).val();
+
+    submitComment(replyComment, parentCommentId);
+});
+/*$(document).on('click', '.reply-btn', function () {
+    // const userId = sessionStorage.getItem('userId');
+    if (!userId) {
+        alert('Vui lòng đăng nhập để bình luận.');
+        return;
+    }
+
+    var commentId = $(this).data('comment-id');
+    var replyFormHtml = `
+        <div class="form-group reply-form">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Bình luận ...">
+                <div class="input-group-append">
+                    <button class="input-group-text text-secondary"><i class="fa fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Thay thế nút "Reply" bằng form bình luận
+    $(this).replaceWith(replyFormHtml);
+});*/
 //======================================FAOVORITE================================
 
 let isFavorite = false;
@@ -216,6 +284,7 @@ $('#favorite-icon').click(function () {
                 success: function(response) {
                     $('#favorite-icon').removeClass('active-favorite');
                     alert('Tin tức đã được xóa khỏi danh sách yêu thích.');
+                    getAllInteract();
                     isFavorite = false; // Cập nhật trạng thái
                 },
                 error: function(error) {
@@ -233,6 +302,7 @@ $('#favorite-icon').click(function () {
                 success: function(response) {
                     $('#favorite-icon').addClass('active-favorite');
                     alert('Tin tức đã được thêm vào danh sách yêu thích.');
+                    getAllInteract();
                     isFavorite = true; // Cập nhật trạng thái
                 },
                 error: function(error) {

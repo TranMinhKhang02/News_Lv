@@ -1,3 +1,7 @@
 .active-categoryName {
     color: #5e72e4 !important;
 }
+
+.hide-item {
+    display: none !important;
+}

@@ -108,6 +108,18 @@ public class NewsService {
         return newsMapper.toNewsResponse(newsRepository.findById(id).orElse(null));
     }
 
+    public List<NewsResponse> getTop10NewsByCreatedDate() {
+        return newsRepository.findTop10ByOrderByCreatedDateDesc().stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<NewsResponse> getTop5NewsByViewCount() {
+        return newsRepository.findTop5ByOrderByViewCountDesc().stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+
     public int countAllNews() {
         return (int) newsRepository.count();
     }

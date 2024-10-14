@@ -80,6 +80,14 @@ public class CommentService {
         user.setId(userId); // Lấy userId
         comment.setUser(user);
 
+        // Start count Comment
+        if(news.getCommentCount() == null) {
+            news.setCommentCount(0L);
+        }
+        news.setCommentCount(news.getCommentCount() + 1); // Tăng commentCount
+        newsRepository.save(news); // Lưu lại bản ghi News đã cập nhật
+        // End count Comment
+
         // Lưu comment vào cơ sở dữ liệu
         comment = commentRepository.save(comment);
 

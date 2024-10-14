@@ -77,6 +77,7 @@ public class SecurityConfig {
             )
             // Cấu hình session management
             .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // Tạo session nếu cần
                     .maximumSessions(1) // Cho phép 2 session tại một thời điểm
                     .maxSessionsPreventsLogin(false) // Cho phép user login lại nếu hết session
             )
@@ -85,31 +86,7 @@ public class SecurityConfig {
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(customOAuth2UserService())
                     )
-                    .successHandler(new AuthenticationSuccessHandler() {
-                        @Override
-                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                            OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
-                            Map<String, Object> attributes = authToken.getPrincipal().getAttributes();
-
-                            // Lấy thông tin người dùng từ Google
-                            String googleId = (String) attributes.get("sub");
-                            String email = (String) attributes.get("email");
-                            String fullName = (String) attributes.get("name");
-                            String avatar = (String) attributes.get("picture");
-                            LocalDate dob = attributes.containsKey("birthdate") ? LocalDate.parse((String) attributes.get("birthdate")) : null;
-
-                            // Lưu hoặc cập nhật người dùng trong database
-                            User user = userService.loginWithGoogle(googleId, email, fullName, avatar, dob);
-
-                            // Lưu thông tin user vào session nếu cần thiết
-                            HttpSession session = request.getSession();
-                            session.setAttribute("user", user);
-
-                            // Chuyển hướng sau khi xử lý thành công
-                            response.sendRedirect("/news_lv/page/home");
-//                            response.sendRedirect("/news_lv/page/profile");
-                        }
-                    })
+                    .successHandler(new CustomAuthenticationSuccessHandler(userService))
             )
             .csrf(AbstractHttpConfigurer::disable);
 

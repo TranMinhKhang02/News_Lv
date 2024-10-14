@@ -1,24 +1,24 @@
 package com.example.news.pageRequest;
 
 import com.example.news.dto.response.ApiResponse;
+import com.example.news.dto.response.userResponse.UserResponse;
 import com.example.news.entity.User;
-import com.example.news.service.UserService;
+import com.example.news.exception.AppException;
+import com.example.news.exception.ErrorCode;
+import com.example.news.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.security.Principal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +58,8 @@ public class PageController {
     }
 
     @GetMapping("/logout")
-    public ApiResponse<Object> logout(Model model) {
-//        session.invalidate();
+    public ApiResponse<Object> logout(Model model, HttpSession session) {
+        session.invalidate();
         clearModelAttributes(model);
         return ApiResponse.builder().message("Logout successfully").build();
     }
@@ -77,6 +77,18 @@ public class PageController {
     @GetMapping("/myInfo")
     public String showMyInfoPage() {
         return "home/myInfo";
+    }
+
+    @GetMapping("/getSession-userId")
+    public ResponseEntity<String> testSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // Không tạo session mới
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                return ResponseEntity.ok("userId: " + user.getId());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user in session");
     }
 
     @GetMapping("/single")

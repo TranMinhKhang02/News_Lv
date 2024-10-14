@@ -18,15 +18,13 @@
     <div class="card-body mb-3">
         <div class="row gx-4">
             <div class="col-lg-1 col-md-1 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
-                <div id="createNews" class="nav-wrapper position-relative end-0">
+                <div class="nav-wrapper position-relative end-0">
                     <ul class="nav nav-pills nav-fill p-1" role="tablist">
                         <li class="nav-item">
-                            <!--<a class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center " href="#">
+                            <a id="createNews" class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="true">
+                                <!--                                <i class="ni ni-app"></i>-->
                                 <i class="fa fa-plus"></i>
-                            </a>-->
-                            <a class="nav-link mb-0 px-0 py-1 active d-flex align-items-center justify-content-center "
-                               data-bs-toggle="tab" href="#" role="tab" aria-selected="true">
-                                <i class="fa fa-plus"></i>
+                                <!--                                <span class="ms-2"></span>-->
                             </a>
                         </li>
                     </ul>
@@ -47,7 +45,7 @@
                             <tr>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên tin tức</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tác giả</th>
-<!--                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>-->
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày sửa</th>
                                 <th class="text-secondary opacity-7"></th>
                             </tr>
@@ -69,12 +67,15 @@
                                     <p class="text-xs font-weight-bold mb-0">Manager</p>
                                     <p class="text-xs text-secondary mb-0">Organization</p>
                                 </td>
+                                <td class="align-middle text-center text-sm">
+                                    <span class="badge badge-sm bg-gradient-success">Online</span>
+                                </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
                                 </td>
                                 <td class="align-middle">
-                                    <a id="editNews" href="#" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                        Chỉnh sửa
+                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                        Edit
                                     </a>
                                 </td>
                             </tr>

@@ -23,5 +23,5 @@ public class UserResponse extends BaseResponse<UserResponse> {
     LocalDate dob;
     String phoneNumber;
     RoleResponse role;
-    Set<NewsResponse> favoriteNews;
+//    Set<NewsResponse> favoriteNews;
 }

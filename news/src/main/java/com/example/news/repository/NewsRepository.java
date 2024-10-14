@@ -36,6 +36,10 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.news.id = :newsId")
     long countCommentsByNewId(@Param("newsId") Long newsId);
 
+    List<News> findTop10ByOrderByCreatedDateDesc();
+
+    List<News> findTop5ByOrderByViewCountDesc();
+
     /*@Modifying
     @Transactional
     @Query("UPDATE News n SET n.viewCount = n.viewCount + 1 WHERE n.id = :newsId")

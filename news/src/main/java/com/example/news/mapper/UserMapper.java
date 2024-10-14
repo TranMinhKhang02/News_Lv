@@ -14,7 +14,7 @@ public interface UserMapper {
 
     User toUser(UserCreationRequest request);
     // converter Entity to DTO User
-    @Mapping(target = "favoriteNews", source = "favoriteNews")
+//    @Mapping(target = "favoriteNews", source = "favoriteNews")
     UserResponse toUserResponse(User user);
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }

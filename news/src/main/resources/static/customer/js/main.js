@@ -27,26 +27,86 @@
             timeZone: 'Asia/Ho_Chi_Minh' // Múi giờ của Việt Nam
         };
 
+        $('#logoutButton').on('click', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định
+
+            sessionStorage.removeItem('userLogin');
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('userId');
+            sessionStorage.removeItem('currentNewsId');
+
+            // Xóa local storage
+            sessionStorage.clear();
+
+            localStorage.clear();
+
+            // Đánh dấu trạng thái logout trong sessionStorage
+            sessionStorage.setItem('isLoggedOut', 'true');
+
+            // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
+            window.location.href = '/news_lv/page/home';
+            $('#login-btn').hide();
+        });
+
+        // Kiểm tra trạng thái logout từ sessionStorage
+        const isLoggedOut = sessionStorage.getItem('isLoggedOut') === 'true';
+        if (!isLoggedOut){
+            getSession()
+            setMyInfoSession()
+        } else {
+            // Nếu đã logout, xóa cờ để không gọi lại nữa
+            sessionStorage.removeItem('isLoggedOut');
+        }
+
         // Định dạng ngày tháng
         const formattedDate = new Intl.DateTimeFormat('vi-VN', options).format(currentDate);
         // const formattedDate = new Intl.DateTimeFormat('en-US', options).format(currentDate);
 
         // Hiển thị vào trong phần tử HTML
         document.getElementById('current-date').innerText = formattedDate;
-        sessionFail();
-        localStorageFail();
+        // sessionFail();
+        // localStorageFail();
     });
+
+    function getSession() {
+        $.ajax({
+            url: '/news_lv/page/getSession-userId', // Đường dẫn tới API của bạn
+            method: 'GET',
+            success: function(response) {
+                // Lưu userId vào sessionStorage
+                const userId = response.split(": ")[1]; // Tách userId từ chuỗi "userId: 20"
+                sessionStorage.setItem('userId', userId);
+                console.log("UserId stored in sessionStorage:", userId);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching userId from session:", error);
+            }
+        });
+    }
+
+    function setMyInfoSession() {
+        $.ajax({
+            url: '/news_lv/users/myInfo', // Gọi API để lấy thông tin người dùng
+            method: 'GET',
+            success: function(userResponse) {
+                sessionStorage.setItem('user', JSON.stringify(userResponse.result)); // Lưu thông tin người dùng vào sessionStorage
+                console.log("User info stored in sessionStorage:", userResponse.result);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching user info from session:", error);
+            }
+        });
+    }
 
     function sessionFail() {
         const userLogin = sessionStorage.getItem('userLogin');
-        if(userLogin == null) {
-            $('#logoutButton').hide();
+        if(!userLogin) {
             $('#userDropdownToggle').hide();
             $('#userDropdownMenu').hide();
             $('#notification-icon').hide();
         }else {
             $('#login-btn').hide();
-            $('#logoutButton').show();
+            $('.logoutButton').show();
             $('#userDropdownToggle').show();
             $('#notification-icon').show();
         }
@@ -56,41 +116,12 @@
         const userLocal = localStorage.getItem('userLocal');
         if (userLocal == null) {
             $('#login-btn').show();
-            $('#logoutButton').show();
+            $('#logoutButton').hide();
         }
     }
 
     //============================LOGOUT============================
-    $('#logoutButton').on('click', function(event) {
-        event.preventDefault(); // Ngăn chặn hành động mặc định
 
-        sessionStorage.removeItem('userLogin');
-        sessionStorage.removeItem('user');
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('currentNewsId');
-
-        // Xóa local storage
-        sessionStorage.clear();
-
-        localStorage.clear();
-        /*$.ajax({
-            url: '/news_lv/page/logout',
-            method: 'GET',
-            success() {
-                console.log('Logout successfully');
-                /!*$('#userDropdownToggle').hide();
-                $('#userDropdownMenu').hide();
-                $('#notification-icon').hide();*!/
-            },
-            error() {
-                console.log('Error when logging out');
-            }
-        })*/
-
-        // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
-        window.location.href = '/news_lv/page/home';
-        $('#login-btn').hide();
-    });
     
     // Back to top button
     $(window).scroll(function () {

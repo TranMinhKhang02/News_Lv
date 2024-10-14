@@ -34,10 +34,11 @@ public class NewsController {
     @PostMapping
 //    @PreAuthorize("hasAnyRole('ADMIN', 'ADMIN_MANAGE')")
 //    @PreAuthorize("hasRole('ADMIN_MANAGE')")
-    public ApiResponse<NewsResponse> createNews(@RequestBody NewsRequest request) {
+    public ApiResponse<NewsResponse> createNews(@RequestBody NewsRequest request,
+                                                @RequestParam Long userId) {
         // Lấy thông tin người dùng từ kết quả xác thực
-        User user = (User) httpRequest.getSession().getAttribute("user");
-        if(user == null) {
+//        User user = (User) httpRequest.getSession().getAttribute("user");
+        if(userId == null) {
             throw new AppException(ErrorCode.UNLOGIN);
         }
         return ApiResponse.<NewsResponse>builder()
@@ -124,6 +125,22 @@ public class NewsController {
         return ApiResponse.<NewsResponse>builder()
                 .code(1000)
                 .result(news)
+                .build();
+    }
+
+    @GetMapping("/top10ByCreatedDate")
+    public ApiResponse<List<NewsResponse>> getTop10NewsByCreatedDate() {
+        return ApiResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .result(newsService.getTop10NewsByCreatedDate())
+                .build();
+    }
+
+    @GetMapping("/top5ByViewCount")
+    public ApiResponse<List<NewsResponse>> getTop5NewsByViewCount() {
+        return ApiResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .result(newsService.getTop5NewsByViewCount())
                 .build();
     }
 
