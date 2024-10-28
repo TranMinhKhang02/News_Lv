@@ -1,13 +1,9 @@
 package com.example.news.repository;
 
 import com.example.news.entity.News;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,13 +12,18 @@ import java.util.List;
 
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {
-    void deleteNewsCategoryById(Long id);
+//    void deleteNewsCategoryById(Long id);
+    void deleteNewsCategoryById(Long Id);
+    void deleteCommentsById(Long id);
     Page<News> findAllByStatusCode(String statusCode, Pageable pageable);
     long countAllByStatusCode(String status);
 
     List<News> findAllByCategories_code(String categoryCode);
     List<News> findAllByCategories_codeAndStatusCode(String categoryCode, String statusCode);
-    long countByCategories_Code(String categoryCode);
+    long countByCategories_CodeAndStatusCode(String categoryCode, String statusCode);
+
+    Page<News> findAllByCreatedByAndStatusCodeAndCategories_code(String createdBy, String statusCode, String categoryCode, Pageable pageable);
+    long countByCreatedByAndStatusCodeAndCategories_code(String createdBy, String statusCode, String categoryCode);
 
     Page<News> findAllByCategories_codeAndStatusCode(String categoryCode, String statusCode, Pageable pageable);
     long countAllByCategories_codeAndStatusCode(String categoryCode, String statusCode);
@@ -37,8 +38,14 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     long countCommentsByNewId(@Param("newsId") Long newsId);
 
     List<News> findTop10ByOrderByCreatedDateDesc();
+    List<News> findTop10ByStatusCodeOrderByCreatedDateDesc(String statusCode);
 
     List<News> findTop5ByOrderByViewCountDesc();
+    List<News> findTop5ByStatusCodeOrderByViewCountDesc(String statusCode);
+
+    List<News> findTop5ByOrderByLikeCountDesc();
+    List<News> findTop5ByStatusCodeOrderByLikeCountDesc(String statusCode);
+
 
     /*@Modifying
     @Transactional

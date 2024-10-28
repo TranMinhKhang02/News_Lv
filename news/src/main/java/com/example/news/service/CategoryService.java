@@ -42,10 +42,11 @@ public class CategoryService {
         // Chuyển đổi từ Category sang CategoryResponse nếu cần
         return categories.stream().map(categoryMapper::toCategoryResponse).toList();
     }
-    /*public List<CategoryResponse> getAll() {
+
+    public List<CategoryResponse> getAllAndParent() {
         var categories = categoryRepository.findAll();
         return categories.stream().map(categoryMapper::toCategoryResponse).toList();
-    }*/
+    }
 
     public CategoryResponse getById(Long categoryId) {
         var category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Không tìm thấy category!"));

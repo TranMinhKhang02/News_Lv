@@ -44,6 +44,7 @@ public class SecurityConfig {
             "/comment/**",
             "/category/**",
             "/status/**",
+            "/image/**",
             /*"/users",
             "/auth/**",
             "/page/**"*/

@@ -23,12 +23,22 @@ public class RoleController {
     RoleService roleService;
 
     @GetMapping
-    public ApiResponse<List<RoleResponse>> getAllRoles() {
-        var roles = roleService.getAll();
-        log.info("Roles: {}", roles); // In log để kiểm tra danh sách RoleResponse
+    public ApiResponse<List<RoleResponse>> getAllRoles(
+            @RequestParam(value = "status", defaultValue = "1") int status
+    ) {
+        var roles = roleService.getAll(status);
+//        log.info("Roles: {}", roles); // In log để kiểm tra danh sách RoleResponse
         return ApiResponse.<List<RoleResponse>>builder()
                 .code(1000)
                 .result(roles)
+                .build();
+    }
+
+    @GetMapping("/{roleId}")
+    public ApiResponse<RoleResponse> getRoleById(@PathVariable Long roleId) {
+        return ApiResponse.<RoleResponse>builder()
+                .code(1000)
+                .result(roleService.getById(roleId))
                 .build();
     }
 
@@ -37,6 +47,14 @@ public class RoleController {
         return ApiResponse.<RoleResponse>builder()
                 .code(1000)
                 .result(roleService.create(request))
+                .build();
+    }
+
+    @PutMapping("/{roleId}")
+    public ApiResponse<RoleResponse> updateRole(@PathVariable Long roleId, @RequestBody RoleRequest request) {
+        return ApiResponse.<RoleResponse>builder()
+                .code(1000)
+                .result(roleService.update(roleId, request))
                 .build();
     }
 }

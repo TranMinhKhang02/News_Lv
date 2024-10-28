@@ -66,7 +66,7 @@ public class News extends Base {
     @Column(name = "summary_createDate")
     LocalDateTime summary_createDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "news_category",
             joinColumns = @JoinColumn(name = "n_id"),
@@ -80,10 +80,10 @@ public class News extends Base {
     @JsonManagedReference // Tránh vòng lặp dùng cho class chử sở hữu mối quan hệ
     Status status;
 
-    @ManyToMany(mappedBy = "favoriteNews")
+    @ManyToMany(mappedBy = "favoriteNews", cascade = CascadeType.REMOVE)
     Set<User> usersFavorited;
 
-    @OneToMany(mappedBy = "news")
+    @OneToMany(mappedBy = "news", orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonBackReference // Không trả về danh sách news trong phản hồi JSON
     List<Comment> comments;
 

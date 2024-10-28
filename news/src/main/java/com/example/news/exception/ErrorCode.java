@@ -20,6 +20,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(1010, "Phương thức yêu cầu của API không đúng hoặc thiếu value.", HttpStatus.METHOD_NOT_ALLOWED), // 400
     NEWS_EXISTED(1011, "Tin tức đã tồn tại trong danh sách yêu thích.", HttpStatus.BAD_REQUEST), // 400
     INVALID_STATE(1012, "Không tìm thấy file insert hoặc sai đường dẫn.", HttpStatus.BAD_REQUEST), // 400
+    COMMENT_NOT_FOUND(1013, "Không tìm thấy bình luận.", HttpStatus.NOT_FOUND), // 404
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

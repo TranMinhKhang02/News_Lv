@@ -30,6 +30,15 @@ public class CategoryController {
                 .build();
     }
 
+    @GetMapping("/all")
+    public ApiResponse<List<CategoryResponse>> getAllCategoriesAndParent() {
+        var categories = categoryService.getAllAndParent();
+        return ApiResponse.<List<CategoryResponse>>builder()
+                .code(1000)
+                .result(categories)
+                .build();
+    }
+
     @GetMapping("/{categoryId}")
     public ApiResponse<CategoryResponse> getCategoryById(@PathVariable Long categoryId) {
         var category = categoryService.getById(categoryId);

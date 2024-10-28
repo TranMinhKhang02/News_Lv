@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>NEWSROOM - Free Bootstrap Magazine Template</title>
+    <title>NEWSBIG</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -51,10 +51,6 @@
 
 <div class="container-fluid">
     <div class="container">
-        <div class="favorite-icon">
-            <i class="far fa-heart" id="favorite-icon"></i>
-            <button id="incrementViewButton">Increment View</button>
-        </div>
     </div>
 </div>
 
@@ -65,22 +61,46 @@
             <div class="col-lg-8">
                 <!-- News Detail Start -->
                 <div class="position-relative mb-3">
-                    <img id="news-thumbnail" class="img-fluid-custom w-100" style="object-fit: cover;">
-                    <div class="d-flex justify-content-between">
-                        <a href="#" id="like-count" class="text-dark link-hover me-3"><i class="fa fa-heart"></i></a>
-                        <a href="#" id="view-count" class="text-dark link-hover me-3"><i class="fa fa-eye"></i></a>
-<!--                        <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>-->
-                    </div>
+                    <!--<img id="news-thumbnail" class="img-fluid-custom w-100" style="object-fit: cover;">-->
                     <div class="overlay position-relative bg-light">
                         <div class="mb-3">
                             <a id="news-category" href=""></a>
                             <span class="px-1">/</span>
                             <span id="news-date"></span>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <h3 id="news-title" class="mb-3"></h3>
-                            <p id="news-content"></p>
+                            <!--                                <textarea id="news-content-editor"></textarea>-->
+                            <p id="news-content-editor"></p>
                         </div>
+                        <!-- Start Favorite-->
+                        <div class="d-flex">
+                            <div class="backHome mr-3">
+                                <i id="backHome-icon" class="fas fa-arrow-left"></i>
+                            </div>
+                            <div class="favorite-icon">
+                                <svg id="bookmark-icon" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                <!--                                <i class="far fa-bookmark" id="favorite-icon"></i>-->
+                                <!--<a class="not-favorite" href="#">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                        <path d="M336 0H48C21.5 0 0 21.5 0 48v464l192-112 192 112V48c0-26.5-21.5-48-48-48zm0 428.4l-144-84-144 84V54a6 6 0 0 1 6-6h276c3.3 0 6 2.7 6 6V428.4z"/></svg>
+                                </a>-->
+                                <!--<a class="favorite" href="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                        <path fill="#9f224e" d="M0 512V48C0 21.5 21.5 0 48 0h288c26.5 0 48 21.5 48 48v464L192 400 0 512z"/></svg>
+                                </a>-->
+                                <!--                                <button id="incrementViewButton">Increment View</button>-->
+                            </div>
+
+                            <div>
+                                <a href="#" id="like-count" class="text-dark link-hover me-3"><i class="fa fa-heart"></i></a>
+                                <a href="#" id="view-count" class="text-dark link-hover me-3"><i class="fa fa-eye"></i></a>
+                                <!--                        <a href="#" class="text-dark link-hover me-3"><i class="fa fa-comment-dots"></i> 05 Comment</a>-->
+                            </div>
+                        </div>
+                        <!-- End Favorite-->
                     </div>
                 </div>
                 <!-- News Detail End -->
@@ -121,9 +141,9 @@
                 <!-- Comment Form End -->
             </div>
 
-            <div class="col-lg-4 pt-3 pt-lg-0">
+            <div id="topViewsItemPage" class="col-lg-4 pt-3 pt-lg-0">
                 <!-- Social Follow Start -->
-                <div class="pb-3">
+                <!--<div class="pb-3">
                     <div class="bg-light py-2 px-4 mb-3">
                         <h3 class="m-0">Follow Us</h3>
                     </div>
@@ -151,11 +171,11 @@
                             <small class="fab fa-vimeo-v mr-2"></small><small>12,345 Followers</small>
                         </a>
                     </div>
-                </div>
+                </div>-->
                 <!-- Social Follow End -->
 
                 <!-- Newsletter Start -->
-                <div class="pb-3">
+                <!--<div class="pb-3">
                     <div class="bg-light py-2 px-4 mb-3">
                         <h3 class="m-0">Newsletter</h3>
                     </div>
@@ -169,21 +189,24 @@
                         </div>
                         <small>Sit eirmod nonumy kasd eirmod</small>
                     </div>
-                </div>
+                </div>-->
                 <!-- Newsletter End -->
 
                 <!-- Ads Start -->
-                <div class="mb-3 pb-3">
+                <!--<div class="mb-3 pb-3">
                     <a href=""><img class="img-fluid" th:src="@{/static/customer/img/news-500x280-4.jpg}" alt=""></a>
-                </div>
+                </div>-->
                 <!-- Ads End -->
 
                 <!-- Popular News Start -->
                 <div class="pb-3">
                     <div class="bg-light py-2 px-4 mb-3">
-                        <h3 class="m-0">Tranding</h3>
+                        <h3 class="m-0">Xem nhiều</h3>
                     </div>
-                    <div class="d-flex mb-3">
+                    <div id="topViewsInItem">
+
+                    </div>
+                    <!--<div class="d-flex mb-3">
                         <img th:src="@{/static/customer/img/news-100x100-1.jpg}" style="width: 100px; height: 100px; object-fit: cover;">
                         <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
                             <div class="mb-1" style="font-size: 13px;">
@@ -237,12 +260,12 @@
                             </div>
                             <a class="h6 m-0" href="">Lorem ipsum dolor sit amet consec adipis elit</a>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
                 <!-- Popular News End -->
 
                 <!-- Tags Start -->
-                <div class="pb-3">
+                <!--<div class="pb-3">
                     <div class="bg-light py-2 px-4 mb-3">
                         <h3 class="m-0">Tags</h3>
                     </div>
@@ -260,7 +283,7 @@
                         <a href="" class="btn btn-sm btn-outline-secondary m-1">Travel</a>
                         <a href="" class="btn btn-sm btn-outline-secondary m-1">Lifestyle</a>
                     </div>
-                </div>
+                </div>-->
                 <!-- Tags End -->
             </div>
         </div>
@@ -288,10 +311,24 @@
 
 <!-- Template Javascript -->
 <script th:src="@{/static/customer/js/main.js}"></script>
+<!--CKEditor-->
+<script src="https://cdn.ckeditor.com/ckeditor5/41.2.1/super-build/ckeditor.js"></script>
 <!--<script th:src="@{/static/customer/js/homePage.js}"></script>-->
 <script th:src="@{/static/customer/js/single.js}"></script>
 <script th:inline="javascript">
     var defaultAvatarPath = /*[[@{/static/customer/img/user-avatar.png}]]*/ '/static/customer/img/user-avatar.png';
+</script>
+<script>
+    /*$(window).scroll(function() {
+        var scroll = $(window).scrollTop();
+        var topViewsItemPage = $('#topViewsItemPage');
+
+        if (scroll >= 140) {
+            topViewsItemPage.addClass('fixed');
+        } else {
+            topViewsItemPage.removeClass('fixed');
+        }
+    });*/
 </script>
 </body>
 

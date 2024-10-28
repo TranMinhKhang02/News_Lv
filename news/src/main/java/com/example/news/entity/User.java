@@ -56,7 +56,7 @@ public class User extends Base {
     @Column(name = "u_status")
     int status;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "favorite",
             joinColumns = @JoinColumn(name = "u_id"),

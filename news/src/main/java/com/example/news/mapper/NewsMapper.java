@@ -1,6 +1,7 @@
 package com.example.news.mapper;
 
 import com.example.news.dto.request.NewsRequest;
+import com.example.news.dto.request.NewsUpdateRequest;
 import com.example.news.dto.response.categoryResponse.CategoryNewsResponse;
 import com.example.news.dto.response.NewsResponse;
 import com.example.news.dto.response.StatusNewsResponse;
@@ -28,8 +29,7 @@ public interface NewsMapper {
     NewsResponse toNewsResponse(News news);
 
     @Mapping(target = "categories", source = "categories")
-    @Mapping(target = "status", source = "status")
-    void updateNews(@MappingTarget News news, NewsRequest request);
+    void updateNews(@MappingTarget News news, NewsUpdateRequest request);
 
     // Phương thức ánh xạ từ Long sang Status
     default Status map(Long statusId) {

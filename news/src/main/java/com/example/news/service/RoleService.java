@@ -28,14 +28,33 @@ public class RoleService {
                 .toList();
     }*/
 
-    public List<RoleResponse> getAll(){
-        var roles = roleRepository.findAll();
+    public List<RoleResponse> getAll(int status) {
+        var roles = roleRepository.findByStatus(status);
         return roles.stream().map(roleMapper::toRoleResponse).toList();
     }
 
+    public RoleResponse getById(Long roleId) {
+        var role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy role!"));
+        return roleMapper.toRoleResponse(role);
+    }
+
     public RoleResponse create(RoleRequest request) {
+        // Kiểm tra trùng lặp vai trò dựa trên code và categories
+        boolean exists = roleRepository.existsByCodeAndCategories(request.getCode(), request.getCategories());
+        if (exists) {
+            throw new RuntimeException("Vai trò với mã và thể loại này đã tồn tại!");
+        }
         var role = roleMapper.toRole(request);
+        role.setStatus(1);
         role = roleRepository.save(role);
         return roleMapper.toRoleResponse(role);
+    }
+
+    public RoleResponse update(Long roleId, RoleRequest request) {
+        var role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy role!"));
+        roleMapper.updateRole(request, role);
+        return roleMapper.toRoleResponse(roleRepository.save(role));
     }
 }

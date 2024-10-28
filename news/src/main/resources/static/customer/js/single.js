@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    $('#homeNavbar').removeClass('active');
+    $('#singleNavbar').addClass('active');
 
     // Fetch news by ID when the page loads
     var newsId = getNewsIdFromUrl();
@@ -31,14 +33,22 @@ $(document).ready(function () {
     }
 
     function renderNewsDetails(news) {
+        sessionStorage.setItem('categoryCode', news.categories[0].code);
+
         $('#news-title').text(news.title);
-        $('#news-content').html(news.content);
+        // $('#news-content').html(news.content);
         $('#news-thumbnail').attr('src', news.thumbnail);
         $('#news-date').text(new Date(news.modifiedDate).toLocaleDateString());
         $('#news-category').text(news.categories[0].name);
         $('#news-comments-count').text(news.countComment + ' Comments');
         $('#like-count').text(news.countLike + ' Yêu thích');
         $('#view-count').text(news.countView + ' Luợt xem');
+        // Hiển thị nội dung vào trong CKEditor
+        if (window.editor) {
+            window.editor.setData(news.content);
+        } else {
+            console.error("CKEditor chưa được khởi tạo hoặc gán cho biến editor.");
+        }
 
         var categoryHtml = '';
         if (news.categories.length > 0) {
@@ -56,6 +66,7 @@ $(document).ready(function () {
         $('#breadcrumb-category').html(categoryHtml);
     }
 
+    fetchNewsByTopViewInItem()
 
     //===============================COMMENT================================
     // fetchComments(newsId);
@@ -64,14 +75,56 @@ $(document).ready(function () {
 
     // Gọi hàm updateCounts khi trang được tải
     // updateCounts();
-    // Tăng view
+    /*// Tăng view
     $('#incrementViewButton').click(function () {
         viewCount();
-    });
+    });*/
+
+    setTimeout(function () {
+        viewCount()
+    }, 10000) // 10s
 });
 
 const userId = sessionStorage.getItem('userId');
 
+// ====================================News By Item==============================
+function fetchNewsByTopViewInItem() {
+    var topViewsContent = $('#topViewsInItem');
+    topViewsContent.empty();
+    $.ajax({
+        url: '/news_lv/news/top5ByViewCount',
+        method: 'GET',
+        success: function(response) {
+            if (response.code === 1000 && Array.isArray(response.result)) {
+                response.result.forEach(function(news) {
+                    var newsItem = renderTopViewedNews(news);
+                    topViewsContent.append(newsItem);
+                });
+            } else {
+                console.error('Unexpected response format:', response);
+            }
+        },
+        error: function(error) {
+            console.error('Error fetching top viewed news:', error);
+        }
+    });
+}
+
+function renderTopViewedNews(news) {
+    return `
+        <div class="d-flex mb-3">
+            <img src="${news.thumbnail}" style="width: 100px; height: 100px; object-fit: cover;">
+            <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
+                <div class="mb-1" style="font-size: 13px;">
+                    <a href="">${news.categories[0].name}</a>
+                    <span class="px-1">/</span>
+                    <span>${new Date(news.createdDate).toLocaleDateString()}</span>
+                </div>
+                <a class="h6 m-0" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
+            </div>
+        </div>
+    `;
+}
 //======================================COMMENT================================
 $('#submit-comment').click(function(e) {
     e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
@@ -107,15 +160,19 @@ $('#submit-comment').click(function(e) {
 
 function submitComment(message, parentCommentId = null) {
     var newsId = getNewsIdFromUrl(); // Hàm để lấy newsId từ URL hoặc từ một nguồn khác
+    console.log('User ID:', userId);
+    console.log('News ID:', newsId);
+    var data = {
+        content: message,
+        parentComment: parentCommentId
+    }
+    console.log('Data:', data);
 
     $.ajax({
         url: '/news_lv/comment/' + newsId + '?userId=' + userId,
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({
-            content: message,
-            parentComment: parentCommentId
-        }),
+        data: JSON.stringify(data),
         success: function(response) {
             // alert('Bình luận của bạn đã được gửi.');
             fetchComments(newsId);
@@ -162,14 +219,20 @@ function createCommentHtml(comment) {
     }
 
     var avatarSrc = comment.user.avatar ? comment.user.avatar : defaultAvatarPath;
+    var editCommentBtn = '';
+
+    if (comment.user.id == userId) {
+        editCommentBtn = `<button class="btn btn-sm btn-outline-secondary edit-btn" data-parent-comment-id="${comment.parentComment}" data-user-id="${comment.user.id}" data-comment-id="${comment.id}">Chỉnh sửa</button>`;
+    }
 
     return `
         <div class="media mb-4">
             <img src="${avatarSrc}" alt="Image" class="img-fluid-comment mr-3 mt-1" style="width: 45px;">
             <div class="media-body">
                 <h6><a href="#">${comment.user.fullName}</a> <small><i>${new Date(comment.createdDate).toLocaleString()}</i></small></h6>
-                <p>${comment.content}</p>
-                <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="${comment.id}">Reply</button>
+                <p id="content-comment-${comment.id}">${comment.content}</p>
+                ${editCommentBtn}
+                <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="${comment.id}">Trả lời</button>
                 ${repliesHtml ? `<div class="ml-4">${repliesHtml}</div>` : ''}
             </div>
         </div>
@@ -210,28 +273,60 @@ $(document).on('click', '.btn-replyComment', function () {
 
     submitComment(replyComment, parentCommentId);
 });
-/*$(document).on('click', '.reply-btn', function () {
-    // const userId = sessionStorage.getItem('userId');
-    if (!userId) {
-        alert('Vui lòng đăng nhập để bình luận.');
-        return;
-    }
 
+$(document).on('click', '.edit-btn', function () {
     var commentId = $(this).data('comment-id');
-    var replyFormHtml = `
-        <div class="form-group reply-form">
+    var commentContent = $(`#content-comment-${commentId}`).text();
+
+    var editFormHtml = `
+        <div class="form-group edit-form">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Bình luận ...">
+                <textarea id="edit-textArea-${commentId}" class="form-control auto-resize" 
+                    rows="1">${commentContent}
+                </textarea>
                 <div class="input-group-append">
-                    <button class="input-group-text text-secondary"><i class="fa fa-paper-plane"></i></button>
+                    <button data-comment-id="${commentId}" class="btn-updateComment input-group-text text-secondary"><i class="fa fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
     `;
 
-    // Thay thế nút "Reply" bằng form bình luận
-    $(this).replaceWith(replyFormHtml);
-});*/
+    // Replace the comment content with the edit form
+    $(`#content-comment-${commentId}`).replaceWith(editFormHtml);
+
+    // Thêm sự kiện input để tự động điều chỉnh chiều cao của textarea
+    $('.auto-resize').on('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+})
+
+$(document).on('click', '.btn-updateComment', function() {
+    var commentId = $(this).data('comment-id');
+    var parentCommentId = $(this).data('parent-comment-id');
+    var newContent = $(`#edit-textArea-${commentId}`).val();
+    var data = {
+        content: newContent,
+        parentComment: parentCommentId
+    }
+    console.log('Data:', data);
+
+    $.ajax({
+        url: `/news_lv/comment/${commentId}?userId=${userId}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(response) {
+            alert('Comment updated successfully.');
+            // Reload comments or update the comment content in the DOM
+            fetchComments(newsId);
+        },
+        error: function(error) {
+            console.error('Error updating comment:', error);
+            alert('An error occurred while updating the comment.');
+        }
+    });
+});
 //======================================FAOVORITE================================
 
 let isFavorite = false;
@@ -256,7 +351,9 @@ function checkFavoriteNews() {
 
                 if (isFavorite) {
                     // Thêm class active-favorite khi icon được yêu thích
-                    $('#favorite-icon').addClass('active-favorite');
+                    // $('#favorite-icon').addClass('active-favorite');
+                    $('#bookmark-icon path').attr('fill', '#9f224e');
+                    $('#bookmark-icon').attr('color', '#9f224e');
                 }
             },
             error: function(error) {
@@ -266,7 +363,11 @@ function checkFavoriteNews() {
     }
 }
 
-$('#favorite-icon').click(function () {
+$('#backHome-icon').click(function () {
+    window.location.href = '/news_lv/page/home';
+})
+
+$('#bookmark-icon').click(function () {
     // const userId = sessionStorage.getItem('userId');
     if (!userId) {
         alert('Vui lòng đăng nhập để sử dụng chức năng này.');
@@ -282,7 +383,7 @@ $('#favorite-icon').click(function () {
                     userId: userId
                 },
                 success: function(response) {
-                    $('#favorite-icon').removeClass('active-favorite');
+                    $('#bookmark-icon path').attr('fill', 'none')
                     alert('Tin tức đã được xóa khỏi danh sách yêu thích.');
                     getAllInteract();
                     isFavorite = false; // Cập nhật trạng thái
@@ -300,7 +401,8 @@ $('#favorite-icon').click(function () {
                     userId: userId
                 },
                 success: function(response) {
-                    $('#favorite-icon').addClass('active-favorite');
+                    $('#bookmark-icon path').attr('fill', '#9f224e')
+                    $('#bookmark-icon').attr('color', '#9f224e');
                     alert('Tin tức đã được thêm vào danh sách yêu thích.');
                     getAllInteract();
                     isFavorite = true; // Cập nhật trạng thái
@@ -336,6 +438,8 @@ function viewCount() {
         method: 'POST',
         success: function() {
             console.log('View count incremented');
+            // updateCounts()
+            getAllInteract()
         },
         error: function(error) {
             console.error('Error incrementing view count:', error);
@@ -383,8 +487,7 @@ function getAllInteract() {
 }*/
 
 // Hàm để cập nhật like_count và view_count
-/*
-function updateCounts() {
+/*function updateCounts() {
     var newsId = getNewsIdFromUrl();
     $.ajax({
         url: `/news_lv/news/counts/${newsId}`,
@@ -397,4 +500,190 @@ function updateCounts() {
             console.error('Error fetching counts:', error);
         }
     });
+}*/
+CKEDITOR.ClassicEditor
+    .create(document.getElementById("news-content-editor"), {
+        // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
+        toolbar: {
+            items: [
+                'exportPDF','exportWord', '|',
+                'findAndReplace', 'selectAll', '|',
+                'heading', '|',
+                'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+                'bulletedList', 'numberedList', 'todoList', '|',
+                'outdent', 'indent', '|',
+                'undo', 'redo',
+                '-',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+                'alignment', '|',
+                'link', 'uploadImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+                'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+                'textPartLanguage', '|',
+                'sourceEditing'
+            ],
+            shouldNotGroupWhenFull: true
+        },
+        // Changing the language of the interface requires loading the language file using the <script> tag.
+        // language: 'es',
+        list: {
+            properties: {
+                styles: true,
+                startIndex: true,
+                reversed: true
+            }
+        },
+        // https://ckeditor.com/docs/ckeditor5/latest/features/headings.html#configuration
+        heading: {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+                { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+                { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+            ]
+        },
+        // https://ckeditor.com/docs/ckeditor5/latest/features/editor-placeholder.html#using-the-editor-configuration
+        placeholder: 'Welcome to content New',
+        // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-family-feature
+        fontFamily: {
+            options: [
+                'default',
+                'Arial, Helvetica, sans-serif',
+                'Courier New, Courier, monospace',
+                'Georgia, serif',
+                'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                'Tahoma, Geneva, sans-serif',
+                'Times New Roman, Times, serif',
+                'Trebuchet MS, Helvetica, sans-serif',
+                'Verdana, Geneva, sans-serif'
+            ],
+            supportAllValues: true
+        },
+        // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-size-feature
+        fontSize: {
+            options: [ 10, 12, 14, 'default', 18, 20, 22 ],
+            supportAllValues: true
+        },
+        // Be careful with the setting below. It instructs CKEditor to accept ALL HTML markup.
+        // https://ckeditor.com/docs/ckeditor5/latest/features/general-html-support.html#enabling-all-html-features
+        htmlSupport: {
+            allow: [
+                {
+                    name: /.*/,
+                    attributes: true,
+                    classes: true,
+                    styles: true
+                }
+            ]
+        },
+        // Be careful with enabling previews
+        // https://ckeditor.com/docs/ckeditor5/latest/features/html-embed.html#content-previews
+        htmlEmbed: {
+            showPreviews: true
+        },
+        // https://ckeditor.com/docs/ckeditor5/latest/features/link.html#custom-link-attributes-decorators
+        link: {
+            decorators: {
+                addTargetToExternalLinks: true,
+                defaultProtocol: 'https://',
+                toggleDownloadable: {
+                    mode: 'manual',
+                    label: 'Downloadable',
+                    attributes: {
+                        download: 'file'
+                    }
+                }
+            }
+        },
+        // https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html#configuration
+        mention: {
+            feeds: [
+                {
+                    marker: '@',
+                    feed: [
+                        '@apple', '@bears', '@brownie', '@cake', '@cake', '@candy', '@canes', '@chocolate', '@cookie', '@cotton', '@cream',
+                        '@cupcake', '@danish', '@donut', '@dragée', '@fruitcake', '@gingerbread', '@gummi', '@ice', '@jelly-o',
+                        '@liquorice', '@macaroon', '@marzipan', '@oat', '@pie', '@plum', '@pudding', '@sesame', '@snaps', '@soufflé',
+                        '@sugar', '@sweet', '@topping', '@wafer'
+                    ],
+                    minimumCharacters: 1
+                }
+            ]
+        },
+        // The "superbuild" contains more premium features that require additional configuration, disable them below.
+        // Do not turn them on unless you read the documentation and know how to configure them and setup the editor.
+        removePlugins: [
+            // These two are commercial, but you can try them out without registering to a trial.
+            // 'ExportPdf',
+            // 'ExportWord',
+            'AIAssistant',
+            'CKBox',
+            'CKFinder',
+            'EasyImage',
+            // This sample uses the Base64UploadAdapter to handle image uploads as it requires no configuration.
+            // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/base64-upload-adapter.html
+            // Storing images as Base64 is usually a very bad idea.
+            // Replace it on production website with other solutions:
+            // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/image-upload.html
+            // 'Base64UploadAdapter',
+            'RealTimeCollaborativeComments',
+            'RealTimeCollaborativeTrackChanges',
+            'RealTimeCollaborativeRevisionHistory',
+            'PresenceList',
+            'Comments',
+            'TrackChanges',
+            'TrackChangesData',
+            'RevisionHistory',
+            'Pagination',
+            'WProofreader',
+            // Careful, with the Mathtype plugin CKEditor will not load when loading this sample
+            // from a local file system (file://) - load this site via HTTP server if you enable MathType.
+            'MathType',
+            // The following features are part of the Productivity Pack and require additional license.
+            'SlashCommand',
+            'Template',
+            'DocumentOutline',
+            'FormatPainter',
+            'TableOfContents',
+            'PasteFromOfficeEnhanced',
+            'CaseChange'
+        ],
+        isReadOnly: true
+    })
+    .then(editor => {
+        // Đoạn mã trong then được thực thi khi CKEditor đã được tạo thành công
+        window.editor = editor;
+        const toolbarElement = editor.ui.view.toolbar.element;
+
+        editor.on( 'change:isReadOnly', ( evt, propertyName, isReadOnly ) => {
+            if ( isReadOnly ) {
+                toolbarElement.style.display = 'none';
+            } else {
+                toolbarElement.style.display = 'flex';
+            }
+        } );
+
+        editor.enableReadOnlyMode( 'my-feature-id' )
+
+    })
+    .catch(error => {
+        console.error('Đã xảy ra lỗi khi tạo CKEditor:', error);
+    });
+
+/*
+function initializeCKEditorItem(content) {
+    CKEDITOR.ClassicEditor
+        .create(document.getElementById("news-content-editor"), {
+            // height: 500 // Đặt chiều cao của CKEditor
+        })
+        .then(editor => {
+            window.editor = editor;
+            // Đặt nội dung ban đầu cho CKEditor
+            editor.setData(content)
+        })
+        .catch(error => {
+            console.error('Đã xảy ra lỗi khi tạo CKEditor:', error);
+        });
 }*/

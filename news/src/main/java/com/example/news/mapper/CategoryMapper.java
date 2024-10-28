@@ -26,4 +26,13 @@ public interface CategoryMapper {
         category.setId(categoryId);
         return category;
     }
+
+    default CategoryUpdateRequest map(Category category) {
+        if (category == null) {
+            return null;
+        }
+        CategoryUpdateRequest request = new CategoryUpdateRequest();
+        request.setParentCategory(category.getParentCategory().getId());
+        return request;
+    }
 }

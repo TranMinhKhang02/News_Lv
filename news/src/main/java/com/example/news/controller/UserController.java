@@ -1,5 +1,6 @@
 package com.example.news.controller;
 
+import com.example.news.dto.request.UserUpdateRequestByAdmin;
 import com.example.news.dto.response.ApiNewsResponse;
 import com.example.news.dto.response.ApiResponse;
 import com.example.news.dto.request.UserCreationRequest;
@@ -54,14 +55,43 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/usersByRoleAndStatus")
+    public ApiResponse<List<UserResponse>> getUsersByRoleAndStatus
+            (@RequestParam String roleCode,
+            @RequestParam(value = "status", defaultValue = "1") int status) {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .result(userService.getUserByRoleAndStatus(roleCode, status))
+                .build();
+    }
+
     @GetMapping("/{userId}")
-    public UserResponse getUser(@PathVariable("userId") long userId) {
-        return userService.getUserById(userId);
+    public ApiResponse<UserResponse> getUser(@PathVariable("userId") long userId) {
+        var userById = userService.getUserById(userId);
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(userById)
+                .build();
     }
 
     @PutMapping("{userId}")
-    public UserResponse updateUser(@PathVariable("userId") long userId, @RequestBody UserUpdateRequest request) {
-        return userService.updateUser(userId, request);
+    public ApiResponse<UserResponse> updateUser(@PathVariable("userId") long userId, @RequestBody UserUpdateRequest request) {
+        var updateUser = userService.updateUser(userId, request);
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(updateUser)
+                .build();
+    }
+
+    @PutMapping("/updateRole/{userId}")
+    public ApiResponse<UserResponse> updateUserRole(
+            @PathVariable("userId") long userId,
+            @RequestBody UserUpdateRequestByAdmin request) {
+        var updateUser = userService.updateUserRole(userId, request);
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(updateUser)
+                .build();
     }
 
     @DeleteMapping("/{userId}")

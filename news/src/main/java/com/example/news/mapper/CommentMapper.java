@@ -8,6 +8,7 @@ import com.example.news.entity.News;
 import com.example.news.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,9 @@ public interface CommentMapper {
     @Mapping(target = "replies", source = "replies") // Ánh xạ replies thành list CommentResponse
     CommentResponse toCommentResponse(Comment comment);
 
+    @Mapping(target = "parentComment", source = "parentComment")
+    void updateComment(CommentRequest request, @MappingTarget Comment comment);
+
     default Comment map(Long parentCommentId) {
         if (parentCommentId == null) {
             return null;
@@ -34,16 +38,12 @@ public interface CommentMapper {
         comment.setId(parentCommentId);
         return comment;
     }
-    /*default Comment map(Long id) {
-        if (id == null) {
-            return null;
+
+    default void setParentComment(CommentRequest request, @MappingTarget Comment comment) {
+        if (request.getParentComment() != null) {
+            comment.setParentComment(map(request.getParentComment()));
         }
-        Comment comment = new Comment();
-        comment.setId(id);
-        return comment;
-    }*/
-
-
+    }
 
     default List<CommentResponse> mapReplies(List<Comment> replies) {
         if (replies == null || replies.isEmpty()) {

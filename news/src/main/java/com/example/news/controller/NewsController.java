@@ -1,9 +1,9 @@
 package com.example.news.controller;
 
 import com.example.news.dto.request.NewsRequest;
+import com.example.news.dto.request.NewsUpdateRequest;
 import com.example.news.dto.request.NewsUpdateStatusRequest;
 import com.example.news.dto.response.*;
-import com.example.news.entity.User;
 import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
 import com.example.news.repository.NewsRepository;
@@ -13,10 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +96,45 @@ public class NewsController {
                 .build();
     }
 
+    @GetMapping("/by-categories")
+    public ApiNewsResponse<List<NewsResponse>> getAllNewsByCategories(
+            @RequestParam(value = "categories") String categories,
+            @RequestParam(value = "status", defaultValue = "1") String statusCode,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<NewsResponse> newsList = newsService.getAllByCategoryCodeAndStatusCode(categories, statusCode);
+        int totalNewsByCategories = newsService.countAllByCategoryCode(categories, statusCode);
+
+        int totalPage = (int) Math.ceil((double) totalNewsByCategories / size);
+
+        return ApiNewsResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .page(page)
+                .totalPage(totalPage)
+                .result(newsList)
+                .build();
+    }
+
+    @GetMapping("/by-createdBy")
+    public ApiNewsResponse<List<NewsResponse>> getAllNewsByCreatedBy(
+            @RequestParam(value = "createdBy") String createdBy,
+            @RequestParam(value = "categoryCode") String categoryCode,
+            @RequestParam(value = "status", defaultValue = "1") String statusCode,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<NewsResponse> newsList = newsService.getAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode, page, size);
+        int totalNewsByCategories = newsService.countAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode);
+
+        int totalPage = (int) Math.ceil((double) totalNewsByCategories / size);
+
+        return ApiNewsResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .page(page)
+                .totalPage(totalPage)
+                .result(newsList)
+                .build();
+    }
+
     @GetMapping("/by-category-and-status")
     public ApiNewsResponse<List<NewsResponse>> getAllNewsByCategoryAndStatus(
             @RequestParam(value = "category") String categoryCode,
@@ -129,18 +167,29 @@ public class NewsController {
     }
 
     @GetMapping("/top10ByCreatedDate")
-    public ApiResponse<List<NewsResponse>> getTop10NewsByCreatedDate() {
+    public ApiResponse<List<NewsResponse>> getTop10NewsByCreatedDate(
+            @RequestParam(value = "statusCode", defaultValue = "1") String statusCode) {
         return ApiResponse.<List<NewsResponse>>builder()
                 .code(1000)
-                .result(newsService.getTop10NewsByCreatedDate())
+                .result(newsService.getTop10NewsByCreatedDate(statusCode))
                 .build();
     }
 
     @GetMapping("/top5ByViewCount")
-    public ApiResponse<List<NewsResponse>> getTop5NewsByViewCount() {
+    public ApiResponse<List<NewsResponse>> getTop5NewsByViewCount(
+            @RequestParam(value = "statusCode", defaultValue = "1") String statusCode) {
         return ApiResponse.<List<NewsResponse>>builder()
                 .code(1000)
-                .result(newsService.getTop5NewsByViewCount())
+                .result(newsService.getTop5NewsByViewCount(statusCode))
+                .build();
+    }
+
+    @GetMapping("/top5ByLikeCount")
+    public ApiResponse<List<NewsResponse>> getTop5NewsByLikeCount(
+            @RequestParam(value = "statusCode", defaultValue = "1") String statusCode) {
+        return ApiResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .result(newsService.getTop5NewsByLikeCount(statusCode))
                 .build();
     }
 
@@ -153,7 +202,7 @@ public class NewsController {
     }*/
 
     @PutMapping("/{newsId}")
-    public ApiResponse<NewsResponse> updateNews(@RequestBody NewsRequest request, @PathVariable Long newsId) {
+    public ApiResponse<NewsResponse> updateNews(@RequestBody NewsUpdateRequest request, @PathVariable Long newsId) {
         return ApiResponse.<NewsResponse>builder()
                 .code(1000)
                 .result(newsService.update(newsId, request))
@@ -167,6 +216,15 @@ public class NewsController {
         return ApiResponse.<String>builder()
                 .code(1000)
                 .message("Cập nhật trạng thái của bài viết thành công.")
+                .build();
+    }
+
+    @PutMapping("/update-status")
+    public ApiResponse<String> updateNewsStatus(@RequestBody List<Long> newsIds) {
+        newsService.updateNewsStatus(newsIds, 1L);
+        return ApiResponse.<String>builder()
+                .code(1000)
+                .message("Cập nhật trạng thái của các bài viết thành công.")
                 .build();
     }
 
@@ -200,5 +258,37 @@ public class NewsController {
                 .code(1000)
                 .result(counts)
                 .build();
+    }
+
+    @DeleteMapping
+    public ApiResponse<String> deleteNews(@RequestBody List<Long> newsIds) {
+        newsService.delete(newsIds);
+        return ApiResponse.<String>builder()
+                .code(1000)
+                .message("Xóa bài viết thành công.")
+                .build();
+    }
+
+    /*=========================VIEW-FAVORITE==============================*/
+
+    @GetMapping("/stats/today")
+    public Map<String, Double> getTodayStats() {
+        Map<String, Double> stats = new HashMap<>();
+        stats.put("viewsPercentageIncrease", newsService.getPercentageIncreaseViews());
+        stats.put("favoritesPercentageIncrease", newsService.getPercentageIncreaseFavorites());
+        return stats;
+    }
+
+    @GetMapping("/stats/period")
+    public Map<String, Map<LocalDateTime, Long>> getPeriodStats(
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+        LocalDateTime startDate = LocalDateTime.parse(startDateStr);
+        LocalDateTime endDate = LocalDateTime.parse(endDateStr);
+
+        Map<String, Map<LocalDateTime, Long>> stats = new HashMap<>();
+        stats.put("views", newsService.getViewsStatistics(startDate, endDate));
+        stats.put("favorites", newsService.getFavoritesStatistics(startDate, endDate));
+        return stats;
     }
 }

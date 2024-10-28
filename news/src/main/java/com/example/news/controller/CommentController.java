@@ -43,29 +43,6 @@ public class CommentController {
                 .result(comment)
                 .build();
     }
-    /*@PostMapping("/{newsId}")
-    public ApiResponse<CommentResponse> createComment(
-            @PathVariable Long newsId,
-            @RequestParam(value = "parentId", required = false) Long parentId,
-            @RequestBody CommentRequest request) {
-        // Lấy thông tin người dùng từ kết quả xác thực
-        User user = (User) httpRequest.getSession().getAttribute("user");
-
-        if(user == null) {
-            throw new AppException(ErrorCode.UNLOGIN);
-        }
-
-        Long userId = user.getId();
-        // Chuyển userId vào request
-        request.setUserId(userId); // Đảm bảo bạn đã có phương thức setter cho userId trong CommentRequest
-        request.setParentComment(parentId);
-
-        var comment = commentService.create(newsId, request);
-        return ApiResponse.<CommentResponse>builder()
-                .code(1000)
-                .result(comment)
-                .build();
-    }*/
 
     @GetMapping("/{newsId}")
     public ApiResponse<List<CommentResponse>> getAllComment(@PathVariable Long newsId) {
@@ -82,6 +59,27 @@ public class CommentController {
         return ApiResponse.<List<CommentResponse>>builder()
                 .code(1000)
                 .result(comments)
+                .build();
+    }
+
+    @PutMapping("/{commentId}")
+    public ApiResponse<CommentResponse> updateComment(
+            @PathVariable Long commentId,
+            @RequestParam Long userId,
+            @RequestBody CommentRequest request) {
+        var comment = commentService.update(commentId, userId, request);
+        return ApiResponse.<CommentResponse>builder()
+                .code(1000)
+                .result(comment)
+                .build();
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ApiResponse<Void> deleteComment(@PathVariable Long commentId) {
+        commentService.delete(commentId);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Xóa bình luận thành công.")
                 .build();
     }
 }

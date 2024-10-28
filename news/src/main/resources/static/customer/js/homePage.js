@@ -7,6 +7,7 @@
         fetchCategories();
         fetchNewsByCreatedDate()
         fetchNewsByView()
+        fetchNewsByLikes()
     });
 
     // Fetch categories
@@ -82,7 +83,7 @@
                         <span class="px-1 text-white">/</span>
                         <a class="text-white" href="">${new Date(news.createdDate).toLocaleDateString()}</a>
                     </div>
-                    <a class="h4 m-0 text-white" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
+                    <a class="h4 m-0 text-white title-news-4item" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
                 </div>
             </div>
         `;
@@ -119,6 +120,37 @@
                         <a class="text-white" href="">${new Date(news.createdDate).toLocaleDateString()}</a>
                     </div>
                     <a class="h2 m-0 text-white font-weight-bold" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
+                </div>
+            </div>
+        `;
+    }
+
+    function fetchNewsByLikes() {
+        let mostLikeNewsContainer = $('#likes-news-carousel');
+        mostLikeNewsContainer.empty();
+        $.ajax({
+            url: '/news_lv/news/top5ByLikeCount',
+            method: 'GET',
+            success: function(response) {
+                if (response.code === 1000 && Array.isArray(response.result)) {
+                    response.result.forEach(function(news) {
+                        var newsItem = renderNewsByLikes(news);
+                        mostLikeNewsContainer.append(newsItem);
+                    });
+                    initializeCarousel3Item(mostLikeNewsContainer)
+                } else {
+                    console.error('Unexpected response format:', response);
+                }
+            },
+        })
+    }
+
+    function renderNewsByLikes(news) {
+        return `
+            <div class="d-flex">
+                <img src="${news.thumbnail}" style="width: 80px; height: 80px; object-fit: cover;">
+                <div class="d-flex align-items-center bg-light px-3" style="height: 80px;">
+                    <a class="text-secondary font-weight-semi-bold" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
                 </div>
             </div>
         `;
@@ -191,6 +223,36 @@
                 '<i class="fa fa-angle-left" aria-hidden="true"></i>',
                 '<i class="fa fa-angle-right" aria-hidden="true"></i>'
             ]
+        });
+    }
+
+    function initializeCarousel3Item(elementId) {
+        elementId.owlCarousel('destroy');
+        $(elementId).owlCarousel({
+            autoplay: true,
+            smartSpeed: 1000,
+            margin: 30,
+            dots: false,
+            loop: true,
+            nav : true,
+            navText : [
+                '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+            ],
+            responsive: {
+                0:{
+                    items:1
+                },
+                576:{
+                    items:1
+                },
+                768:{
+                    items:2
+                },
+                992:{
+                    items:3
+                }
+            }
         });
     }
     // Initialize carousel

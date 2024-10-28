@@ -2,6 +2,7 @@ package com.example.news.configuration;
 
 import com.example.news.entity.User;
 import com.example.news.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,7 +47,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             String email = (String) attributes.get("email");
             String fullName = (String) attributes.get("name");
             String avatar = (String) attributes.get("picture");
+            log.info("Attributes: {}", attributes);
             LocalDate dob = attributes.containsKey("birthdate") ? LocalDate.parse((String) attributes.get("birthdate")) : null;
+            log.info("Dob: {}", dob);
 
             // Lưu hoặc cập nhật người dùng trong database
             User user = userService.loginWithGoogle(googleId, email, fullName, avatar, dob);
@@ -60,9 +63,33 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getCode()));
             Authentication newAuth = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+            String redirectUrl = "/news_lv/page/home";
+            String userRole = user.getRole().getCode();
+            if (userRole.equals("ADMIN") || userRole.equals("ADMIN_MANAGE") || userRole.equals("AUTHOR")) {
+                redirectUrl = "/news_lv/page/admin";
+            } else if (user.getRole().getCode().equals("USER")) {
+                redirectUrl = "/news_lv/page/home";
+            }
+
+            // Thêm mã JavaScript để lưu thông tin vào sessionStorage
+            String script = "<script>" +
+                    "sessionStorage.setItem('userLogin', 'true');" +
+                    "sessionStorage.setItem('Role', '" + user.getRole().getCode() + "');" +
+                    "sessionStorage.setItem('categories', '" + user.getRole().getCategories() + "');" +
+                    "sessionStorage.setItem('userName', '" + (user.getUserName() != null ? user.getUserName() : user.getEmail()) + "');" +
+                    "sessionStorage.setItem('userId', '" + user.getId() + "');" +
+                    "window.location.href = '" + redirectUrl + "';" +
+                    "</script>";
+
+            response.setContentType("text/html");
+            response.getWriter().write(script);
+
+            // Chuyển hướng sau khi xử lý thành công
+//            response.sendRedirect(redirectUrl);
         }
 
         // Chuyển hướng sau khi xử lý thành công
-        response.sendRedirect("/news_lv/page/home");
+//        response.sendRedirect("/news_lv/page/home");
     }
 }

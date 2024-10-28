@@ -1,0 +1,70 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0">Xem bình luận</p>
+                        <button id="back-CommentByNews" class="btn btn-primary btn-sm ms-auto">Quay lại</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <div class="form-group w-670">
+                                <label class="form-control-label">Tiêu đề tin tức</label>
+                                <input class="form-control" type="text" name="title" value="" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="horizontal dark">
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <div class="form-group w-670">
+                                <label class="form-control-label">Mô tả ngắn</label>
+                                <input class="form-control" type="text" name="shortDescription" value="" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="horizontal dark">
+                    <div class="row d-flex">
+                        <div class="col-md-3 ml-category">
+                            <div class="form-group">
+                                <label class="form-control-label">Thể loại</label>
+                                <select class="form-control" name="category" id="category-select" disabled></select>
+                                <!--<input class="form-control" type="text" name="category" value="">-->
+                            </div>
+                        </div>
+                        <div class="form-group img-contentDisplay">
+                            <!-- Thêm một input ẩn để lưu URL của ảnh -->
+                            <input type="hidden" id="thumbnailUrl" name="thumbnailUrl">
+                            <input type="hidden" id="publicId" name="publicId">
+                            <!-- Thêm div để hiển thị hình ảnh sau khi upload -->
+                            <div id="imagePreview" style="margin-top: 10px;"></div>
+                        </div>
+                    </div>
+                    <!--<hr class="horizontal dark">
+                    <div class="row d-flex justify-content-center">
+                        <div class="form-group img-contentDisplay">
+                            &lt;!&ndash; Thêm một input ẩn để lưu URL của ảnh &ndash;&gt;
+                            <input type="hidden" id="thumbnailUrl" name="thumbnailUrl">
+                            <input type="hidden" id="publicId" name="publicId">
+                            &lt;!&ndash; Thêm div để hiển thị hình ảnh sau khi upload &ndash;&gt;
+                            <div id="imagePreview" style="margin-top: 10px;"></div>
+                        </div>
+                    </div>-->
+                    <hr class="horizontal dark">
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <div class="form-group w-670">
+                                <label class="form-control-label">Bình luận</label>
+                                <!--Các bình luận sẽ hiển thị ở đây-->
+                                <div class="container-commentByNews"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

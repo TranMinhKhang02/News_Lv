@@ -5,6 +5,8 @@ import com.example.news.dto.response.commentResponse.CommentResponse;
 import com.example.news.entity.Comment;
 import com.example.news.entity.News;
 import com.example.news.entity.User;
+import com.example.news.exception.AppException;
+import com.example.news.exception.ErrorCode;
 import com.example.news.mapper.CommentMapper;
 import com.example.news.repository.CommentRepository;
 import com.example.news.repository.NewsRepository;
@@ -93,5 +95,35 @@ public class CommentService {
 
         // Trả về response
         return commentMapper.toCommentResponse(comment);
+    }
+
+    public CommentResponse update(Long commentId, Long userId, CommentRequest request) {
+        var comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+
+        commentMapper.updateComment(request, comment);
+        commentMapper.setParentComment(request, comment);
+        /*comment.setContent(request.getContent());
+
+        // Cập nhật parentComment nếu có
+        if (request.getParentComment() != null) {
+            Comment parentComment = commentRepository.findById(request.getParentComment())
+                    .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+            comment.setParentComment(parentComment);
+        }*/
+
+        commentRepository.save(comment);
+
+        return commentMapper.toCommentResponse(comment);
+    }
+
+    public void delete(Long commentId) {
+        var comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+        commentRepository.delete(comment);
     }
 }

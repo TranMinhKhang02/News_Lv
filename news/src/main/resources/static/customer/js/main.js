@@ -64,8 +64,25 @@
 
         // Hiển thị vào trong phần tử HTML
         document.getElementById('current-date').innerText = formattedDate;
-        // sessionFail();
+
+        sessionFail();
         // localStorageFail();
+
+        // Kiểm tra xem sessionStorage có chứa thông tin user hay không
+        const user = JSON.parse(sessionStorage.getItem('user'));
+
+        if (user) {
+            // Cập nhật avatar
+            const avatarImg = $('#userAvatar');
+            if (user.avatar && user.avatar !== '') {
+                avatarImg.attr('src', user.avatar); // Avatar từ sessionStorage
+            } else {
+                avatarImg.attr('src', defaultAvatarPath); // Avatar mặc định
+            }
+
+            // Cập nhật tên đầy đủ
+            $('#userFullName').text(user.fullName);
+        }
     });
 
     function getSession() {
@@ -76,6 +93,8 @@
                 // Lưu userId vào sessionStorage
                 const userId = response.split(": ")[1]; // Tách userId từ chuỗi "userId: 20"
                 sessionStorage.setItem('userId', userId);
+                sessionStorage.setItem('userLogin', 'true');
+                localStorage.setItem('userLocal', 'true');
                 console.log("UserId stored in sessionStorage:", userId);
             },
             error: function(xhr, status, error) {
@@ -106,7 +125,7 @@
             $('#notification-icon').hide();
         }else {
             $('#login-btn').hide();
-            $('.logoutButton').show();
+            $('#logoutButton').show();
             $('#userDropdownToggle').show();
             $('#notification-icon').show();
         }

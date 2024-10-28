@@ -6,6 +6,11 @@ server:
     session:
       timeout: 1440m  # Thời gian session là 1440 phút (1 ngày)
 
+cloudinary:
+  cloud-name: dd1grolgr
+  api-key: 165223227289875
+  api-secret: KuEgKknBTrJ7-FdsAHGJYa_Jx4c
+
 spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/news_lv"

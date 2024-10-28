@@ -2,8 +2,10 @@ package com.example.news.service;
 
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
+import com.example.news.dto.request.UserUpdateRequestByAdmin;
 import com.example.news.dto.response.NewsResponse;
 import com.example.news.dto.response.userResponse.UserResponse;
+import com.example.news.entity.FavoriteEvent;
 import com.example.news.entity.News;
 import com.example.news.entity.Role;
 import com.example.news.entity.User;
@@ -11,6 +13,7 @@ import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
 import com.example.news.mapper.NewsMapper;
 import com.example.news.mapper.UserMapper;
+import com.example.news.repository.FavoriteEventRepository;
 import com.example.news.repository.NewsRepository;
 import com.example.news.repository.RoleRepository;
 import com.example.news.repository.UserRepository;
@@ -24,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +45,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     NewsRepository newsRepository;
     NewsMapper newsMapper;
+    FavoriteEventRepository favoriteEventRepository;
 
     public User createUser(UserCreationRequest request) {
 //        Role role = new Role();
@@ -72,12 +77,26 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    public UserResponse updateUserRole(Long userId, UserUpdateRequestByAdmin request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+        userMapper.updateUserRole(user, request);
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
     public void deleteUser(long userId) {
         userRepository.deleteById(userId);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<UserResponse> getUserByRoleAndStatus(String roleCode, int status) {
+        List<User> users = userRepository.findByRole_codeAndStatus(roleCode, status);
+        return users.stream()
+                .map(userMapper::toUserResponse)
+                .collect(Collectors.toList());
     }
 
     public UserResponse getUserById(long id) {
@@ -106,6 +125,13 @@ public class UserService {
         news.setLikeCount(news.getLikeCount() + 1); // Tăng likeCount
         newsRepository.save(news); // Lưu lại bản ghi News đã cập nhật
         // End tăng likeCount
+
+        // Lưu sự kiện vào bảng FavoriteEvent
+        FavoriteEvent favoriteEvent = new FavoriteEvent();
+        favoriteEvent.setEventDate(LocalDateTime.now());
+        favoriteEvent.setNews(news);
+        favoriteEventRepository.save(favoriteEvent);
+
         userRepository.save(user);
     }
 

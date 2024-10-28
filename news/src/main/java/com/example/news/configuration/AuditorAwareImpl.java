@@ -23,7 +23,11 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
-                return Optional.of(user.getUserName());
+                String userName = user.getUserName();
+                if(userName == null || userName.isEmpty()) {
+                    userName = user.getEmail();
+                }
+                return Optional.of(userName);
             }
         }
         return Optional.of("anonymousUser");

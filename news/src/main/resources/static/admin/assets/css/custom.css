@@ -5,3 +5,41 @@
 .hide-item {
     display: none !important;
 }
+
+.ck-content {
+    min-height: 400px;
+}
+
+.ck.ck-editor {
+    width: 670px !important;
+}
+
+.editForm-newsContent {
+    display: flex;
+    justify-content: center;
+}
+
+.w-670 {
+    width: 670px;
+}
+
+.w-470 {
+    width: 470px;
+}
+
+.img-contentDisplay {
+    width: 200px;
+    height: 100%;
+}
+
+.ml-category {
+    margin-left: 146px;
+}
+
+.navbar-vertical.navbar-expand-xs .navbar-collapse {
+    height: 100vh !important;
+}
+
+.replyComment {
+    margin-left: 50px;
+}

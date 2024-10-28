@@ -1,17 +1,9 @@
 package com.example.news.pageRequest;
 
 import com.example.news.dto.response.ApiResponse;
-import com.example.news.dto.response.userResponse.UserResponse;
 import com.example.news.entity.User;
-import com.example.news.exception.AppException;
-import com.example.news.exception.ErrorCode;
-import com.example.news.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -102,6 +94,11 @@ public class PageController {
         return "home/single";
     }
 
+    @GetMapping("/category")
+    public String showCategoryPage() {
+        return "home/category";
+    }
+
     @GetMapping("/admin")
     public String showAdminPage(HttpSession session, Model model, HttpServletRequest httpRequest) {
         // Lấy thông tin người dùng từ kết quả xác thực
@@ -114,15 +111,61 @@ public class PageController {
         return "admin/index";
     }
 
+    @GetMapping("/profileAdmin")
+    public String showProfilePage() {
+        return "admin/profile";
+    }
+
     @GetMapping("/newsTable")
     public String getNewsTable() {
         // Thêm dữ liệu vào model nếu cần
         return "admin/newsTable";
     }
 
+    @GetMapping("/newsTableManage")
+    public String getNewsTableManage() {
+        // Thêm dữ liệu vào model nếu cần
+        return "manage/newsTableManage";
+    }
+
     @GetMapping("editNews")
     public  String getEditNews() {
         return "admin/editNews";
+    }
+
+    @GetMapping("/viewCommentByNews")
+    public String getViewCommentByNews() {
+        return "admin/viewCommentByNews";
+    }
+
+    @GetMapping("/categoryTable")
+    public String getCategoryTable() {
+        return "admin/categoryTable";
+    }
+
+    @GetMapping("/editCategory")
+    public String getEditCategory() {
+        return "admin/editCategory";
+    }
+
+    @GetMapping("/userTable")
+    public String getUserTable() {
+        return "admin/usersTable";
+    }
+
+    @GetMapping("/editUser")
+    public String getEditUser() {
+        return "admin/editUser";
+    }
+
+    @GetMapping("/roleTable")
+    public String getRoleTable() {
+        return "admin/roleTable";
+    }
+
+    @GetMapping("/editRole")
+    public String getEditRole() {
+        return "admin/editRole";
     }
 
     @GetMapping("/profile")
@@ -153,8 +196,4 @@ public class PageController {
 
         return ResponseEntity.ok(userInfo); // Trả về toàn bộ thông tin người dùng
     }
-    /*@GetMapping("/user-profile")
-    public Principal user(Principal user) {
-        return user;
-    }*/
 }

@@ -82,6 +82,18 @@
                     // Lưu thông tin người dùng vào sessionStorage
                     sessionStorage.setItem('userLogin', 'true');
 
+                    sessionStorage.setItem('Role', response.result.user.role.code);
+                    sessionStorage.setItem('categories', response.result.user.role.categories);
+
+                    var userName = response.result.user.userName;
+                    var email = response.result.user.email;
+
+                    if (userName != null) {
+                        sessionStorage.setItem('userName', userName);
+                    } else {
+                        sessionStorage.setItem('userName', email);
+                    }
+
                     localStorage.setItem('userLocal', 'true');
                     // Lưu thông tin người dùng vào sessionStorage để lấy thông tin user
                     sessionStorage.setItem('user', JSON.stringify(response.result.user)); // Lưu user vào sessionStorage
