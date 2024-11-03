@@ -68,6 +68,10 @@
                             <span class="px-1">/</span>
                             <span id="news-date"></span>
                         </div>
+                        <audio controls id="audioElement" class="ml-auto">
+                            <source id="audioSource" src="" type="audio/mpeg">
+                            Trình duyệt của bạn không hỗ trợ thẻ audio.
+                        </audio>
                         <div class="mb-3">
                             <h3 id="news-title" class="mb-3"></h3>
                             <!--                                <textarea id="news-content-editor"></textarea>-->
@@ -101,6 +105,17 @@
                             </div>
                         </div>
                         <!-- End Favorite-->
+                        <!--<h1>Text to Speech Demo</h1>
+                        <div id="audio-controls">
+                            <button id="playPauseBtn" onclick="togglePlayPause()">Phát</button>
+                            <input type="range" id="seekBar" min="0" max="100" value="0" step="1" oninput="seekSpeech()" />
+                            <button onclick="rewindSpeech()">Tua lại</button>
+                        </div>
+                        <p id="current-time">0:00</p>-->
+                        <!--<audio controls>
+                            <source id="audioSource" th:src="@{/static/audio_files/news-2.mp3}" type="audio/mpeg">
+                            Trình duyệt của bạn không hỗ trợ thẻ audio.
+                        </audio>-->
                     </div>
                 </div>
                 <!-- News Detail End -->

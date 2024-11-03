@@ -1,28 +1,14 @@
 $(document).ready(function () {
-    /*function summarizeAllNews() {
+    var category = sessionStorage.getItem('categories');
+    function fetchDataAndUpdateUIMange() {
         $.ajax({
-            url: '/news_lv/news/summarize',
-            type: 'POST',
-            success: function () {
-                console.log('Tóm tắt tất cả bài viết thành công!');
-                // Cập nhật giao diện nếu cần
-            },
-            error: function (error) {
-                console.error('Error summarizing news:', error);
-            }
-        });
-    }
-
-    summarizeAllNews()*/
-
-    var Role = sessionStorage.getItem('Role');
-    /*=========================EVENT===============================*/
-    function fetchDataAndUpdateUI() {
-        $.ajax({
-            url: '/news_lv/events/favorite-events/today',
+            url: '/news_lv/events/today/views',
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function (data) {
-                updateFavoriteToday(data.result);
+                updateViewTodayMange(data.result);
             },
             error: function (error) {
                 console.error('Error fetching favorite events today:', error);
@@ -30,10 +16,13 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: '/news_lv/events/favorite-events/week',
+            url: '/news_lv/events/today/favorites',
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function (data) {
-                updateFavoriteWeek(data.result);
+                updateFavoriteTodayManage(data.result);
             },
             error: function (error) {
                 console.error('Error fetching favorite events this week:', error);
@@ -41,10 +30,13 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: '/news_lv/events/view-events/today',
+            url: '/news_lv/events/week/views',
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function (data) {
-                updateViewToday(data.result);
+                updateViewWeekMange(data.result);
             },
             error: function (error) {
                 console.error('Error fetching view events today:', error);
@@ -52,10 +44,13 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: '/news_lv/events/view-events/week',
+            url: '/news_lv/events/week/favorites',
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function (data) {
-                updateViewWeek(data.result);
+                updateFavoriteWeekMange(data.result);
             },
             error: function (error) {
                 console.error('Error fetching view events this week:', error);
@@ -63,40 +58,43 @@ $(document).ready(function () {
         });
     }
 
-    function updateFavoriteToday(data) {
+    function updateFavoriteTodayManage(data) {
         // Cập nhật giao diện với dữ liệu yêu thích hôm nay
-        $('#favorite-today').text(data);
+        $('#favorite-today-manage').text(data);
     }
 
-    function updateFavoriteWeek(data) {
+    function updateFavoriteWeekMange(data) {
         // Cập nhật giao diện với dữ liệu yêu thích tuần này
-        $('#favorite-week').text(data);
+        $('#favorite-week-manage').text(data);
     }
 
-    function updateViewToday(data) {
+    function updateViewTodayMange(data) {
         // Cập nhật giao diện với dữ liệu lượt xem hôm nay
-        $('#view-today').text(data);
+        $('#view-today-manage').text(data);
     }
 
-    function updateViewWeek(data) {
+    function updateViewWeekMange(data) {
         // Cập nhật giao diện với dữ liệu lượt xem tuần này
-        $('#view-week').text(data);
+        $('#view-week-manage').text(data);
     }
 
     /*-------------------------------FAVORITE YEAR-------------------------------*/
-    var chartInstanceFavoriteYear; // Biến toàn cục để lưu trữ biểu đồ
-    var chartInstanceFavoriteMonth; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceFavoriteYearManage; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceFavoriteMonthManage; // Biến toàn cục để lưu trữ biểu đồ
 
-    function favoriteYear() {
+    function favoriteYearManage() {
         $.ajax({
-            url: '/news_lv/events/favorite-events/year', // URL API của bạn
+            url: '/news_lv/events/year/favorites', // URL API của bạn
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function(response) {
                 // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
                 var data = response.map(item => parseInt(item.split(': ')[1]));
                 var labels = response.map(item => item.split(': ')[0]);
 
-                updateChart(data, labels);
+                updateChartFavoriteYearManage(data, labels);
             },
             error: function(error) {
                 console.error('Error fetching data', error);
@@ -104,12 +102,12 @@ $(document).ready(function () {
         });
     }
 
-    function updateChart(data, labels) {
-        var ctx1 = document.getElementById("chart-line").getContext("2d");
+    function updateChartFavoriteYearManage(data, labels) {
+        var ctx1 = document.getElementById("favoriteYear-manage").getContext("2d");
 
         // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceFavoriteYear) {
-            chartInstanceFavoriteYear.destroy();
+        if (chartInstanceFavoriteYearManage) {
+            chartInstanceFavoriteYearManage.destroy();
         }
 
         var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
@@ -117,7 +115,7 @@ $(document).ready(function () {
         gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
         gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
 
-        chartInstanceFavoriteYear = new Chart(ctx1, {
+        chartInstanceFavoriteYearManage = new Chart(ctx1, {
             type: "line",
             data: {
                 labels: labels,
@@ -192,16 +190,19 @@ $(document).ready(function () {
         });
     }
 
-    function favoriteMonth() {
+    function favoriteMonthManage() {
         $.ajax({
-            url: '/news_lv/events/favorite-events/month', // URL API của bạn
+            url: '/news_lv/events/month/favorites', // URL API của bạn
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function(response) {
                 // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
                 var data = response.map(item => parseInt(item.split(': ')[1]));
                 var labels = response.map(item => item.split(': ')[0]);
 
-                updateChartFavoriteMonth(data, labels);
+                updateChartFavoriteMonthManage(data, labels);
             },
             error: function(error) {
                 console.error('Error fetching data', error);
@@ -209,12 +210,12 @@ $(document).ready(function () {
         });
     }
 
-    function updateChartFavoriteMonth(data, labels) {
-        var ctx1 = document.getElementById("favoriteMonth").getContext("2d");
+    function updateChartFavoriteMonthManage(data, labels) {
+        var ctx1 = document.getElementById("favoriteMonth-manage").getContext("2d");
 
         // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceFavoriteMonth) {
-            chartInstanceFavoriteMonth.destroy();
+        if (chartInstanceFavoriteMonthManage) {
+            chartInstanceFavoriteMonthManage.destroy();
         }
 
         var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
@@ -222,7 +223,7 @@ $(document).ready(function () {
         gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
         gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
 
-        chartInstanceFavoriteMonth = new Chart(ctx1, {
+        chartInstanceFavoriteMonthManage = new Chart(ctx1, {
             type: "line",
             data: {
                 labels: labels,
@@ -298,19 +299,22 @@ $(document).ready(function () {
     }
     /*-------------------------------FAVORITE------------------------------------*/
     /*-------------------------------VIEW----------------------------------------*/
-    var chartInstanceViewYear; // Biến toàn cục để lưu trữ biểu đồ
-    var chartInstanceViewMonth; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceViewYearManage; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceViewMonthManage; // Biến toàn cục để lưu trữ biểu đồ
 
-    function viewYear() {
+    function viewYearManage() {
         $.ajax({
-            url: '/news_lv/events/view-events/year', // URL API của bạn
+            url: '/news_lv/events/year/views', // URL API của bạn
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function(response) {
                 // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
                 var data = response.map(item => parseInt(item.split(': ')[1]));
                 var labels = response.map(item => item.split(': ')[0]);
 
-                updateChartViewYear(data, labels);
+                updateChartViewYearManage(data, labels);
             },
             error: function(error) {
                 console.error('Error fetching data', error);
@@ -318,12 +322,12 @@ $(document).ready(function () {
         });
     }
 
-    function updateChartViewYear(data, labels) {
-        var ctx1 = document.getElementById("viewYear").getContext("2d");
+    function updateChartViewYearManage(data, labels) {
+        var ctx1 = document.getElementById("viewYear-manage").getContext("2d");
 
         // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceViewYear) {
-            chartInstanceViewYear.destroy();
+        if (chartInstanceViewYearManage) {
+            chartInstanceViewYearManage.destroy();
         }
 
         var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
@@ -331,7 +335,7 @@ $(document).ready(function () {
         gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
         gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
 
-        chartInstanceViewYear = new Chart(ctx1, {
+        chartInstanceViewYearManage = new Chart(ctx1, {
             type: "line",
             data: {
                 labels: labels,
@@ -406,16 +410,19 @@ $(document).ready(function () {
         });
     }
 
-    function viewMonth() {
+    function viewMonthManage() {
         $.ajax({
-            url: '/news_lv/events/view-events/month', // URL API của bạn
+            url: '/news_lv/events/month/views', // URL API của bạn
             method: 'GET',
+            data: {
+                category: category
+            },
             success: function(response) {
                 // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
                 var data = response.map(item => parseInt(item.split(': ')[1]));
                 var labels = response.map(item => item.split(': ')[0]);
 
-                updateChartViewMonth(data, labels);
+                updateChartViewMonthManage(data, labels);
             },
             error: function(error) {
                 console.error('Error fetching data', error);
@@ -423,12 +430,12 @@ $(document).ready(function () {
         });
     }
 
-    function updateChartViewMonth(data, labels) {
-        var ctx1 = document.getElementById("viewMonth").getContext("2d");
+    function updateChartViewMonthManage(data, labels) {
+        var ctx1 = document.getElementById("viewMonth-manage").getContext("2d");
 
         // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceViewMonth) {
-            chartInstanceViewMonth.destroy();
+        if (chartInstanceViewMonthManage) {
+            chartInstanceViewMonthManage.destroy();
         }
 
         var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
@@ -436,7 +443,7 @@ $(document).ready(function () {
         gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
         gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
 
-        chartInstanceViewMonth = new Chart(ctx1, {
+        chartInstanceViewMonthManage = new Chart(ctx1, {
             type: "line",
             data: {
                 labels: labels,
@@ -511,78 +518,27 @@ $(document).ready(function () {
         });
     }
     /*-------------------------------VIEW----------------------------------------*/
-    function loadDashboardAdmin() {
-        $('#content-container').load('/news_lv/page/dashboardAdmin', function () {
-            fetchDataAndUpdateUI();
 
-            favoriteYear();
-
-            favoriteMonth()
-
-            viewYear()
-
-            viewMonth()
-        })
-    }
-    /*=========================EVENT===============================*/
-    console.log('Role: ', Role);
-
-    var navAdmin = $('.nav-admin');
-    var navManage = $('.nav-manage');
-    var navAuthor = $('.nav-author');
-
-    if (Role === 'ADMIN') {
-        loadDashboardAdmin()
+    var Role = sessionStorage.getItem('Role')
+    if (Role === 'ADMIN_MANAGE') {
+        loadDashboardManage()
         $(document).on('click', '#dashboardAdmin', function (e) {
             e.preventDefault();
-            loadDashboardAdmin()
+            loadDashboardManage()
         })
-        sessionStorage.removeItem('categories')
-        sessionStorage.removeItem('userName')
-        navManage.remove()
-        navAuthor.remove()
-    } else if (Role === 'ADMIN_MANAGE') {
-        sessionStorage.removeItem('userName')
-        navAdmin.remove()
-        navAuthor.remove()
-    } else if (Role === 'AUTHOR') {
-        sessionStorage.removeItem('categories')
-        navAdmin.remove()
-        navManage.remove()
     }
 
-})
+    function loadDashboardManage() {
+        $('#content-container').load('/news_lv/page/dashboardManage', function () {
+            fetchDataAndUpdateUIMange();
 
-$(document).on('click', '#profileAdmin', function (e) {
-    e.preventDefault();
-    console.log('Profile Admin');
-    $('#content-container').load('/news_lv/page/profileAdmin', function(response, status, xhr) {
-        if (status == "error") {
-            console.log("Error: " + xhr.status + ": " + xhr.statusText);
-        } else {
-            console.log("Content loaded successfully");
-            console.log(response);
-        }
-    });
-});
+            favoriteYearManage();
 
-$('#logoutButton').on('click', function(event) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định
+            favoriteMonthManage()
 
-    sessionStorage.removeItem('userLogin');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('userId');
-    sessionStorage.removeItem('currentNewsId');
+            viewYearManage()
 
-    // Xóa local storage
-    sessionStorage.clear();
-
-    localStorage.clear();
-
-    // Đánh dấu trạng thái logout trong sessionStorage
-    sessionStorage.setItem('isLoggedOut', 'true');
-
-    // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
-    window.location.href = '/news_lv/page/home';
-    $('#login-btn').hide();
+            viewMonthManage()
+        })
+    }
 });

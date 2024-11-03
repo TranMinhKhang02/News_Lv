@@ -15,7 +15,7 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card border-0 shadow rounded-3 my-5">
                 <div class="card-body p-4 p-sm-5">
-                    <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
+                    <h5 class="card-title text-center mb-5 fw-light fs-5">Đăng nhập</h5>
                     <form id="loginForm">
 <!--                    <form action="/news_lv/auth/log-in" method="post">-->
                         <div class="form-floating mb-3">
@@ -41,7 +41,7 @@
                         <div class="d-grid mb-2">
                             <a href="/news_lv/oauth2/authorization/google">
                                 <button class="btn btn-google btn-login text-uppercase fw-bold" type="button">
-                                    <i class="fab fa-google me-2"></i> Sign in with Google
+                                    <i class="fab fa-google me-2"></i> Đăng nhập với Google
                                 </button>
                             </a>
                             <!--<button class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
@@ -49,9 +49,11 @@
                             </button>-->
                         </div>
                         <div class="d-grid">
-                            <button class="btn btn-facebook btn-login text-uppercase fw-bold" type="submit">
-                                <i class="fab fa-facebook-f me-2"></i> Sign in with Facebook
-                            </button>
+                            <a th:href="@{/page/register}">
+                                <button class="btn btn-facebook btn-login text-uppercase fw-bold" type="button">
+                                    <!--<i class="fab fa-facebook-f me-2"></i>--> Chuyển trang đăng ký
+                                </button>
+                            </a>
                         </div>
                     </form>
                 </div>

@@ -164,8 +164,21 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy news!"));
+
+        // Xóa các sự kiện yêu thích liên quan trong favorite_event
+        favoriteEventRepository.deleteByNewsIdAndUserId(newsId, userId);
+
         user.getFavoriteNews().remove(news);
         userRepository.save(user);
+    }
+
+    public void updateStatus(List<Long> userIds, int status) {
+        for(Long userId : userIds) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+            user.setStatus(status);
+            userRepository.save(user);
+        }
     }
 
     public User loginWithGoogle(String googleId, String email, String fullName, String avatar, LocalDate dob) {

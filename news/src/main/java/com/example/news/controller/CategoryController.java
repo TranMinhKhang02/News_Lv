@@ -22,8 +22,9 @@ public class CategoryController {
     CategoryService categoryService;
 
     @GetMapping
-    public ApiResponse<List<CategoryResponse>> getAllCategories() {
-        var categories = categoryService.getAll();
+    public ApiResponse<List<CategoryResponse>> getAllCategories(
+            @RequestParam(value = "status", defaultValue = "1") int status) {
+        var categories = categoryService.getAll(status);
         return ApiResponse.<List<CategoryResponse>>builder()
                 .code(1000)
                 .result(categories)
@@ -31,8 +32,9 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    public ApiResponse<List<CategoryResponse>> getAllCategoriesAndParent() {
-        var categories = categoryService.getAllAndParent();
+    public ApiResponse<List<CategoryResponse>> getAllCategoriesAndParent(
+            @RequestParam(value = "status", defaultValue = "1") int status) {
+        var categories = categoryService.getAllAndParent(status);
         return ApiResponse.<List<CategoryResponse>>builder()
                 .code(1000)
                 .result(categories)

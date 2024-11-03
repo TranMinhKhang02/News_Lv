@@ -25,4 +25,8 @@ public class FavoriteEvent {
     @ManyToOne
     @JoinColumn(name = "n_id")
     News news;
+
+    @ManyToOne
+    @JoinColumn(name = "u_id")
+    User user;
 }

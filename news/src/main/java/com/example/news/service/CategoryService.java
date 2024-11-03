@@ -37,14 +37,14 @@ public class CategoryService {
     }
 
     // Lấy danh sách category có parentId là not null
-    public List<CategoryResponse> getAll() {
-        List<Category> categories = categoryRepository.findAllByParentCategoryNotNull();
+    public List<CategoryResponse> getAll(int status) {
+        List<Category> categories = categoryRepository.findAllByParentCategoryNotNullAndStatus(status);
         // Chuyển đổi từ Category sang CategoryResponse nếu cần
         return categories.stream().map(categoryMapper::toCategoryResponse).toList();
     }
 
-    public List<CategoryResponse> getAllAndParent() {
-        var categories = categoryRepository.findAll();
+    public List<CategoryResponse> getAllAndParent(int status) {
+        var categories = categoryRepository.findAllByStatus(status);
         return categories.stream().map(categoryMapper::toCategoryResponse).toList();
     }
 

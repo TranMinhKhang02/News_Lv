@@ -54,11 +54,11 @@ public class News extends Base {
     @Column(name = "n_rejectReason")
     String rejectReason; // lý do từ chối duyệt bài viết
 
-    @Column(name = "n_summary")
+    @Column(columnDefinition = "longtext", name = "n_summary")
     String summary;
 
     @Column(name = "n_isSummarized")
-    boolean isSummarized;
+    boolean summarized;
 
     @Column(name = "n_audioPath")
     String audioPath;
@@ -88,7 +88,7 @@ public class News extends Base {
     List<Comment> comments;
 
     public void prePersist() {
-        if (isSummarized) { // Chỉ cập nhật summary_createDate nếu bài viết đã được tóm tắt
+        if (summarized) { // Chỉ cập nhật summary_createDate nếu bài viết đã được tóm tắt
             summary_createDate = LocalDateTime.now();
         }
         // Ở đây, bạn có thể lấy thông tin người tạo (createdBy)

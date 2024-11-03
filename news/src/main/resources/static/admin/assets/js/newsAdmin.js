@@ -10,6 +10,15 @@ $('.navbar-nav .nav-item .nav-link').click(function () {
     $(this).addClass('active');
 });
 
+$('#dashboardAdmin').click(function () {
+    sessionStorage.removeItem('categoryCodeInNewItem');
+    $('#ui-news').collapse('hide');
+    $('#manage-comment').collapse('hide');
+    $('#manage-category').collapse('hide');
+    $('#manage-user').collapse('hide');
+    $('#manage-role').collapse('hide');
+})
+
 $('#menu-manageComment').click(function () {
     sessionStorage.removeItem('categoryCodeInNewItem');
     $('#ui-news').collapse('hide');
@@ -116,6 +125,7 @@ $(document).on('click', '#categoryFetchNews', function () {
         fetchNewsByCategory(categoryCode, 1, status);
     }
 
+    // $('.nav-link').removeClass('active-categoryName');
     $('.nav-link').not('#approved-articles, #news-waitApprove, #news-refused, #showCommentByNewsTable, #showCategory, #showUsers, #showRole').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 });
@@ -147,6 +157,7 @@ $(document).on('click', '#approved-articles', function () {
         fetchNewsByCategory('the-thao', 1, status); // Mặc định khi load là thể thao
     });*/
     $('#approved-articles').removeClass('active-categoryName');
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 });
 
@@ -160,6 +171,8 @@ $(document).on('click', '#news-waitApprove', function () {
     approvedArticles.removeClass('active-categoryName');
     loadNewsTable(status)
     $('#news-waitApprove').removeClass('active-categoryName');
+
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 });
 
@@ -190,6 +203,8 @@ $(document).on('click', '#news-refused', function () {
         fetchNewsByCategory('the-thao', 1, status); // Mặc định khi load là thể thao và status là 2
     });
     $('#news-waitApprove').removeClass('active-categoryName');
+
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 });
 
@@ -213,6 +228,8 @@ $(document).on('click', '#showCommentByNewsTable', function () {
         fetchCategoryNames();
         fetchNewsByCategory('the-thao', 1, 1); // Mặc định khi load là thể thao và status là 2
     });
+
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 })
 

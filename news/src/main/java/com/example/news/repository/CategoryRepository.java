@@ -10,5 +10,5 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByStatus(Integer status);
     // Lấy category parentId là null
-    List<Category> findAllByParentCategoryNotNull();
+    List<Category> findAllByParentCategoryNotNullAndStatus(int status);
 }

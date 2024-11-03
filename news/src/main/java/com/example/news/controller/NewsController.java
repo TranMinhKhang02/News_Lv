@@ -4,6 +4,7 @@ import com.example.news.dto.request.NewsRequest;
 import com.example.news.dto.request.NewsUpdateRequest;
 import com.example.news.dto.request.NewsUpdateStatusRequest;
 import com.example.news.dto.response.*;
+import com.example.news.entity.News;
 import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
 import com.example.news.repository.NewsRepository;
@@ -29,6 +30,26 @@ public class NewsController {
     NewsRepository newsRepository;
     NewsService newsService;
     HttpServletRequest httpRequest;
+
+    /*===========START GPT===========*/
+    /*@PostMapping("/summarize")
+    public void summarizeAllNews() throws Exception {
+        newsService.summarizeAllNews();
+    }*/
+    /*@PostMapping("/summarize/{id}")
+    public void summarizeNews(@PathVariable Long id) throws Exception {
+        newsService.summarizeNews(id);
+    }*/
+
+    @PostMapping("/summarize/{newsId}")
+    public ApiResponse<String> summarizeNews(@PathVariable Long newsId, @RequestBody String summary) {
+        newsService.summarizeNews(newsId, summary);
+        return ApiResponse.<String>builder()
+                .code(1000)
+                .message("Tóm tắt nội dung thành công.")
+                .build();
+    }
+    /*===========END GPT===========*/
 
     @PostMapping
 //    @PreAuthorize("hasAnyRole('ADMIN', 'ADMIN_MANAGE')")

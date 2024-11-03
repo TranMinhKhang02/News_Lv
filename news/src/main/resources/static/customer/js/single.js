@@ -1,9 +1,25 @@
+var newsContent = '';
+
 $(document).ready(function () {
     $('#homeNavbar').removeClass('active');
     $('#singleNavbar').addClass('active');
 
     // Fetch news by ID when the page loads
     var newsId = getNewsIdFromUrl();
+
+    /*if(newsId) {
+        var baseAudioSrc  = /!*[[@{/static/audio_files/news-}]]*!/ '';
+        var fullAudioSrc = baseAudioSrc + newsId + '.mp3';
+        console.log('Audio source:', fullAudioSrc);
+        $('#audioSource').attr('src', fullAudioSrc);
+    } else {
+        console.error("newsId không được tìm thấy trong URL.");
+    }*/
+
+    /*===========Truyền source newsId vào audio===================*/
+    /*$('#audioSource').attr('src', '/news_lv/static/audio_files/news-' + newsId + '.mp3')*/
+
+    getAllInteract()
 
     if (newsId) {
         sessionStorage.setItem('currentNewsId', newsId); // lưu newsId vào sessionStorage
@@ -21,6 +37,8 @@ $(document).ready(function () {
             success: function(response) {
                 if (response.code === 1000 && response.result) {
                     renderNewsDetails(response.result);
+                    newsContent = response.result.content;
+                    speakContent(newsContent, response.result.summarized);
                     console.log('News details:', response.result);
                 } else {
                     console.error('Unexpected response format:', response);
@@ -33,6 +51,7 @@ $(document).ready(function () {
     }
 
     function renderNewsDetails(news) {
+        var audio = $('#audioSource');
         sessionStorage.setItem('categoryCode', news.categories[0].code);
 
         $('#news-title').text(news.title);
@@ -40,9 +59,11 @@ $(document).ready(function () {
         $('#news-thumbnail').attr('src', news.thumbnail);
         $('#news-date').text(new Date(news.modifiedDate).toLocaleDateString());
         $('#news-category').text(news.categories[0].name);
+        audio.attr('src', news.audioPath);
+        $('#audioElement')[0].load();
         $('#news-comments-count').text(news.countComment + ' Comments');
-        $('#like-count').text(news.countLike + ' Yêu thích');
-        $('#view-count').text(news.countView + ' Luợt xem');
+        /*$('#like-count').text(news.countLike + ' Yêu thích');
+        $('#view-count').text(news.countView + ' Luợt xem');*/
         // Hiển thị nội dung vào trong CKEditor
         if (window.editor) {
             window.editor.setData(news.content);
@@ -84,6 +105,279 @@ $(document).ready(function () {
         viewCount()
     }, 10000) // 10s
 });
+
+/*let speechSynthesisUtterance;
+let isPlaying = false;
+let textContent = 'Đây là nội dung giọng nói của bạn.'; // Văn bản để chuyển thành giọng nói
+let speechPosition = 0;
+
+function togglePlayPause() {
+    if (isPlaying) {
+        window.speechSynthesis.pause();
+        document.getElementById("playPauseBtn").textContent = "Phát";
+    } else {
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+        } else {
+            speakContent(textContent);
+        }
+        document.getElementById("playPauseBtn").textContent = "Dừng";
+    }
+    isPlaying = !isPlaying;
+}
+
+function speakContent(content) {
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+    speechSynthesisUtterance = new SpeechSynthesisUtterance(content);
+    speechSynthesisUtterance.lang = 'vi-VN';
+    speechSynthesisUtterance.onboundary = (event) => {
+        if (event.name === 'word') {
+            speechPosition = event.charIndex;
+            updateSeekBar();
+        }
+    };
+    speechSynthesisUtterance.onend = () => {
+        document.getElementById("playPauseBtn").textContent = "Phát";
+        isPlaying = false;
+    };
+    window.speechSynthesis.speak(speechSynthesisUtterance);
+    isPlaying = true;
+}
+
+function updateSeekBar() {
+    let progress = (speechPosition / textContent.length) * 100;
+    document.getElementById("seekBar").value = progress;
+    document.getElementById("current-time").textContent = `${Math.floor(progress)}%`; // Hiển thị % đã đọc
+}
+
+function seekSpeech() {
+    let seekValue = document.getElementById("seekBar").value;
+    let targetIndex = Math.floor((seekValue / 100) * textContent.length);
+    if (speechSynthesisUtterance) {
+        window.speechSynthesis.cancel();
+        const newText = textContent.substring(targetIndex);
+        speakContent(newText);
+    }
+}
+
+function rewindSpeech() {
+    if (speechSynthesisUtterance) {
+        window.speechSynthesis.cancel();
+        speechPosition = Math.max(0, speechPosition - 50);
+        const newText = textContent.substring(speechPosition);
+        speakContent(newText);
+    }
+}*/
+/*var speechSynthesisUtterance;
+
+function speakBtn() {
+    console.log('speakBtn called');
+    speakContent(newsContent);
+}
+
+function convertTextToSpeak() {
+    speakBtnFPT(newsContent);
+}*/
+
+/*function speakBtnFPT(newsContent) {
+    const text = newsContent;
+    console.log('Text to speak:', text);
+    const voice = document.getElementById('voiceSelect').value;
+    const speed = document.getElementById('speedRange').value;
+    convertTextToSpeech(text, voice, speed);
+}
+
+function convertTextToSpeech(text, voice, speed) {
+    const apiKey = 'ojrzH55757sKoE63cieiWrY9DUCVPAlI';
+    const url = 'https://api.fpt.ai/hmi/tts/v5';
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'api-key': apiKey,
+            'voice': voice,
+            'speed': speed,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({ text: text })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.async) {
+                const audio = new Audio(data.async);
+                audio.play();
+            } else {
+                console.error('Error in response:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}*/
+
+function speakContent(content, summarized) {
+    // Kiểm tra nếu URL hiện tại không phải là trang single thì dừng phát giọng nói
+    if (!window.location.href.includes('/page/single')) {
+        window.speechSynthesis.cancel();
+        return;
+    }
+
+    // Chuyển đổi nội dung HTML thành các phần tử DOM
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(content, 'text/html');
+
+    // Lấy tất cả các thẻ <p> trong nội dung
+    var paragraphs = doc.querySelectorAll('p');
+    var textToSpeak = '';
+
+    // Duyệt qua từng thẻ <p> và lấy nội dung
+    paragraphs.forEach(function(paragraph) {
+        textToSpeak += paragraph.textContent + ' ';
+    });
+
+    console.log('Text to speak:', textToSpeak.trim());
+
+    // Gọi hàm speak với nội dung đã lấy
+    newsContent = textToSpeak.trim();
+    var newsId = getNewsIdFromUrl();
+    convertTTS(newsId, newsContent);
+
+    // Chỉ tóm tắt nếu `summarized` là `false`
+    if (!summarized) {
+        summarizeContent(newsContent);
+    }
+    // speak(newsContent);
+    // speakBtnFPT(newsContent)
+}
+
+function summarizeContent(content) {
+    // API URL và API Key
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCJMwDDPf0MWA8fOxR0I6UXJSOwXCaCllg';
+
+    // Chuẩn bị dữ liệu yêu cầu cho API
+    const requestData = {
+        contents: [{
+            parts: [{
+                text: `Tóm tắt nội dung chính khoảng 10 dòng, không thêm bất kỳ thông tin liên quan nào khác: ${content}`
+            }]
+        }]
+    };
+
+    // Gửi yêu cầu AJAX
+    $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(requestData),
+        success: function(response) {
+            // Trích xuất nội dung tóm tắt
+            const summaryText = response.candidates[0].content.parts[0].text;
+            updateSummarize(summaryText);
+            console.log('Nội dung đã tóm tắt:', summaryText);
+        },
+        error: function(xhr, status, error) {
+            console.error('Lỗi khi gọi API Gemini:', xhr.responseText || error);
+        }
+    });
+}
+
+function updateSummarize(summarize) {
+    var newsId = getNewsIdFromUrl();
+    $.ajax({
+        url: '/news_lv/news/summarize/' + newsId,
+        type: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(summarize),
+        success: function(response) {
+            console.log('Đã cập nhật tóm tắt');
+        },
+        error: function(xhr, status, error) {
+            console.error('Lỗi khi cập nhật tóm tắt:', xhr.responseText || error);
+        }
+    })
+}
+
+function convertTTS(newsId, newsContent) {
+    console.log('TextNews Convert', newsContent)
+    $.ajax({
+        url: '/news_lv/tts/convert/' + newsId,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(newsContent),
+        success: function(response) {
+            console.log('Audio file path:', response);
+            // Xử lý response nếu cần
+        },
+        error: function(xhr, status, error) {
+            console.error('Đã xảy ra lỗi khi gọi API:', error);
+        }
+    });
+}
+
+/*function convertTextToSpeech(text) {
+    const apiKey = 'ojrzH55757sKoE63cieiWrY9DUCVPAlI';
+    const url = 'https://api.fpt.ai/hmi/tts/v5';
+    const voice = 'banmai';
+    const speed = '0'; // Tốc độ đọc, có thể điều chỉnh
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'api-key': apiKey,
+            'voice': voice,
+            'speed': speed,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({ text: text })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.async) {
+                const audio = new Audio(data.async);
+                audio.play();
+            } else {
+                console.error('Error in response:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}*/
+
+/*function speak(text) {
+    console.log('Text to speak:', text);
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+    }
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'vi-VN'; // Đặt ngôn ngữ là tiếng Việt
+    window.speechSynthesis.speak(speech);
+}
+
+function pauseSpeech() {
+    window.speechSynthesis.pause();
+}
+
+function resumeSpeech() {
+    window.speechSynthesis.resume();
+}
+
+function rewindSpeech() {
+    if (speechSynthesisUtterance) {
+        window.speechSynthesis.cancel();
+        const currentText = speechSynthesisUtterance.text;
+        const currentIndex = speechSynthesisUtterance.charIndex;
+        const rewindIndex = Math.max(0, currentIndex - 50); // Tua lại 50 ký tự
+        const newText = currentText.substring(rewindIndex);
+        speak(newText);
+    }
+}*/
 
 const userId = sessionStorage.getItem('userId');
 

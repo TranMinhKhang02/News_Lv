@@ -45,6 +45,8 @@ public class SecurityConfig {
             "/category/**",
             "/status/**",
             "/image/**",
+            "/events/**",
+            "/tts/**",
             /*"/users",
             "/auth/**",
             "/page/**"*/

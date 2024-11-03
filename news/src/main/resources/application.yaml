@@ -11,6 +11,19 @@ cloudinary:
   api-key: 165223227289875
   api-secret: KuEgKknBTrJ7-FdsAHGJYa_Jx4c
 
+huggingface:
+  api:
+    key: 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
+
+gemini:
+  api:
+    key: AIzaSyCJMwDDPf0MWA8fOxR0I6UXJSOwXCaCllg
+
+google:
+  cloud:
+    text-to-speech:
+      api-key: texttospeech-440503
+
 spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/news_lv"
@@ -43,6 +56,10 @@ spring:
   #Khai báo thymeleaf
   mvc:
     static-path-pattern: /static/**
+
+audio:
+  files:
+    path: "F:\\GitHub-Desktop\\KhangB2012215\\News_Lv\\news\\src\\main\\resources\\static\\audio_files\\"
   #thymeleaf:
     #prefix: classpath:/templates/
     #suffix: .html

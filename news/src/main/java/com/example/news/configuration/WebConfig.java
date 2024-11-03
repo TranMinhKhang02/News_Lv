@@ -27,6 +27,8 @@ public class WebConfig implements WebMvcConfigurer {
             "/comment/**",
             "/category/**",
             "/image/**",
+            "/events/**",
+            "/tts/**",
     };
 
     public final String[] GET_ENDPOINTS = {

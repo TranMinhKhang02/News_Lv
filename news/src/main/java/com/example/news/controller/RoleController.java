@@ -4,6 +4,7 @@ import com.example.news.dto.request.RoleRequest;
 import com.example.news.dto.response.ApiResponse;
 import com.example.news.dto.response.RoleResponse;
 import com.example.news.entity.Role;
+import com.example.news.service.NewsService;
 import com.example.news.service.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,11 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController {
     RoleService roleService;
+    private final NewsService newsService;
 
     @GetMapping
     public ApiResponse<List<RoleResponse>> getAllRoles(
-            @RequestParam(value = "status", defaultValue = "1") int status
-    ) {
+            @RequestParam(value = "status", defaultValue = "1") int status) {
         var roles = roleService.getAll(status);
 //        log.info("Roles: {}", roles); // In log để kiểm tra danh sách RoleResponse
         return ApiResponse.<List<RoleResponse>>builder()
@@ -55,6 +56,15 @@ public class RoleController {
         return ApiResponse.<RoleResponse>builder()
                 .code(1000)
                 .result(roleService.update(roleId, request))
+                .build();
+    }
+
+    @PutMapping("/update-status")
+    public ApiResponse<RoleResponse> updateStatus(@RequestBody List<Long> roleIds) {
+        roleService.updateStatus(roleIds, 0);
+        return ApiResponse.<RoleResponse>builder()
+                .code(1000)
+                .message("Xóa vai trò thành công!")
                 .build();
     }
 }

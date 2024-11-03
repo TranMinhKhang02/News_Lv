@@ -19,6 +19,7 @@ $(document).on('click', '#showRole', function (e) {
     $('#content-container').load('/news_lv/page/roleTable', function () {
         fetchRole()
     });
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 })
 
@@ -28,6 +29,7 @@ $(document).on('click', '#editRole', function (e) {
     sessionStorage.setItem('roleId', roleId)
     $('#content-container').load('/news_lv/page/editRole', function () {
         getRoleById(roleId);
+        $('#saveRole').hide();
     });
 })
 
@@ -205,6 +207,7 @@ $(document).on('click', '#createRole', function (e) {
             fetchAllRoles()
             fetchCategoriesRole()
             $(this).val('');
+            $('#updateRole').hide();
         });
     });
 })

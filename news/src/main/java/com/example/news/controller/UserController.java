@@ -134,6 +134,13 @@ public class UserController {
         userService.deleteFavoriteNews(userId, newsId);
     }
 
+    @PutMapping("/update-status")
+    public ApiResponse<UserResponse> updateStatus(@RequestBody List<Long> userIds) {
+        userService.updateStatus(userIds, 0);
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .build();
+    }
 
     @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {

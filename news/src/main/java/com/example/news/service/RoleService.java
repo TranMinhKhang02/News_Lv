@@ -57,4 +57,13 @@ public class RoleService {
         roleMapper.updateRole(request, role);
         return roleMapper.toRoleResponse(roleRepository.save(role));
     }
+
+    public void updateStatus(List<Long> roleIds, int status) {
+        for(Long roleId : roleIds) {
+            Role role = roleRepository.findById(roleId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy role!"));
+            role.setStatus(status);
+            roleRepository.save(role);
+        }
+    }
 }

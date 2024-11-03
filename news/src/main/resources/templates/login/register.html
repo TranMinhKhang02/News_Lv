@@ -5,11 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/login/login.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 
-<h2>User Registration</h2>
+<!--<h2>User Registration</h2>
 
 <form id="registrationForm">
     <div>
@@ -35,7 +39,65 @@
     <div>
         <button type="button" id="submitBtn">Register</button>
     </div>
-</form>
+</form>-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card border-0 shadow rounded-3 my-5">
+                <div class="card-body p-4 p-sm-5">
+                    <h5 class="card-title text-center mb-5 fw-light fs-5">Đăng ký</h5>
+                    <form id="registrationForm">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="userName" name=userName placeholder="Tên đăng nhập" required minlength="4">
+                            <label for="userName">Tên đăng nhập</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" name="password" required minlength="4" placeholder="Mật khẩu">
+                            <label for="password">Mật khẩu</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="fullName" name="fullName" required placeholder="Họ và tên">
+                            <label for="fullName">Họ và tên</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="dob" name="dob" required>
+                            <label for="dob">Ngày sinh</label>
+                        </div>
+
+                        <!--<div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck">
+                            <label class="form-check-label" for="rememberPasswordCheck">
+                                Remember password
+                            </label>
+                        </div>-->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-login text-uppercase fw-bold" id="submitBtn">Đăng ký</button>
+                        </div>
+                        <hr class="my-4">
+                        <div class="d-grid mb-2">
+                            <a href="/news_lv/oauth2/authorization/google">
+                                <button class="btn btn-google btn-login text-uppercase fw-bold" type="button">
+                                    <i class="fab fa-google me-2"></i> Đăng nhập với Google
+                                </button>
+                            </a>
+                            <!--<button class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
+                                <i class="fab fa-google me-2"></i> Sign in with Google
+                            </button>-->
+                        </div>
+                        <div class="d-grid">
+                            <a th:href="@{/page/login}">
+                                <button class="btn btn-facebook btn-login text-uppercase fw-bold" type="button">
+                                    <!--<i class="fab fa-facebook-f me-2"></i>--> Chuyển trang đăng nhập
+                                </button>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- jQuery AJAX to send data -->
 <script>
@@ -57,7 +119,7 @@
                 data: JSON.stringify(formData),
                 success: function(response) {
                     // Handle success, redirect to home
-                    window.location.href = "/news_lv/page/home";
+                    window.location.href = "/news_lv/page/login";
                 },
                 error: function(xhr, status, error) {
                     // Handle error

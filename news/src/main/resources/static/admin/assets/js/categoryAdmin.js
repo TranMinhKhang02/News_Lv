@@ -2,6 +2,17 @@ $(document).ready(function () {
 
 })
 
+function showBtnCategory() {
+    var categoryId = sessionStorage.getItem('categoryId');
+    var saveCategoryBtn = $('#saveCategory');
+    var updateCategoryBtn = $('#updateCategory');
+    if (categoryId) {
+        saveCategoryBtn.hide()
+    } else {
+        updateCategoryBtn.hide()
+    }
+}
+
 $(document).on('click', '#showCategory', function (e) {
     e.preventDefault();
     var titlePage = $('.titlePage')
@@ -12,6 +23,7 @@ $(document).on('click', '#showCategory', function (e) {
     $('#content-container').load('/news_lv/page/categoryTable', function () {
         fetchCategoryTable();
     });
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 })
 
@@ -22,15 +34,18 @@ $(document).on('click', '#editCategory', function (e) {
     console.log('Category ID: ', categoryId);
     $('#content-container').load('/news_lv/page/editCategory', function () {
         getCategoryItem(categoryId);
+        showBtnCategory()
     });
 })
 
 $(document).on('click', '#createCategory', function (e) {
     e.preventDefault()
+    sessionStorage.removeItem('categoryId');
     $('#content-container').load('/news_lv/page/editCategory', function () {
         $('#content-container').find('input').each(function() {
             $(this).val('');
             fetchCategories();
+            showBtnCategory()
         });
     });
 })

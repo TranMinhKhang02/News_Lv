@@ -46,6 +46,8 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     List<News> findTop5ByOrderByLikeCountDesc();
     List<News> findTop5ByStatusCodeOrderByLikeCountDesc(String statusCode);
 
+    List<News> findBySummarizedFalse();
+
 
     /*@Modifying
     @Transactional

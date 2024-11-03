@@ -10,6 +10,17 @@ function loadUserTable() {
     });
 }
 
+function showBtnUser() {
+    var userId = sessionStorage.getItem('userId');
+    var saveUserBtn = $('#saveUser');
+    var updateUserBtn = $('#updateUser');
+    if (userId) {
+        saveUserBtn.hide()
+    } else {
+        updateUserBtn.hide()
+    }
+}
+
 function backUserTable() {
     var userId = sessionStorage.getItem('userId');
     setTimeout(function () {
@@ -30,11 +41,13 @@ $(document).on('click', '#showUsers', function (e) {
     var titlePageHeading = $('.titlePage-heading')
     titlePageHeading.html('Người dùng hệ thống');
     sessionStorage.removeItem('manage-comment')
+    sessionStorage.setItem('roleCode', 'USER');
     // loadUserTable()
     $('#content-container').load('/news_lv/page/userTable', function () {
         fetchRoles()
         fetchUsers('USER');
     });
+    $('.nav-link').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 })
 
@@ -165,7 +178,25 @@ function renderRoles(roles) {
     // Add click event listener to role items
     $('#role-name').on('click', '#roleFetchUser', function () {
         var roleCode = $(this).data('role-code');
+        sessionStorage.setItem('roleCode', roleCode);
         fetchUsers(roleCode);
+        $('#role-name').find('.active-categoryName').removeClass('active-categoryName');
+        $(this).addClass('active-categoryName');
+    });
+
+    var sessionRoleCode = sessionStorage.getItem('roleCode');
+    console.log('sessionRoleCode:', sessionRoleCode);
+    if (!sessionRoleCode) {
+        sessionRoleCode = 'USER';
+        sessionStorage.setItem('roleCode', sessionRoleCode);
+    }
+
+    // Thêm class active-categoryName vào danh mục có roleCode trùng với sessionRoleCode
+    $('.nav-link').each(function () {
+        var roleCode = $(this).data('role-code');
+        if (roleCode === sessionRoleCode) {
+            $(this).addClass('active-categoryName');
+        }
     });
 }
 
@@ -243,6 +274,9 @@ function createUserItem(user) {
                 data-toggle="tooltip" data-original-title="View user">
                     Chi tiết
                 </a>
+            </td>
+            <td class="align-middle">
+                <input type="checkbox" class="delete-checkbox" value="${user.id}">
             </td>
         </tr>
     `;

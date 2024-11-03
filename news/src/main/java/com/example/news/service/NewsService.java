@@ -33,6 +33,49 @@ public class NewsService {
     CategoryRepository categoryRepository;
     ViewEventRepository viewEventRepository;
     FavoriteEventRepository favoriteEventRepository;
+    SummaryService summaryService;
+
+    /*============START GPT=================*/
+    public void summarizeNews(Long newsId, String summary) {
+        News news = newsRepository.findById(newsId).orElseThrow(() -> new RuntimeException("News not found"));
+        news.setSummarized(true);
+        news.setSummary(summary);
+        news.setSummary_createDate(LocalDateTime.now());
+        newsRepository.save(news);
+    }
+    /*public void summarizeNews(Long newsId) throws Exception {
+        Optional<News> newsOptional = newsRepository.findById(newsId);
+        if (newsOptional.isPresent()) {
+            News news = newsOptional.get();
+            String summary = summaryService.summarizeText(news.getContent());
+            news.setSummary(summary);
+            news.setSummarized(true);
+            news.setSummary_createDate(LocalDateTime.now());
+            newsRepository.save(news);
+        }
+    }*/
+    /*public void summarizeAllNews() throws Exception {
+        List<News> newsList = newsRepository.findBySummarizedFalse();
+        for (News news : newsList) {
+            String summary = geminiService.summarizeContent(news.getContent());
+            news.setSummary(summary);
+            news.setSummarized(true);
+            news.setSummary_createDate(LocalDateTime.now());
+            newsRepository.save(news);
+        }
+    }*/
+    /*public void summarizeNews(Long newsId) throws Exception {
+        Optional<News> newsOptional = newsRepository.findById(newsId);
+        if (newsOptional.isPresent()) {
+            News news = newsOptional.get();
+            String summary = geminiService.summarizeContent(news.getContent());
+            news.setSummary(summary);
+            news.setSummarized(true);
+            news.setSummary_createDate(LocalDateTime.now());
+            newsRepository.save(news);
+        }
+    }*/
+    /*============END GPT=================*/
 
     public NewsResponse create(NewsRequest request) {
         // Set status mặc định là 3L
@@ -155,7 +198,10 @@ public class NewsService {
         long likeCount = newsRepository.countLikesByNewsId(newsId);
         news.setLikeCount(likeCount);
         return (int) likeCount;*/
-        return (int) newsRepository.countLikesByNewsId(newsId);
+        return newsRepository.findById(newsId)
+                .map(news -> news.getLikeCount().intValue())
+                .orElse(0);
+//        return (int) newsRepository.countLikesByNewsId(newsId);
     }
 
     public int getViewCount(Long newsId) {
@@ -256,6 +302,12 @@ public class NewsService {
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
     }*/
+
+    public void updateAudioPath(Long newsId, String audioUrl) {
+        News news = newsRepository.findById(newsId).orElseThrow(() -> new RuntimeException("News not found"));
+        news.setAudioPath(audioUrl);
+        newsRepository.save(news);
+    }
 
 //    @Transactional
     public void delete(List<Long> newsIds) {

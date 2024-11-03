@@ -10,4 +10,8 @@ public interface FavoriteEventRepository extends JpaRepository<FavoriteEvent, Lo
     Long countByEventDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 
     List<FavoriteEvent> findByEventDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    int countByEventDateBetweenAndNews_Categories_Code(LocalDateTime startOfDay, LocalDateTime endOfDay, String category);
+
+    void deleteByNewsIdAndUserId(long newsId, long userId);
 }

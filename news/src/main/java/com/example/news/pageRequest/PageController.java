@@ -168,6 +168,16 @@ public class PageController {
         return "admin/editRole";
     }
 
+    @GetMapping("/dashboardAdmin")
+    public String getDashboardAdmin() {
+        return "admin/dashboardAdmin";
+    }
+
+    @GetMapping("/dashboardManage")
+    public String getDashboardManage() {
+        return "manage/dashboardManage";
+    }
+
     @GetMapping("/profile")
     public String profile(OAuth2AuthenticationToken token, Model model) {
         model.addAttribute("name", token.getPrincipal().getAttribute("name"));
