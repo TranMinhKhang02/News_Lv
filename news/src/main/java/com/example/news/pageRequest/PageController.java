@@ -178,6 +178,11 @@ public class PageController {
         return "manage/dashboardManage";
     }
 
+    @GetMapping("/dashboardAuthor")
+    public String getDashboardAuthor() {
+        return "author/dashboardAuthor";
+    }
+
     @GetMapping("/profile")
     public String profile(OAuth2AuthenticationToken token, Model model) {
         model.addAttribute("name", token.getPrincipal().getAttribute("name"));

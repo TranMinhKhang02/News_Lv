@@ -12,4 +12,6 @@ public interface ViewEventRepository extends JpaRepository<ViewEvent, Long> {
     List<ViewEvent> findByEventDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     int countByEventDateBetweenAndNews_Categories_Code(LocalDateTime startOfDay, LocalDateTime endOfDay, String category);
+
+    int countByEventDateBetweenAndNews_CreatedBy(LocalDateTime startOfDay, LocalDateTime endOfDay, String createdBy);
 }

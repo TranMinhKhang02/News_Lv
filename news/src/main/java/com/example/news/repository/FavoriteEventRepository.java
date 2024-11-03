@@ -14,4 +14,6 @@ public interface FavoriteEventRepository extends JpaRepository<FavoriteEvent, Lo
     int countByEventDateBetweenAndNews_Categories_Code(LocalDateTime startOfDay, LocalDateTime endOfDay, String category);
 
     void deleteByNewsIdAndUserId(long newsId, long userId);
+
+    int countByEventDateBetweenAndNews_CreatedBy(LocalDateTime startOfDay, LocalDateTime endOfDay, String createdBy);
 }

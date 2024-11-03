@@ -92,8 +92,10 @@
 
                     if (userName != null) {
                         sessionStorage.setItem('userName', userName);
+                        sessionStorage.setItem('createdBy', userName);
                     } else {
                         sessionStorage.setItem('userName', email);
+                        sessionStorage.setItem('createdBy', email);
                     }
 
                     localStorage.setItem('userLocal', 'true');

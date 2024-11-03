@@ -41,8 +41,11 @@ public class TextToSpeechService {
         // Kiểm tra xem file đã tồn tại hay chưa
         File audioFile = new File(filePath);
         if (audioFile.exists()) {
-            // Nếu file đã tồn tại, trả về đường dẫn của file đó
-            return filePath;
+            // Nếu file đã tồn tại, kiểm tra URL trong cơ sở dữ liệu
+            String existingAudioUrl = newsService.getAudioPath(newsId);
+            if (existingAudioUrl != null && !existingAudioUrl.isEmpty()) {
+                return existingAudioUrl;
+            }
         }
 
         try {
@@ -71,11 +74,18 @@ public class TextToSpeechService {
             e.printStackTrace();
         }
 
-        return filePath;
+        return null;
     }
-    /*public String convertTextToSpeech(String text) {
-        String fileName = UUID.randomUUID().toString() + ".mp3";
+    /*public String convertTextToSpeech(Long newsId, String text) {
+        String fileName = "news-" + newsId + ".mp3"; // Tạo tên file từ newsId
         String filePath = new File(audioFilesPath, fileName).getAbsolutePath();
+
+        // Kiểm tra xem file đã tồn tại hay chưa
+        File audioFile = new File(filePath);
+        if (audioFile.exists()) {
+            // Nếu file đã tồn tại, trả về đường dẫn của file đó
+            return filePath;
+        }
 
         try {
             ProcessBuilder pb = new ProcessBuilder("python", "F:\\GitHub-Desktop\\KhangB2012215\\News_Lv\\news\\scripts\\text_to_speech.py", text, filePath);
@@ -84,9 +94,20 @@ public class TextToSpeechService {
             process.waitFor();
 
             // Kiểm tra xem file có được tạo ra hay không
-            File audioFile = new File(filePath);
             if (!audioFile.exists()) {
                 throw new IOException("File MP3 không được tạo ra.");
+            }
+
+            // Tải tệp lên Cloudinary
+            Map<String, Object> uploadResult = cloudinaryService.uploadFile(audioFile);
+            if (uploadResult != null) {
+                String audioUrl = (String) uploadResult.get("secure_url");
+                log.info("Đã tải tệp lên Cloudinary: " + audioUrl);
+                // Cập nhật URL vào cơ sở dữ liệu
+                newsService.updateAudioPath(newsId, audioUrl);
+                return audioUrl;
+            } else {
+                throw new IOException("Tải tệp lên Cloudinary thất bại.");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

@@ -59,8 +59,7 @@ $(document).ready(function () {
         $('#news-thumbnail').attr('src', news.thumbnail);
         $('#news-date').text(new Date(news.modifiedDate).toLocaleDateString());
         $('#news-category').text(news.categories[0].name);
-        audio.attr('src', news.audioPath);
-        $('#audioElement')[0].load();
+        // $('#audioElement')[0].load();
         $('#news-comments-count').text(news.countComment + ' Comments');
         /*$('#like-count').text(news.countLike + ' Yêu thích');
         $('#view-count').text(news.countView + ' Luợt xem');*/
@@ -85,9 +84,16 @@ $(document).ready(function () {
             categoryHtml += '<span class="breadcrumb-item active" href="#">' + category.name + '</span>';
         }
         $('#breadcrumb-category').html(categoryHtml);
+
+        // Loại bỏ dấu ngoặc kép ở đầu và cuối chuỗi nếu có
+        // let cleanedSummary = news.summary.replace(/^"|"$/g, '');
+        $('#news-summaryText').text(news.summary);
+        audio.attr('src', news.audioPath);
     }
 
     fetchNewsByTopViewInItem()
+
+    fetchNewsByTopModifiedByCategory()
 
     //===============================COMMENT================================
     // fetchComments(newsId);
@@ -105,6 +111,17 @@ $(document).ready(function () {
         viewCount()
     }, 10000) // 10s
 });
+
+$(document).on('click', '#toggle-summary-btn', function () {
+    var summary = $('#news-summary');
+    if (summary.css('display') === 'none') {
+        summary.css('display', 'block');
+        this.textContent = 'Ẩn tóm tắt';
+    } else {
+        summary.css('display', 'none');
+        this.textContent = 'Xem tóm tắt';
+    }
+})
 
 /*let speechSynthesisUtterance;
 let isPlaying = false;
@@ -274,8 +291,12 @@ function summarizeContent(content) {
         },
         data: JSON.stringify(requestData),
         success: function(response) {
+            console.log('API Gemini response:', response);
             // Trích xuất nội dung tóm tắt
-            const summaryText = response.candidates[0].content.parts[0].text;
+            let summaryText = response.candidates[0].content.parts[0].text;
+            // Loại bỏ các ký tự không mong muốn
+            summaryText = summaryText.replace(/[\n"]/g, '');
+            $('#news-summaryText').text(summaryText);
             updateSummarize(summaryText);
             console.log('Nội dung đã tóm tắt:', summaryText);
         },
@@ -284,15 +305,46 @@ function summarizeContent(content) {
         }
     });
 }
+/*function summarizeContent(content) {
+    // API URL và API Key
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCJMwDDPf0MWA8fOxR0I6UXJSOwXCaCllg';
+
+    // Chuẩn bị dữ liệu yêu cầu cho API
+    const requestData = {
+        contents: [{
+            parts: [{
+                text: `Tóm tắt nội dung chính khoảng 10 dòng, không thêm bất kỳ thông tin liên quan nào khác: ${content}`
+            }]
+        }]
+    };
+
+    // Gửi yêu cầu AJAX
+    $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(requestData),
+        success: function(response) {
+            // Trích xuất nội dung tóm tắt
+            const summaryText = response.candidates[0].content.parts[0].text;
+            $('#news-summaryText').text(summaryText);
+            updateSummarize(summaryText);
+            console.log('Nội dung đã tóm tắt:', summaryText);
+        },
+        error: function(xhr, status, error) {
+            console.error('Lỗi khi gọi API Gemini:', xhr.responseText || error);
+        }
+    });
+}*/
 
 function updateSummarize(summarize) {
     var newsId = getNewsIdFromUrl();
     $.ajax({
         url: '/news_lv/news/summarize/' + newsId,
         type: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        contentType: 'application/json',
         data: JSON.stringify(summarize),
         success: function(response) {
             console.log('Đã cập nhật tóm tắt');
@@ -313,6 +365,8 @@ function convertTTS(newsId, newsContent) {
         success: function(response) {
             console.log('Audio file path:', response);
             // Xử lý response nếu cần
+            $('#audioSource').attr('src', response);
+            $('#audioElement')[0].load();
         },
         error: function(xhr, status, error) {
             console.error('Đã xảy ra lỗi khi gọi API:', error);
@@ -413,6 +467,46 @@ function renderTopViewedNews(news) {
                     <a href="">${news.categories[0].name}</a>
                     <span class="px-1">/</span>
                     <span>${new Date(news.createdDate).toLocaleDateString()}</span>
+                </div>
+                <a class="h6 m-0" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
+            </div>
+        </div>
+    `;
+}
+
+// ====================================News By CategoryCode View==============================
+function fetchNewsByTopModifiedByCategory() {
+    var categoryCode = sessionStorage.getItem('categoryCode');
+    var topViewByCategoryContent = $('#topModifiedByCategoryCode');
+    topViewByCategoryContent.empty();
+    $.ajax({
+        url: '/news_lv/news/top5ByCategoryCode/' + categoryCode,
+        method: 'GET',
+        success: function(response) {
+            if (response.code === 1000 && Array.isArray(response.result)) {
+                response.result.forEach(function(news) {
+                    var newsItem = renderTopModifiedByCategory(news);
+                    topViewByCategoryContent.append(newsItem);
+                });
+            } else {
+                console.error('Unexpected response format:', response);
+            }
+        },
+        error: function(error) {
+            console.error('Error fetching top viewed news:', error);
+        }
+    });
+}
+
+function renderTopModifiedByCategory(news) {
+    return `
+        <div class="d-flex mb-3">
+            <img src="${news.thumbnail}" style="width: 100px; height: 100px; object-fit: cover;">
+            <div class="w-100 d-flex flex-column justify-content-center bg-light px-3" style="height: 100px;">
+                <div class="mb-1" style="font-size: 13px;">
+                    <a href="">${news.categories[0].name}</a>
+                    <span class="px-1">/</span>
+                    <span>${new Date(news.modifiedDate).toLocaleDateString()}</span>
                 </div>
                 <a class="h6 m-0" href="/news_lv/page/single?newsId=${news.id}">${news.title}</a>
             </div>
@@ -946,6 +1040,23 @@ CKEDITOR.ClassicEditor
         ],
         isReadOnly: true
     })
+    /*.then(editor => {
+        // Đoạn mã trong then được thực thi khi CKEditor đã được tạo thành công
+        window.editor = editor;
+        const toolbarElement = editor.ui.view.toolbar.element;
+
+        editor.on('change:isReadOnly', (evt, propertyName, isReadOnly) => {
+            if (isReadOnly) {
+                toolbarElement.style.visibility = 'hidden';  // Sử dụng visibility để ẩn thay vì display: none
+            } else {
+                toolbarElement.style.visibility = 'visible'; // Hiển thị lại khi cần
+            }
+        });
+
+        // Kiểm tra nếu cần bật chế độ read-only hoặc bỏ đi dòng này nếu không cần
+        editor.isReadOnly = true; // Thay thế enableReadOnlyMode nếu cần
+
+    })*/
     .then(editor => {
         // Đoạn mã trong then được thực thi khi CKEditor đã được tạo thành công
         window.editor = editor;

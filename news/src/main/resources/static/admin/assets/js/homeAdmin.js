@@ -86,6 +86,7 @@ $(document).ready(function () {
     /*-------------------------------FAVORITE YEAR-------------------------------*/
     var chartInstanceFavoriteYear; // Biến toàn cục để lưu trữ biểu đồ
     var chartInstanceFavoriteMonth; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceFavorite7LastDay; // Biến toàn cục để lưu trữ biểu đồ
 
     function favoriteYear() {
         $.ajax({
@@ -296,10 +297,116 @@ $(document).ready(function () {
             },
         });
     }
+
+    function favorite7LastDay() {
+        $.ajax({
+            url: '/news_lv/events/favorite-events/last7days', // URL API của bạn
+            method: 'GET',
+            success: function(response) {
+                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+                var data = response.result.map(item => parseInt(item.split(': ')[1]));
+                var labels = response.result.map(item => item.split(': ')[0]);
+
+                updateChartFavorite7LastDay(data, labels);
+            },
+            error: function(error) {
+                console.error('Error fetching data', error);
+            }
+        });
+    }
+
+    function updateChartFavorite7LastDay(data, labels) {
+        var ctx1 = document.getElementById("favorite7LastDay").getContext("2d");
+
+        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+        if (chartInstanceFavorite7LastDay) {
+            chartInstanceFavorite7LastDay.destroy();
+        }
+
+        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+        gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+        gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+        gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+        chartInstanceFavorite7LastDay = new Chart(ctx1, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Lượt yêu thích",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#5e72e4",
+                    backgroundColor: gradientStroke1,
+                    borderWidth: 3,
+                    fill: true,
+                    data: data,
+                    maxBarThickness: 6
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#fbfbfb',
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#ccc',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                },
+            },
+        });
+    }
     /*-------------------------------FAVORITE------------------------------------*/
     /*-------------------------------VIEW----------------------------------------*/
     var chartInstanceViewYear; // Biến toàn cục để lưu trữ biểu đồ
     var chartInstanceViewMonth; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceView7LastDay; // Biến toàn cục để lưu trữ biểu đồ
 
     function viewYear() {
         $.ajax({
@@ -510,6 +617,111 @@ $(document).ready(function () {
             },
         });
     }
+
+    function view7LastDay() {
+        $.ajax({
+            url: '/news_lv/events/view-events/last7days', // URL API của bạn
+            method: 'GET',
+            success: function(response) {
+                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+                var data = response.result.map(item => parseInt(item.split(': ')[1]));
+                var labels = response.result.map(item => item.split(': ')[0]);
+
+                updateChartView7LastDay(data, labels);
+            },
+            error: function(error) {
+                console.error('Error fetching data', error);
+            }
+        });
+    }
+
+    function updateChartView7LastDay(data, labels) {
+        var ctx1 = document.getElementById("view7LastDay").getContext("2d");
+
+        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+        if (chartInstanceView7LastDay) {
+            chartInstanceView7LastDay.destroy();
+        }
+
+        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+        gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
+        gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
+        gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
+
+        chartInstanceView7LastDay = new Chart(ctx1, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Lượt xem",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#5e72e4",
+                    backgroundColor: gradientStroke1,
+                    borderWidth: 3,
+                    fill: true,
+                    data: data,
+                    maxBarThickness: 6
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#fbfbfb',
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#ccc',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                },
+            },
+        });
+    }
     /*-------------------------------VIEW----------------------------------------*/
     function loadDashboardAdmin() {
         $('#content-container').load('/news_lv/page/dashboardAdmin', function () {
@@ -519,9 +731,13 @@ $(document).ready(function () {
 
             favoriteMonth()
 
+            favorite7LastDay()
+
             viewYear()
 
             viewMonth()
+
+            view7LastDay()
         })
     }
     /*=========================EVENT===============================*/

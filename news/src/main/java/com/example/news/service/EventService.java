@@ -184,6 +184,32 @@ public class EventService {
         return viewCounts;
     }*/
 
+
+
+    public List<String> getViewEventsLast7Days() {
+        List<String> viewCounts = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 6; i >= 0; i--) {
+            LocalDateTime startOfDay = now.minusDays(i).truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(startOfDay, endOfDay));
+            viewCounts.add(String.format("%02d/%02d: %d", startOfDay.getDayOfMonth(), startOfDay.getMonthValue(), count));
+        }
+        return viewCounts;
+    }
+
+    public List<String> getFavoriteEventsLast7Days() {
+        List<String> favoriteCounts = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 6; i >= 0; i--) {
+            LocalDateTime startOfDay = now.minusDays(i).truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(startOfDay, endOfDay));
+            favoriteCounts.add(String.format("%02d/%02d: %d", startOfDay.getDayOfMonth(), startOfDay.getMonthValue(), count));
+        }
+        return favoriteCounts;
+    }
+
     public List<String> getFavoriteEventsCustom(String startDate, String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime start = LocalDate.parse(startDate, formatter).atStartOfDay();
@@ -290,6 +316,7 @@ public class EventService {
         return viewCounts;
     }*/
 
+    /*==========================Start-MANAGE========================*/
     public int getTodayViewEventsByCategory(String category) {
         LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
         LocalDateTime endOfDay = startOfDay.plusDays(1);
@@ -394,5 +421,54 @@ public class EventService {
             favoriteCounts.add(String.format("%02d/%04d: %d", startOfMonth.getMonthValue(), startOfMonth.getYear(), count));
         }
         return favoriteCounts;
+    }
+
+    public List<String> getViewEventsLast7DaysByCategory(String category) {
+        List<String> viewCounts = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 6; i >= 0; i--) {
+            LocalDateTime startOfDay = now.minusDays(i).truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int count = Math.toIntExact(viewEventRepository.countByEventDateBetweenAndNews_Categories_Code(startOfDay, endOfDay, category));
+            viewCounts.add(String.format("%02d/%02d: %d", startOfDay.getDayOfMonth(), startOfDay.getMonthValue(), count));
+        }
+        return viewCounts;
+    }
+
+    public List<String> getFavoriteEventsLast7DaysByCategory(String category) {
+        List<String> favoriteCounts = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 6; i >= 0; i--) {
+            LocalDateTime startOfDay = now.minusDays(i).truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetweenAndNews_Categories_Code(startOfDay, endOfDay, category));
+            favoriteCounts.add(String.format("%02d/%02d: %d", startOfDay.getDayOfMonth(), startOfDay.getMonthValue(), count));
+        }
+        return favoriteCounts;
+    }
+    /*==========================End-MANAGE========================*/
+
+    public int getTodayViewEventsByCreatedBy(String createdBy) {
+        LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+        return viewEventRepository.countByEventDateBetweenAndNews_CreatedBy(startOfDay, endOfDay, createdBy);
+    }
+
+    public int getTodayFavoriteEventsByCreatedBy(String createdBy) {
+        LocalDateTime startOfDay = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+        return favoriteEventRepository.countByEventDateBetweenAndNews_CreatedBy(startOfDay, endOfDay, createdBy);
+    }
+
+    public int getWeekViewEventsByCreatedBy(String createdBy) {
+        LocalDateTime startOfWeek = LocalDate.now().with(java.time.DayOfWeek.MONDAY).atStartOfDay();
+        LocalDateTime endOfWeek = startOfWeek.plusDays(7);
+        return viewEventRepository.countByEventDateBetweenAndNews_CreatedBy(startOfWeek, endOfWeek, createdBy);
+    }
+
+    public int getWeekFavoriteEventsByCreatedBy(String createdBy) {
+        LocalDateTime startOfWeek = LocalDate.now().with(java.time.DayOfWeek.MONDAY).atStartOfDay();
+        LocalDateTime endOfWeek = startOfWeek.plusDays(7);
+        return favoriteEventRepository.countByEventDateBetweenAndNews_CreatedBy(startOfWeek, endOfWeek, createdBy);
     }
 }

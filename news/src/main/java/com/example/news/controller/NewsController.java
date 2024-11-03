@@ -214,6 +214,14 @@ public class NewsController {
                 .build();
     }
 
+    @GetMapping("/top5ByCategoryCode/{categoryCode}")
+    public ApiResponse<List<NewsResponse>> getTop5NewsByModifiedDate(@PathVariable String categoryCode) {
+        return ApiResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .result(newsService.getTop5NewsByCategoryCode(categoryCode))
+                .build();
+    }
+
     /*@GetMapping("/{newsId}")
     public ModelAndView getNewsSingle(@PathVariable Long newsId) {
         NewsResponse newsResponse = newsService.getNewsById(newsId);

@@ -81,6 +81,7 @@ $(document).ready(function () {
     /*-------------------------------FAVORITE YEAR-------------------------------*/
     var chartInstanceFavoriteYearManage; // Biến toàn cục để lưu trữ biểu đồ
     var chartInstanceFavoriteMonthManage; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceFavorite7LastDayManage; // Biến toàn cục để lưu trữ biểu đồ
 
     function favoriteYearManage() {
         $.ajax({
@@ -297,10 +298,119 @@ $(document).ready(function () {
             },
         });
     }
+
+    function favorite7LastDayManage() {
+        $.ajax({
+            url: '/news_lv/events/last7days/favorites', // URL API của bạn
+            method: 'GET',
+            data: {
+                category: category
+            },
+            success: function(response) {
+                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+                var data = response.result.map(item => parseInt(item.split(': ')[1]));
+                var labels = response.result.map(item => item.split(': ')[0]);
+
+                updateChartFavorite7LastDayManage(data, labels);
+            },
+            error: function(error) {
+                console.error('Error fetching data', error);
+            }
+        });
+    }
+
+    function updateChartFavorite7LastDayManage(data, labels) {
+        var ctx1 = document.getElementById("favorite7LastDay-manage").getContext("2d");
+
+        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+        if (chartInstanceFavorite7LastDayManage) {
+            chartInstanceFavorite7LastDayManage.destroy();
+        }
+
+        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+        gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+        gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+        gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+        chartInstanceFavorite7LastDayManage = new Chart(ctx1, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Lượt yêu thích",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#5e72e4",
+                    backgroundColor: gradientStroke1,
+                    borderWidth: 3,
+                    fill: true,
+                    data: data,
+                    maxBarThickness: 6
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#fbfbfb',
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#ccc',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                },
+            },
+        });
+    }
     /*-------------------------------FAVORITE------------------------------------*/
     /*-------------------------------VIEW----------------------------------------*/
     var chartInstanceViewYearManage; // Biến toàn cục để lưu trữ biểu đồ
     var chartInstanceViewMonthManage; // Biến toàn cục để lưu trữ biểu đồ
+    var chartInstanceView7LastDayManage; // Biến toàn cục để lưu trữ biểu đồ
 
     function viewYearManage() {
         $.ajax({
@@ -517,6 +627,114 @@ $(document).ready(function () {
             },
         });
     }
+
+    function view7LastDayManage() {
+        $.ajax({
+            url: '/news_lv/events/last7days/view', // URL API của bạn
+            method: 'GET',
+            data: {
+                category: category
+            },
+            success: function(response) {
+                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+                var data = response.result.map(item => parseInt(item.split(': ')[1]));
+                var labels = response.result.map(item => item.split(': ')[0]);
+
+                updateChartView7LastDayManage(data, labels);
+            },
+            error: function(error) {
+                console.error('Error fetching data', error);
+            }
+        });
+    }
+
+    function updateChartView7LastDayManage(data, labels) {
+        var ctx1 = document.getElementById("view7LastDay-manage").getContext("2d");
+
+        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+        if (chartInstanceView7LastDayManage) {
+            chartInstanceView7LastDayManage.destroy();
+        }
+
+        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+        gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
+        gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
+        gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
+
+        chartInstanceView7LastDayManage = new Chart(ctx1, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Lượt xem",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#5e72e4",
+                    backgroundColor: gradientStroke1,
+                    borderWidth: 3,
+                    fill: true,
+                    data: data,
+                    maxBarThickness: 6
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            drawBorder: false,
+                            display: true,
+                            drawOnChartArea: true,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            padding: 10,
+                            color: '#fbfbfb',
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                    x: {
+                        grid: {
+                            drawBorder: false,
+                            display: false,
+                            drawOnChartArea: false,
+                            drawTicks: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            display: true,
+                            color: '#ccc',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "Open Sans",
+                                style: 'normal',
+                                lineHeight: 2
+                            },
+                        }
+                    },
+                },
+            },
+        });
+    }
     /*-------------------------------VIEW----------------------------------------*/
 
     var Role = sessionStorage.getItem('Role')
@@ -536,9 +754,13 @@ $(document).ready(function () {
 
             favoriteMonthManage()
 
+            favorite7LastDayManage()
+
             viewYearManage()
 
             viewMonthManage()
+
+            view7LastDayManage()
         })
     }
 });

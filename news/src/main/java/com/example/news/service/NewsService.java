@@ -173,6 +173,12 @@ public class NewsService {
                 .collect(Collectors.toList());
     }
 
+    public List<NewsResponse> getTop5NewsByCategoryCode(String categoryCode) {
+        return newsRepository.findTop5ByCategories_codeOrderByModifiedDateDesc(categoryCode).stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+
     public int countAllNews() {
         return (int) newsRepository.count();
     }
@@ -376,4 +382,9 @@ public class NewsService {
         ));
     }
 
+    public String getAudioPath(Long newsId) {
+        return newsRepository.findById(newsId)
+                .map(News::getAudioPath)
+                .orElse(null);
+    }
 }

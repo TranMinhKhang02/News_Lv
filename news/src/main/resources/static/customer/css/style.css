@@ -613,7 +613,7 @@ pre code {
 }
 
 @media (min-width: 768px) {
-  .container, .container-sm, .container-md {
+  .container, .container-sm, .container-md, .ck-editor__main {
     max-width: 720px;
   }
 }

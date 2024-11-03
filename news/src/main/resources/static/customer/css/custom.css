@@ -149,7 +149,10 @@
 }
 
 .ck-editor__main {
-    width: 670px;
+    /*width: 670px;*/
+    width: 100%;
+    max-width: 670px;
+    box-sizing: border-box;
 }
 
 .ck-editor__editable {
@@ -165,4 +168,26 @@
     top: 50px;
     /*width: 100%;*/
     margin-left: 760px;
+}
+
+#audioElement {
+    max-width: 100%;
+}
+
+@media (min-width: 576px) {
+    #audioElement {
+        justify-content: center;
+    }
+}
+
+@media (min-width: 768px) {
+    #audioElement {
+        justify-content: center;
+    }
+}
+
+@media (min-width: 992px) {
+}
+
+@media (min-width: 1200px) {
 }

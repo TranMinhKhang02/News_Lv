@@ -89,6 +89,24 @@ public class EventController {
         return eventService.getViewEventsMonth();
     }
 
+    @GetMapping("/view-events/last7days")
+    public ApiResponse<Object> getViewEventsLast7Days() {
+        var viewCounts = eventService.getViewEventsLast7Days();
+        return ApiResponse.builder()
+                .code(1000)
+                .result(viewCounts)
+                .build();
+    }
+
+    @GetMapping("/favorite-events/last7days")
+    public ApiResponse<Object> getFavoriteEventsLast7Days() {
+        var favoriteCounts = eventService.getFavoriteEventsLast7Days();
+        return ApiResponse.builder()
+                .code(1000)
+                .result(favoriteCounts)
+                .build();
+    }
+
     @GetMapping("/favorite-events/custom")
     public List<String> getFavoriteEventsCustom(@RequestParam String startDate, @RequestParam String endDate) {
         return eventService.getFavoriteEventsCustom(startDate, endDate);
@@ -154,4 +172,60 @@ public class EventController {
     public List<String> getFavoriteEventsYearByCategory(@RequestParam String category) {
         return eventService.getFavoriteEventsYearByCategory(category);
     }
+
+    @GetMapping("/last7days/view")
+    public ApiResponse<Object> getViewEventsLast7DaysByCategory(@RequestParam String category) {
+        var viewCounts = eventService.getViewEventsLast7DaysByCategory(category);
+        return ApiResponse.builder()
+                .code(1000)
+                .result(viewCounts)
+                .build();
+    }
+
+    @GetMapping("/last7days/favorites")
+    public ApiResponse<Object> getFavoriteEventsLast7DaysByCategory(@RequestParam String category) {
+        var favoriteCounts = eventService.getFavoriteEventsLast7DaysByCategory(category);
+        return ApiResponse.builder()
+                .code(1000)
+                .result(favoriteCounts)
+                .build();
+    }
+
+    /*=====================Start-AUTHOR===========================*/
+    @GetMapping("/today/views/createdBy")
+    public ApiResponse<Object> getTodayViewEventsByCreatedBy(@RequestParam String createdBy) {
+        var todayViews = eventService.getTodayViewEventsByCreatedBy(createdBy);
+        return ApiResponse.builder()
+                .code(1000)
+                .result(todayViews)
+                .build();
+    }
+
+    @GetMapping("/today/favorites/createdBy")
+    public ApiResponse<Object> getTodayFavoriteEventsByCreatedBy(@RequestParam String createdBy) {
+        var todayFavorites = eventService.getTodayFavoriteEventsByCreatedBy(createdBy);
+        return ApiResponse.builder()
+                .code(1000)
+                .result(todayFavorites)
+                .build();
+    }
+
+    @GetMapping("/week/views/createdBy")
+    public ApiResponse<Object> getWeekViewEventsByCreatedBy(@RequestParam String createdBy) {
+        var weekViews = eventService.getWeekViewEventsByCreatedBy(createdBy);
+        return ApiResponse.builder()
+                .code(1000)
+                .result(weekViews)
+                .build();
+    }
+
+    @GetMapping("/week/favorites/createdBy")
+    public ApiResponse<Object> getWeekFavoriteEventsByCreatedBy(@RequestParam String createdBy) {
+        var weekFavorites = eventService.getWeekFavoriteEventsByCreatedBy(createdBy);
+        return ApiResponse.builder()
+                .code(1000)
+                .result(weekFavorites)
+                .build();
+    }
+    /*=====================End-AUTHOR===========================*/
 }
