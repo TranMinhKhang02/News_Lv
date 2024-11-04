@@ -33,6 +33,8 @@ function getNewsItemByNewsId() {
                 var news = response.result;
                 $('input[name="title"]').val(news.title);
                 $('input[name="shortDescription"]').val(news.shortDescription);
+                /*$('#thumbnail').val(news.thumbnail);
+                $('#thumbnailUrl').val(news.thumbnail);*/
                 displaySelectedThumbnail(news.thumbnail);
                 fetchCategoryNameInEditNews(news.categories[0].code);
                 loadComments(newsId);

@@ -1,5 +1,6 @@
 package com.example.news.service;
 
+import com.example.news.dto.request.AdminCreateUserRequest;
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
 import com.example.news.dto.request.UserUpdateRequestByAdmin;
@@ -64,6 +65,24 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
+    public UserResponse adminCreateUser(AdminCreateUserRequest request, long roleId) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy role!"));
+        User user = userMapper.toUser(request);
+        user.setRole(role);
+        user.setStatus(1);
+        // Mã hoá mật khẩu Bcrypt
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user = userRepository.save(user);
+        return userMapper.toUserResponse(user);
+    }
+
+   /* public UserResponse adminCreateUser(AdminCreateUserRequest request) {
+        User user = userMapper.toUser(request);
+        user = userRepository.save(user);
+        return userMapper.toUserResponse(user);
+    }*/
 
     public UserResponse updateUser(long userId, UserUpdateRequest request) {
 

@@ -1,5 +1,6 @@
 package com.example.news.controller;
 
+import com.example.news.dto.request.AdminCreateUserRequest;
 import com.example.news.dto.request.UserUpdateRequestByAdmin;
 import com.example.news.dto.response.ApiNewsResponse;
 import com.example.news.dto.response.ApiResponse;
@@ -22,6 +23,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -48,6 +50,15 @@ public class UserController {
         return apiResponse;
     }
 
+    @PostMapping("/createUser/{roleId}")
+    public ApiResponse<UserResponse> adminCreateUser(
+            @PathVariable("roleId") long roleId,
+            @RequestBody @Valid AdminCreateUserRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(userService.adminCreateUser(request, roleId))
+                .build();
+    }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")

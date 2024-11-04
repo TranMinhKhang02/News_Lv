@@ -238,9 +238,12 @@ $(document).on('click', '#updateCategory', function (e) {
 })
 
 function updateCategory(categoryId) {
+    var categoryName = $('#categoryName').val();
+    var categoryCode = generateCategoryCode(categoryName);
+
     var categoryData = {
-        name: $('#categoryName').val(),
-        code: $('#categoryCode').val(),
+        name: categoryName,
+        code: categoryCode,
         parentCategory: $('#category-select').val(),
         description: $('#description').val()
     };

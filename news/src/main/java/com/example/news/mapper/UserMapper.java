@@ -1,5 +1,6 @@
 package com.example.news.mapper;
 
+import com.example.news.dto.request.AdminCreateUserRequest;
 import com.example.news.dto.request.UserCreationRequest;
 import com.example.news.dto.request.UserUpdateRequest;
 import com.example.news.dto.request.UserUpdateRequestByAdmin;
@@ -12,6 +13,9 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
+//    @Mapping(target = "role", source = "roleId")
+    User toUser(AdminCreateUserRequest request);
     //@Mapping(source = "", target = "")
 
     User toUser(UserCreationRequest request);

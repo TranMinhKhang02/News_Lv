@@ -476,6 +476,7 @@ function renderTopViewedNews(news) {
 
 // ====================================News By CategoryCode View==============================
 function fetchNewsByTopModifiedByCategory() {
+    var newsId = getNewsIdFromUrl();
     var categoryCode = sessionStorage.getItem('categoryCode');
     var topViewByCategoryContent = $('#topModifiedByCategoryCode');
     topViewByCategoryContent.empty();
@@ -485,8 +486,12 @@ function fetchNewsByTopModifiedByCategory() {
         success: function(response) {
             if (response.code === 1000 && Array.isArray(response.result)) {
                 response.result.forEach(function(news) {
-                    var newsItem = renderTopModifiedByCategory(news);
-                    topViewByCategoryContent.append(newsItem);
+                    if (news.id !== newsId) { // Loại bỏ bài viết có ID trùng
+                        var newsItem = renderTopModifiedByCategory(news);
+                        topViewByCategoryContent.append(newsItem);
+                    }
+                    /*var newsItem = renderTopModifiedByCategory(news);
+                    topViewByCategoryContent.append(newsItem);*/
                 });
             } else {
                 console.error('Unexpected response format:', response);

@@ -4,7 +4,6 @@ import com.example.news.dto.request.NewsRequest;
 import com.example.news.dto.request.NewsUpdateRequest;
 import com.example.news.dto.request.NewsUpdateStatusRequest;
 import com.example.news.dto.response.*;
-import com.example.news.entity.News;
 import com.example.news.exception.AppException;
 import com.example.news.exception.ErrorCode;
 import com.example.news.repository.NewsRepository;

@@ -201,8 +201,46 @@
     </div>
   </div>
 </div>-->
+<!--=====================Chọn option ở đây=============================-->
 <div class="row mt-4">
-    <div class="col-lg-7 mb-lg-0 mb-4">
+    <div class="col-lg-12 mb-lg-0 mb-4">
+        <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize">Chọn biểu đồ thống kê</h6>
+                <div class="d-flex justify-content-between">
+                    <div class="form-check">
+                        <input class="form-check-input favoriteYearCheckbox" type="checkbox" value="" id="favoriteYearCheckbox">
+                        <label class="form-check-label" for="favoriteYearCheckbox">
+                            Yêu thích theo năm
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="favoriteMonthCheckbox">
+                        <label class="form-check-label" for="favoriteMonthCheckbox">
+                            Yêu thích theo tháng
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="favorite7DaysCheckbox">
+                        <label class="form-check-label" for="favorite7DaysCheckbox">
+                            Yêu thích 7 ngày
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="favoriteCustomCheckbox">
+                        <label class="form-check-label" for="favoriteCustomCheckbox">
+                            Yêu thích thủ công
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--=====================End chọn option ở đây================================-->
+
+<div class="row mt-4">
+    <div class="col-lg-7 mb-lg-0 mb-4" id="chartFavoriteYear">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Yêu thích tin tức</h6>
@@ -213,18 +251,18 @@
             </div>
             <div class="card-body p-3">
                 <div class="chart">
-                    <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+                    <canvas id="favoriteYear" class="chart-canvas" height="300"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-5 mb-lg-0 mb-4">
+    <div class="col-lg-5 mb-lg-0 mb-4" id="chartFavoriteMonth">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Yêu thích tin tức</h6>
                 <p class="text-sm mb-0">
 <!--                  <i class="fa fa-arrow-up text-success"></i>-->
-                  <span class="font-weight-bold">4% more</span> Thống kê theo tuần
+                  <span class="font-weight-bold">4% more</span> Thống kê theo tháng
                 </p>
             </div>
             <div class="card-body p-3">
@@ -316,9 +354,7 @@
         </div>
       </div>
     </div>-->
-</div>
-<div class="row mt-4">
-    <div class="col-lg-7 mb-lg-0 mb-4">
+    <div class="col-lg-5 mb-lg-0 mb-4" id="chartFavorite7LastDay">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Yêu thích tin tức</h6>
@@ -334,25 +370,120 @@
             </div>
         </div>
     </div>
-    <!--<div class="col-lg-5 mb-lg-0 mb-4">
+    <div class="col-lg-7 mb-lg-0 mb-4 mt-4" id="chartFavoriteCustom">
+        <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize">Yêu thích tin tức</h6>
+                <div class="d-flex justify-content-between">
+                    <p class="text-sm mb-0">
+                        <!--                  <i class="fa fa-arrow-up text-success"></i>-->
+                        Thống kê
+                        <!--                        <span class="font-weight-bold">4% more</span> Thống kê-->
+                        <button id="fetchCustomStats" class="btn btn-primary ms-4">Lấy thống kê</button>
+                    </p>
+                    <div class="form-group">
+                        <label for="startDate">Ngày bắt đầu:</label>
+                        <input type="date" id="startDate" class="form-control" style="max-width: 140px">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Ngày kết thúc:</label>
+                        <input type="date" id="endDate" class="form-control" style="max-width: 140px">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="chart">
+                    <canvas id="favoriteCustom" class="chart-canvas" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="row mt-4">
+    <div class="col-lg-5 mb-lg-0 mb-4" id="chartFavorite7LastDay">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Yêu thích tin tức</h6>
                 <p class="text-sm mb-0">
                     &lt;!&ndash;                  <i class="fa fa-arrow-up text-success"></i>&ndash;&gt;
-                    <span class="font-weight-bold">4% more</span> Thống kê theo tuần
+                    <span class="font-weight-bold">4% more</span> Thống kê 7 ngày gần đây
                 </p>
             </div>
             <div class="card-body p-3">
                 <div class="chart">
-                    <canvas id="favoriteMonth" class="chart-canvas" height="300"></canvas>
+                    <canvas id="favorite7LastDay" class="chart-canvas" height="300"></canvas>
                 </div>
             </div>
         </div>
-    </div>-->
-</div>
+    </div>
+    <div class="col-lg-7 mb-lg-0 mb-4" id="chartFavoriteCustom">
+        <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize">Yêu thích tin tức</h6>
+                <div class="d-flex justify-content-between">
+                    <p class="text-sm mb-0">
+                        &lt;!&ndash;                  <i class="fa fa-arrow-up text-success"></i>&ndash;&gt;
+                        Thống kê
+&lt;!&ndash;                        <span class="font-weight-bold">4% more</span> Thống kê&ndash;&gt;
+                        <button id="fetchCustomStats" class="btn btn-primary ms-4">Lấy thống kê</button>
+                    </p>
+                    <div class="form-group">
+                        <label for="startDate">Ngày bắt đầu:</label>
+                        <input type="date" id="startDate" class="form-control" style="max-width: 140px">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Ngày kết thúc:</label>
+                        <input type="date" id="endDate" class="form-control" style="max-width: 140px">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="chart">
+                    <canvas id="favoriteCustom" class="chart-canvas" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->
+<!--=====================Chọn option ở đây=============================-->
 <div class="row mt-4">
-    <div class="col-lg-7 mb-lg-0 mb-4">
+    <div class="col-lg-12 mb-lg-0 mb-4">
+        <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize">Chọn biểu đồ thống kê</h6>
+                <div class="d-flex justify-content-between">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="viewYearCheckbox">
+                        <label class="form-check-label" for="viewYearCheckbox">
+                            Lượt xem theo năm
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="viewMonthCheckbox">
+                        <label class="form-check-label" for="viewMonthCheckbox">
+                            Lượt xem theo tháng
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="view7DaysCheckbox">
+                        <label class="form-check-label" for="view7DaysCheckbox">
+                            Lượt xem 7 ngày
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="viewCustomCheckbox">
+                        <label class="form-check-label" for="viewCustomCheckbox">
+                            Lượt xem thủ công
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--=====================End chọn option ở đây================================-->
+<div class="row mt-4">
+    <div class="col-lg-7 mb-lg-0 mb-4" id="chartViewYear">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Lượt xem tin tức</h6>
@@ -368,13 +499,13 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-5 mb-lg-0 mb-4">
+    <div class="col-lg-5 mb-lg-0 mb-4" id="chartViewMonth">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Lượt xem tin tức</h6>
                 <p class="text-sm mb-0">
 <!--                  <i class="fa fa-arrow-up text-success"></i>-->
-                  <span class="font-weight-bold">4% more</span> Thống kê theo tuần
+                  <span class="font-weight-bold">4% more</span> Thống kê theo tháng
                 </p>
             </div>
             <div class="card-body p-3">
@@ -384,9 +515,7 @@
             </div>
         </div>
     </div>
-</div>
-<div class="row mt-4">
-    <div class="col-lg-7 mb-lg-0 mb-4">
+    <div class="col-lg-5 mb-lg-0 mb-4" id="chartView7LastDay">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Lượt xem tin tức</h6>
@@ -402,7 +531,38 @@
             </div>
         </div>
     </div>
-    <!--<div class="col-lg-5 mb-lg-0 mb-4">
+    <div class="col-lg-7 mb-lg-0 mb-4 mt-4" id="chartViewCustom">
+        <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize">Lượt xem tin tức</h6>
+                <div class="d-flex justify-content-between">
+                    <p class="text-sm mb-0">
+                        <!--                  <i class="fa fa-arrow-up text-success"></i>-->
+                        Thống kê
+                        <!--                        <span class="font-weight-bold">4% more</span> Thống kê-->
+                        <button id="fetchViewCustom" class="btn btn-primary ms-4">Lấy thống kê</button>
+                    </p>
+                    <div class="form-group">
+                        <label for="startDate">Ngày bắt đầu:</label>
+                        <input type="date" id="startDateView" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Ngày kết thúc:</label>
+                        <input type="date" id="endDateView" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="chart">
+                    <canvas id="viewCustom" class="chart-canvas" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<div class="row mt-4">
+    <div class="col-lg-5 mb-lg-0 mb-4" id="chartView7LastDay">
         <div class="card z-index-2 h-100">
             <div class="card-header pb-0 pt-3 bg-transparent">
                 <h6 class="text-capitalize">Lượt xem tin tức</h6>
@@ -413,9 +573,37 @@
             </div>
             <div class="card-body p-3">
                 <div class="chart">
-                    <canvas id="viewMonth" class="chart-canvas" height="300"></canvas>
+                    <canvas id="view7LastDay" class="chart-canvas" height="300"></canvas>
                 </div>
             </div>
         </div>
-    </div>-->
-</div>
+    </div>
+    <div class="col-lg-7 mb-lg-0 mb-4" id="chartViewCustom">
+        <div class="card z-index-2 h-100">
+            <div class="card-header pb-0 pt-3 bg-transparent">
+                <h6 class="text-capitalize">Lượt xem tin tức</h6>
+                <div class="d-flex justify-content-between">
+                    <p class="text-sm mb-0">
+                        &lt;!&ndash;                  <i class="fa fa-arrow-up text-success"></i>&ndash;&gt;
+                        Thống kê
+&lt;!&ndash;                        <span class="font-weight-bold">4% more</span> Thống kê&ndash;&gt;
+                        <button id="fetchViewCustom" class="btn btn-primary ms-4">Lấy thống kê</button>
+                    </p>
+                    <div class="form-group">
+                        <label for="startDate">Ngày bắt đầu:</label>
+                        <input type="date" id="startDateView" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Ngày kết thúc:</label>
+                        <input type="date" id="endDateView" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="chart">
+                    <canvas id="viewCustom" class="chart-canvas" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->

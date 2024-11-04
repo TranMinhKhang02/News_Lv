@@ -12,11 +12,21 @@ function titlePageAuthor() {
     titlePage.html('Quản lý bài viết');
 }
 
-function loadNewsByCreatedBy(createdBy, status) {
+function loadNewsByCreatedBy(createdBy, status, categoryCode) {
     $('#content-container').load('/news_lv/page/newsTable', function () {
         fetchCategoryNames();
-        fetchNewsByCreatedBy(createdBy, status, 'the-thao')
+        fetchNewsByCreatedBy(createdBy, status, categoryCode)
     });
+
+    setTimeout(function () {
+        $('tr').each(function () {
+            var editLink = $(this).find('a#editNews');
+            var newsIdInRow = editLink.data('news-id');
+            if (newsIdInRow == newsId) {
+                $(this).find('#title-newsTable').addClass('active-categoryName');
+            }
+        });
+    }, 300);
 }
 
 $(document).on('click', '#news-approvedAuthor', function(e) {
@@ -27,7 +37,7 @@ $(document).on('click', '#news-approvedAuthor', function(e) {
     var status = $(this).data('status');
     sessionStorage.setItem('categoryCodeInNewItem', 'the-thao');
     sessionStorage.setItem('status', status);
-    loadNewsByCreatedBy(createdBy, status)
+    loadNewsByCreatedBy(createdBy, status, 'the-thao')
     $(this).addClass('active-categoryName');
     waitApproveAuthor.removeClass('active-categoryName');
     refusedAuthor.removeClass('active-categoryName');
@@ -41,7 +51,7 @@ $(document).on('click', '#news-waitApproveAuthor', function(e) {
     var status = $(this).data('status');
     sessionStorage.setItem('categoryCodeInNewItem', 'the-thao');
     sessionStorage.setItem('status', status);
-    loadNewsByCreatedBy(createdBy, status)
+    loadNewsByCreatedBy(createdBy, status, 'the-thao')
     $(this).addClass('active-categoryName');
     approvedAuthor.removeClass('active-categoryName');
     refusedAuthor.removeClass('active-categoryName');
@@ -55,7 +65,7 @@ $(document).on('click', '#news-refusedAuthor', function(e) {
     var status = $(this).data('status');
     sessionStorage.setItem('categoryCodeInNewItem', 'the-thao');
     sessionStorage.setItem('status', status);
-    loadNewsByCreatedBy(createdBy, status)
+    loadNewsByCreatedBy(createdBy, status, 'the-thao')
     $(this).addClass('active-categoryName');
     approvedAuthor.removeClass('active-categoryName');
     waitApproveAuthor.removeClass('active-categoryName');

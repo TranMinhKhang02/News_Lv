@@ -1,728 +1,83 @@
 $(document).ready(function () {
-    /*function summarizeAllNews() {
-        $.ajax({
-            url: '/news_lv/news/summarize',
-            type: 'POST',
-            success: function () {
-                console.log('Tóm tắt tất cả bài viết thành công!');
-                // Cập nhật giao diện nếu cần
-            },
-            error: function (error) {
-                console.error('Error summarizing news:', error);
+
+    setTimeout(function () {
+
+        $('#favoriteYearCheckbox').prop('checked', true);
+        $('#favoriteMonthCheckbox').prop('checked', true);
+        $('#viewYearCheckbox').prop('checked', true);
+        $('#viewMonthCheckbox').prop('checked', true);
+        // Gọi hàm toggleChart cho các checkbox và biểu đồ tương ứng
+        toggleChart($('#favoriteYearCheckbox'), $('#chartFavoriteYear'));
+        toggleChart($('#favoriteMonthCheckbox'), $('#chartFavoriteMonth'));
+        toggleChart($('#favorite7DaysCheckbox'), $('#chartFavorite7LastDay'));
+        toggleChart($('#favoriteCustomCheckbox'), $('#chartFavoriteCustom'));
+        toggleChart($('#viewYearCheckbox'), $('#chartViewYear'));
+        toggleChart($('#viewMonthCheckbox'), $('#chartViewMonth'));
+        toggleChart($('#view7DaysCheckbox'), $('#chartView7LastDay'));
+        toggleChart($('#viewCustomCheckbox'), $('#chartViewCustom'));
+
+        // Hiển thị các biểu đồ mặc định
+        /*$('#chartFavoriteYear').show();
+        $('#chartFavorite7LastDay').show()
+        $('#chartFavoriteMonth').css('display', 'none')
+        $('#chartFavoriteCustom').css('display', 'none')*/
+    }, 100); // Đặt độ trễ 100ms
+
+    function toggleChart(checkbox, chart) {
+        // Kiểm tra trạng thái của checkbox ngay khi hàm được gọi
+        if (checkbox.is(':checked')) {
+            chart.show();
+            if (chart.is('#chartFavoriteMonth')) {
+                $('#chartFavorite7LastDay').addClass('mt-4');
+            }
+            if (chart.is('#chartViewMonth')) {
+                $('#chartView7LastDay').addClass('mt-4');
+            }
+        } else {
+            chart.css('display', 'none');
+            if (chart.is('#chartFavoriteMonth')) {
+                $('#chartFavorite7LastDay').removeClass('mt-4');
+            }
+            if (chart.is('#chartViewMonth')) {
+                $('#chartView7LastDay').removeClass('mt-4');
+            }
+        }
+
+        // Gắn sự kiện change cho checkbox để cập nhật trạng thái biểu đồ
+        checkbox.change(function() {
+            if (checkbox.is(':checked')) {
+                chart.show();
+                if (chart.is('#chartFavoriteMonth')) {
+                    $('#chartFavorite7LastDay').addClass('mt-4');
+                }
+                if (chart.is('#chartViewMonth')) {
+                    $('#chartView7LastDay').addClass('mt-4');
+                }
+            } else {
+                chart.css('display', 'none');
+                if (chart.is('#chartFavoriteMonth')) {
+                    $('#chartFavorite7LastDay').removeClass('mt-4');
+                }
+                if (chart.is('#chartViewMonth')) {
+                    $('#chartView7LastDay').removeClass('mt-4');
+                }
             }
         });
     }
-
-    summarizeAllNews()*/
+    /*function toggleChart(checkbox, chart) {
+        checkbox.change(function() {
+            if (checkbox.is(':checked')) {
+                chart.show();
+                console.log('Show chart');
+            } else {
+                chart.css('display', 'none');
+                console.log('Hide chart');
+            }
+        });
+    }*/
 
     var Role = sessionStorage.getItem('Role');
     /*=========================EVENT===============================*/
-    function fetchDataAndUpdateUI() {
-        $.ajax({
-            url: '/news_lv/events/favorite-events/today',
-            method: 'GET',
-            success: function (data) {
-                updateFavoriteToday(data.result);
-            },
-            error: function (error) {
-                console.error('Error fetching favorite events today:', error);
-            }
-        });
-
-        $.ajax({
-            url: '/news_lv/events/favorite-events/week',
-            method: 'GET',
-            success: function (data) {
-                updateFavoriteWeek(data.result);
-            },
-            error: function (error) {
-                console.error('Error fetching favorite events this week:', error);
-            }
-        });
-
-        $.ajax({
-            url: '/news_lv/events/view-events/today',
-            method: 'GET',
-            success: function (data) {
-                updateViewToday(data.result);
-            },
-            error: function (error) {
-                console.error('Error fetching view events today:', error);
-            }
-        });
-
-        $.ajax({
-            url: '/news_lv/events/view-events/week',
-            method: 'GET',
-            success: function (data) {
-                updateViewWeek(data.result);
-            },
-            error: function (error) {
-                console.error('Error fetching view events this week:', error);
-            }
-        });
-    }
-
-    function updateFavoriteToday(data) {
-        // Cập nhật giao diện với dữ liệu yêu thích hôm nay
-        $('#favorite-today').text(data);
-    }
-
-    function updateFavoriteWeek(data) {
-        // Cập nhật giao diện với dữ liệu yêu thích tuần này
-        $('#favorite-week').text(data);
-    }
-
-    function updateViewToday(data) {
-        // Cập nhật giao diện với dữ liệu lượt xem hôm nay
-        $('#view-today').text(data);
-    }
-
-    function updateViewWeek(data) {
-        // Cập nhật giao diện với dữ liệu lượt xem tuần này
-        $('#view-week').text(data);
-    }
-
-    /*-------------------------------FAVORITE YEAR-------------------------------*/
-    var chartInstanceFavoriteYear; // Biến toàn cục để lưu trữ biểu đồ
-    var chartInstanceFavoriteMonth; // Biến toàn cục để lưu trữ biểu đồ
-    var chartInstanceFavorite7LastDay; // Biến toàn cục để lưu trữ biểu đồ
-
-    function favoriteYear() {
-        $.ajax({
-            url: '/news_lv/events/favorite-events/year', // URL API của bạn
-            method: 'GET',
-            success: function(response) {
-                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
-                var data = response.map(item => parseInt(item.split(': ')[1]));
-                var labels = response.map(item => item.split(': ')[0]);
-
-                updateChart(data, labels);
-            },
-            error: function(error) {
-                console.error('Error fetching data', error);
-            }
-        });
-    }
-
-    function updateChart(data, labels) {
-        var ctx1 = document.getElementById("chart-line").getContext("2d");
-
-        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceFavoriteYear) {
-            chartInstanceFavoriteYear.destroy();
-        }
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-        gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-        gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-
-        chartInstanceFavoriteYear = new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Lượt yêu thích",
-                    tension: 0.4,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1,
-                    borderWidth: 3,
-                    fill: true,
-                    data: data,
-                    maxBarThickness: 6
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#fbfbfb',
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            color: '#ccc',
-                            padding: 20,
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                },
-            },
-        });
-    }
-
-    function favoriteMonth() {
-        $.ajax({
-            url: '/news_lv/events/favorite-events/month', // URL API của bạn
-            method: 'GET',
-            success: function(response) {
-                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
-                var data = response.map(item => parseInt(item.split(': ')[1]));
-                var labels = response.map(item => item.split(': ')[0]);
-
-                updateChartFavoriteMonth(data, labels);
-            },
-            error: function(error) {
-                console.error('Error fetching data', error);
-            }
-        });
-    }
-
-    function updateChartFavoriteMonth(data, labels) {
-        var ctx1 = document.getElementById("favoriteMonth").getContext("2d");
-
-        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceFavoriteMonth) {
-            chartInstanceFavoriteMonth.destroy();
-        }
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-        gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-        gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-
-        chartInstanceFavoriteMonth = new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Lượt yêu thích",
-                    tension: 0.4,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1,
-                    borderWidth: 3,
-                    fill: true,
-                    data: data,
-                    maxBarThickness: 6
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#fbfbfb',
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            color: '#ccc',
-                            padding: 20,
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                },
-            },
-        });
-    }
-
-    function favorite7LastDay() {
-        $.ajax({
-            url: '/news_lv/events/favorite-events/last7days', // URL API của bạn
-            method: 'GET',
-            success: function(response) {
-                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
-                var data = response.result.map(item => parseInt(item.split(': ')[1]));
-                var labels = response.result.map(item => item.split(': ')[0]);
-
-                updateChartFavorite7LastDay(data, labels);
-            },
-            error: function(error) {
-                console.error('Error fetching data', error);
-            }
-        });
-    }
-
-    function updateChartFavorite7LastDay(data, labels) {
-        var ctx1 = document.getElementById("favorite7LastDay").getContext("2d");
-
-        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceFavorite7LastDay) {
-            chartInstanceFavorite7LastDay.destroy();
-        }
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-        gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-        gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-
-        chartInstanceFavorite7LastDay = new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Lượt yêu thích",
-                    tension: 0.4,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1,
-                    borderWidth: 3,
-                    fill: true,
-                    data: data,
-                    maxBarThickness: 6
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#fbfbfb',
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            color: '#ccc',
-                            padding: 20,
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                },
-            },
-        });
-    }
-    /*-------------------------------FAVORITE------------------------------------*/
-    /*-------------------------------VIEW----------------------------------------*/
-    var chartInstanceViewYear; // Biến toàn cục để lưu trữ biểu đồ
-    var chartInstanceViewMonth; // Biến toàn cục để lưu trữ biểu đồ
-    var chartInstanceView7LastDay; // Biến toàn cục để lưu trữ biểu đồ
-
-    function viewYear() {
-        $.ajax({
-            url: '/news_lv/events/view-events/year', // URL API của bạn
-            method: 'GET',
-            success: function(response) {
-                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
-                var data = response.map(item => parseInt(item.split(': ')[1]));
-                var labels = response.map(item => item.split(': ')[0]);
-
-                updateChartViewYear(data, labels);
-            },
-            error: function(error) {
-                console.error('Error fetching data', error);
-            }
-        });
-    }
-
-    function updateChartViewYear(data, labels) {
-        var ctx1 = document.getElementById("viewYear").getContext("2d");
-
-        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceViewYear) {
-            chartInstanceViewYear.destroy();
-        }
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-        gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
-        gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
-
-        chartInstanceViewYear = new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Lượt xem",
-                    tension: 0.4,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1,
-                    borderWidth: 3,
-                    fill: true,
-                    data: data,
-                    maxBarThickness: 6
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#fbfbfb',
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            color: '#ccc',
-                            padding: 20,
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                },
-            },
-        });
-    }
-
-    function viewMonth() {
-        $.ajax({
-            url: '/news_lv/events/view-events/month', // URL API của bạn
-            method: 'GET',
-            success: function(response) {
-                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
-                var data = response.map(item => parseInt(item.split(': ')[1]));
-                var labels = response.map(item => item.split(': ')[0]);
-
-                updateChartViewMonth(data, labels);
-            },
-            error: function(error) {
-                console.error('Error fetching data', error);
-            }
-        });
-    }
-
-    function updateChartViewMonth(data, labels) {
-        var ctx1 = document.getElementById("viewMonth").getContext("2d");
-
-        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceViewMonth) {
-            chartInstanceViewMonth.destroy();
-        }
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-        gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
-        gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
-
-        chartInstanceViewMonth = new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Lượt xem",
-                    tension: 0.4,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1,
-                    borderWidth: 3,
-                    fill: true,
-                    data: data,
-                    maxBarThickness: 6
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#fbfbfb',
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            color: '#ccc',
-                            padding: 20,
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                },
-            },
-        });
-    }
-
-    function view7LastDay() {
-        $.ajax({
-            url: '/news_lv/events/view-events/last7days', // URL API của bạn
-            method: 'GET',
-            success: function(response) {
-                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
-                var data = response.result.map(item => parseInt(item.split(': ')[1]));
-                var labels = response.result.map(item => item.split(': ')[0]);
-
-                updateChartView7LastDay(data, labels);
-            },
-            error: function(error) {
-                console.error('Error fetching data', error);
-            }
-        });
-    }
-
-    function updateChartView7LastDay(data, labels) {
-        var ctx1 = document.getElementById("view7LastDay").getContext("2d");
-
-        // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
-        if (chartInstanceView7LastDay) {
-            chartInstanceView7LastDay.destroy();
-        }
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-        gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
-        gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
-
-        chartInstanceView7LastDay = new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Lượt xem",
-                    tension: 0.4,
-                    borderWidth: 0,
-                    pointRadius: 0,
-                    borderColor: "#5e72e4",
-                    backgroundColor: gradientStroke1,
-                    borderWidth: 3,
-                    fill: true,
-                    data: data,
-                    maxBarThickness: 6
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#fbfbfb',
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            color: '#ccc',
-                            padding: 20,
-                            font: {
-                                size: 11,
-                                family: "Open Sans",
-                                style: 'normal',
-                                lineHeight: 2
-                            },
-                        }
-                    },
-                },
-            },
-        });
-    }
-    /*-------------------------------VIEW----------------------------------------*/
     function loadDashboardAdmin() {
         $('#content-container').load('/news_lv/page/dashboardAdmin', function () {
             fetchDataAndUpdateUI();
@@ -733,11 +88,15 @@ $(document).ready(function () {
 
             favorite7LastDay()
 
+            favoriteCustom()
+
             viewYear()
 
             viewMonth()
 
             view7LastDay()
+
+            viewCustom()
         })
     }
     /*=========================EVENT===============================*/
@@ -767,6 +126,951 @@ $(document).ready(function () {
         navManage.remove()
     }
 
+});
+
+function fetchDataAndUpdateUI() {
+    $.ajax({
+        url: '/news_lv/events/favorite-events/today',
+        method: 'GET',
+        success: function (data) {
+            updateFavoriteToday(data.result);
+        },
+        error: function (error) {
+            console.error('Error fetching favorite events today:', error);
+        }
+    });
+
+    $.ajax({
+        url: '/news_lv/events/favorite-events/week',
+        method: 'GET',
+        success: function (data) {
+            updateFavoriteWeek(data.result);
+        },
+        error: function (error) {
+            console.error('Error fetching favorite events this week:', error);
+        }
+    });
+
+    $.ajax({
+        url: '/news_lv/events/view-events/today',
+        method: 'GET',
+        success: function (data) {
+            updateViewToday(data.result);
+        },
+        error: function (error) {
+            console.error('Error fetching view events today:', error);
+        }
+    });
+
+    $.ajax({
+        url: '/news_lv/events/view-events/week',
+        method: 'GET',
+        success: function (data) {
+            updateViewWeek(data.result);
+        },
+        error: function (error) {
+            console.error('Error fetching view events this week:', error);
+        }
+    });
+}
+
+function updateFavoriteToday(data) {
+    // Cập nhật giao diện với dữ liệu yêu thích hôm nay
+    $('#favorite-today').text(data);
+}
+
+function updateFavoriteWeek(data) {
+    // Cập nhật giao diện với dữ liệu yêu thích tuần này
+    $('#favorite-week').text(data);
+}
+
+function updateViewToday(data) {
+    // Cập nhật giao diện với dữ liệu lượt xem hôm nay
+    $('#view-today').text(data);
+}
+
+function updateViewWeek(data) {
+    // Cập nhật giao diện với dữ liệu lượt xem tuần này
+    $('#view-week').text(data);
+}
+
+/*-------------------------------FAVORITE YEAR-------------------------------*/
+var chartInstanceFavoriteYear; // Biến toàn cục để lưu trữ biểu đồ
+var chartInstanceFavoriteMonth; // Biến toàn cục để lưu trữ biểu đồ
+var chartInstanceFavorite7LastDay; // Biến toàn cục để lưu trữ biểu đồ
+var chartInstanceFavoriteCustom; // Biến toàn cục để lưu trữ biểu đồ
+
+function favoriteYear() {
+    $.ajax({
+        url: '/news_lv/events/favorite-events/year', // URL API của bạn
+        method: 'GET',
+        success: function(response) {
+            // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+            var data = response.map(item => parseInt(item.split(': ')[1]));
+            var labels = response.map(item => item.split(': ')[0]);
+
+            updateChart(data, labels);
+        },
+        error: function(error) {
+            console.error('Error fetching data', error);
+        }
+    });
+}
+
+function updateChart(data, labels) {
+    var ctx1 = document.getElementById("favoriteYear").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceFavoriteYear) {
+        chartInstanceFavoriteYear.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+    chartInstanceFavoriteYear = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt yêu thích",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+
+function favoriteMonth() {
+    $.ajax({
+        url: '/news_lv/events/favorite-events/month', // URL API của bạn
+        method: 'GET',
+        success: function(response) {
+            // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+            var data = response.map(item => parseInt(item.split(': ')[1]));
+            var labels = response.map(item => item.split(': ')[0]);
+
+            updateChartFavoriteMonth(data, labels);
+        },
+        error: function(error) {
+            console.error('Error fetching data', error);
+        }
+    });
+}
+
+function updateChartFavoriteMonth(data, labels) {
+    var ctx1 = document.getElementById("favoriteMonth").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceFavoriteMonth) {
+        chartInstanceFavoriteMonth.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+    chartInstanceFavoriteMonth = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt yêu thích",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+
+function favorite7LastDay() {
+    $.ajax({
+        url: '/news_lv/events/favorite-events/last7days', // URL API của bạn
+        method: 'GET',
+        success: function(response) {
+            // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+            var data = response.result.map(item => parseInt(item.split(': ')[1]));
+            var labels = response.result.map(item => item.split(': ')[0]);
+
+            updateChartFavorite7LastDay(data, labels);
+        },
+        error: function(error) {
+            console.error('Error fetching data', error);
+        }
+    });
+}
+
+function updateChartFavorite7LastDay(data, labels) {
+    var ctx1 = document.getElementById("favorite7LastDay").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceFavorite7LastDay) {
+        chartInstanceFavorite7LastDay.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
+
+    chartInstanceFavorite7LastDay = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt yêu thích",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+
+function favoriteCustom(startDate, endDate) {
+    if (startDate && endDate) {
+        $.ajax({
+            url: '/news_lv/events/favorite-events/custom', // URL API của bạn
+            method: 'GET',
+            data: {
+                startDate: startDate,
+                endDate: endDate
+            },
+            success: function(response) {
+                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+                var data = response.map(item => parseInt(item.split(': ')[1]));
+                var labels = response.map(item => item.split(': ')[0]);
+
+                updateChartFavoriteCustom(data, labels);
+            },
+            error: function(error) {
+                console.error('Error fetching data', error);
+            }
+        });
+    }
+}
+
+function updateChartFavoriteCustom(data, labels) {
+    var ctx1 = document.getElementById("favoriteCustom").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceFavoriteCustom) {
+        chartInstanceFavoriteCustom.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+    chartInstanceFavoriteCustom = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt yêu thích",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+/*-------------------------------FAVORITE------------------------------------*/
+/*-------------------------------VIEW----------------------------------------*/
+var chartInstanceViewYear; // Biến toàn cục để lưu trữ biểu đồ
+var chartInstanceViewMonth; // Biến toàn cục để lưu trữ biểu đồ
+var chartInstanceView7LastDay; // Biến toàn cục để lưu trữ biểu đồ
+var chartInstanceViewCustom; // Biến toàn cục để lưu trữ biểu đồ
+
+function viewYear() {
+    $.ajax({
+        url: '/news_lv/events/view-events/year', // URL API của bạn
+        method: 'GET',
+        success: function(response) {
+            // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+            var data = response.map(item => parseInt(item.split(': ')[1]));
+            var labels = response.map(item => item.split(': ')[0]);
+
+            updateChartViewYear(data, labels);
+        },
+        error: function(error) {
+            console.error('Error fetching data', error);
+        }
+    });
+}
+
+function updateChartViewYear(data, labels) {
+    var ctx1 = document.getElementById("viewYear").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceViewYear) {
+        chartInstanceViewYear.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
+
+    chartInstanceViewYear = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt xem",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+
+function viewMonth() {
+    $.ajax({
+        url: '/news_lv/events/view-events/month', // URL API của bạn
+        method: 'GET',
+        success: function(response) {
+            // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+            var data = response.map(item => parseInt(item.split(': ')[1]));
+            var labels = response.map(item => item.split(': ')[0]);
+
+            updateChartViewMonth(data, labels);
+        },
+        error: function(error) {
+            console.error('Error fetching data', error);
+        }
+    });
+}
+
+function updateChartViewMonth(data, labels) {
+    var ctx1 = document.getElementById("viewMonth").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceViewMonth) {
+        chartInstanceViewMonth.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
+
+    chartInstanceViewMonth = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt xem",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+
+function view7LastDay() {
+    $.ajax({
+        url: '/news_lv/events/view-events/last7days', // URL API của bạn
+        method: 'GET',
+        success: function(response) {
+            // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+            var data = response.result.map(item => parseInt(item.split(': ')[1]));
+            var labels = response.result.map(item => item.split(': ')[0]);
+
+            updateChartView7LastDay(data, labels);
+        },
+        error: function(error) {
+            console.error('Error fetching data', error);
+        }
+    });
+}
+
+function updateChartView7LastDay(data, labels) {
+    var ctx1 = document.getElementById("view7LastDay").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceView7LastDay) {
+        chartInstanceView7LastDay.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(205, 37, 37, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(205, 37, 37, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(205, 37, 37, 0)');
+
+    chartInstanceView7LastDay = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt xem",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+
+function viewCustom() {
+    var startDate = $('#startDateView').val();
+    var endDate = $('#endDateView').val();
+    if (startDate && endDate) {
+        $.ajax({
+            url: '/news_lv/events/view-events/custom', // URL API của bạn
+            method: 'GET',
+            data: {
+                startDate: startDate,
+                endDate: endDate
+            },
+            success: function(response) {
+                // Giả sử response là một mảng dữ liệu như bạn đã cung cấp
+                var data = response.map(item => parseInt(item.split(': ')[1]));
+                var labels = response.map(item => item.split(': ')[0]);
+
+                updateChartViewCustom(data, labels);
+            },
+            error: function(error) {
+                console.error('Error fetching data', error);
+            }
+        });
+    }
+}
+
+function updateChartViewCustom(data, labels) {
+    var ctx1 = document.getElementById("viewCustom").getContext("2d");
+
+    // Kiểm tra và hủy biểu đồ cũ nếu tồn tại
+    if (chartInstanceViewCustom) {
+        chartInstanceViewCustom.destroy();
+    }
+
+    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+    chartInstanceViewCustom = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Lượt xem",
+                tension: 0.4,
+                borderWidth: 0,
+                pointRadius: 0,
+                borderColor: "#5e72e4",
+                backgroundColor: gradientStroke1,
+                borderWidth: 3,
+                fill: true,
+                data: data,
+                maxBarThickness: 6
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#fbfbfb',
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#ccc',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Open Sans",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+}
+/*-------------------------------VIEW----------------------------------------*/
+
+$(document).on('click', '#fetchCustomStats', function () {
+    var startDate = $('#startDate').val();
+    var endDate = $('#endDate').val();
+    favoriteCustom(startDate, endDate);
+})
+
+$(document).on('click', '#fetchViewCustom', function () {
+    var startDate = $('#startDate').val();
+    var endDate = $('#endDate').val();
+    viewCustom(startDate, endDate);
 })
 
 $(document).on('click', '#profileAdmin', function (e) {
@@ -802,3 +1106,27 @@ $('#logoutButton').on('click', function(event) {
     window.location.href = '/news_lv/page/home';
     $('#login-btn').hide();
 });
+
+// Hàm toggleChart để ẩn/hiện biểu đồ khi checkbox thay đổi
+/*
+function toggleChart(checkbox, chart) {
+    checkbox.change(function() {
+        if (checkbox.is(':checked')) {
+            chart.css('display', 'block');
+            console.log('Show chart');
+        } else {
+            chart.css('display', 'none');
+            console.log('Hide chart');
+        }
+    });
+}
+
+// Gọi hàm toggleChart cho các checkbox và biểu đồ tương ứng
+toggleChart($('#favoriteYearCheckbox'), chartFavoriteYear);
+toggleChart($('#favoriteMonthCheckbox'), chartFavoriteMonth);
+toggleChart($('#favorite7DaysCheckbox'), chartFavorite7LastDay);
+toggleChart($('#viewYearCheckbox'), chartViewYear);
+toggleChart($('#viewMonthCheckbox'), chartViewMonth);
+toggleChart($('#view7DaysCheckbox'), chartView7LastDay);
+toggleChart($('#favoriteCustomCheckbox'), chartFavoriteCustom);
+toggleChart($('#viewCustomCheckbox'), chartViewCustom);*/

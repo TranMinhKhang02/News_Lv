@@ -1,4 +1,61 @@
 $(document).ready(function () {
+    setTimeout(function () {
+        $('#favoriteYearManageCheckbox').prop('checked', true);
+        $('#favoriteMonthManageCheckbox').prop('checked', true);
+        $('#viewYearManageCheckbox').prop('checked', true);
+        $('#viewMonthManageCheckbox').prop('checked', true);
+
+        // Gọi hàm toggleChart cho các checkbox và biểu đồ tương ứng
+        toggleChart($('#favoriteYearManageCheckbox'), $('#chartFavoriteYearMange'));
+        toggleChart($('#favoriteMonthManageCheckbox'), $('#chartFavoriteMonthMange'));
+        toggleChart($('#favorite7DaysManageCheckbox'), $('#chartFavorite7LastDayMange'));
+        toggleChart($('#viewYearManageCheckbox'), $('#chartViewYearMange'));
+        toggleChart($('#viewMonthManageCheckbox'), $('#chartViewMonthMange'));
+        toggleChart($('#view7DaysManageCheckbox'), $('#chartView7LastDayMange'));
+    }, 300); // Đặt độ trễ 300ms
+
+    function toggleChart(checkbox, chart) {
+        // Kiểm tra trạng thái của checkbox ngay khi hàm được gọi
+        if (checkbox.is(':checked')) {
+            chart.show();
+            if (chart.is('#chartFavoriteMonthMange')) {
+                $('#chartFavorite7LastDayMange').addClass('mt-4');
+            }
+            if (chart.is('#chartViewMonthMange')) {
+                $('#chartView7LastDayMange').addClass('mt-4');
+            }
+        } else {
+            chart.css('display', 'none');
+            if (chart.is('#chartFavoriteMonthMange')) {
+                $('#chartFavorite7LastDayMange').removeClass('mt-4');
+            }
+            if (chart.is('#chartViewMonthMange')) {
+                $('#chartView7LastDayMange').removeClass('mt-4');
+            }
+        }
+
+        // Gắn sự kiện change cho checkbox để cập nhật trạng thái biểu đồ
+        checkbox.change(function() {
+            if (checkbox.is(':checked')) {
+                chart.show();
+                if (chart.is('#chartFavoriteMonthMange')) {
+                    $('#chartFavorite7LastDayMange').addClass('mt-4');
+                }
+                if (chart.is('#chartViewMonthMange')) {
+                    $('#chartView7LastDayMange').addClass('mt-4');
+                }
+            } else {
+                chart.css('display', 'none');
+                if (chart.is('#chartFavoriteMonthMange')) {
+                    $('#chartFavorite7LastDayMange').removeClass('mt-4');
+                }
+                if (chart.is('#chartViewMonthMange')) {
+                    $('#chartView7LastDayMange').removeClass('mt-4');
+                }
+            }
+        });
+    }
+
     var category = sessionStorage.getItem('categories');
     function fetchDataAndUpdateUIMange() {
         $.ajax({

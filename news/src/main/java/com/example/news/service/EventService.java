@@ -83,6 +83,42 @@ public class EventService {
         List<String> favoriteCounts = new ArrayList<>();
         LocalDate now = LocalDate.now();
         int currentDay = now.getDayOfMonth();
+
+        if (currentDay < 8) {
+            for (int i = 1; i <= currentDay; i++) {
+                LocalDate date = now.withDayOfMonth(i);
+                int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(date.atStartOfDay(), date.atTime(23, 59, 59)));
+                favoriteCounts.add(String.format("%02d/%02d: %d", date.getDayOfMonth(), now.getMonthValue(), count));
+            }
+        } else {
+            int fullWeeks = currentDay / 7;
+            int remainingDays = currentDay % 7;
+
+            for (int i = 0; i < fullWeeks; i++) {
+                LocalDate startDate = now.withDayOfMonth(i * 7 + 1);
+                LocalDate endDate = startDate.plusDays(6);
+                int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
+                favoriteCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+            }
+
+            if (remainingDays > 0) {
+                LocalDate startDate = now.withDayOfMonth(fullWeeks * 7 + 1);
+                LocalDate endDate = now.withDayOfMonth(currentDay);
+                int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
+                if (remainingDays == 1) {
+                    favoriteCounts.add(String.format("%02d/%02d: %d", startDate.getDayOfMonth(), now.getMonthValue(), count));
+                } else {
+                    favoriteCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+                }
+            }
+        }
+
+        return favoriteCounts;
+    }
+    /*public List<String> getFavoriteEventsMonth() {
+        List<String> favoriteCounts = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        int currentDay = now.getDayOfMonth();
         int fullWeeks = currentDay / 7;
         int remainingDays = currentDay % 7;
 
@@ -108,32 +144,45 @@ public class EventService {
         }
 
         return favoriteCounts;
-    }
-    /*public List<String> getFavoriteEventsMonth() {
-        List<String> favoriteCounts = new ArrayList<>();
-        LocalDate now = LocalDate.now();
-        int currentDay = now.getDayOfMonth();
-        int fullWeeks = currentDay / 7;
-        int remainingDays = currentDay % 7;
-
-        for (int i = 0; i < fullWeeks; i++) {
-            LocalDate startDate = now.withDayOfMonth(i * 7 + 1);
-            LocalDate endDate = startDate.plusDays(6);
-            int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
-            favoriteCounts.add(String.format("%02d-%02d/%02d/%04d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), now.getYear(), count));
-        }
-
-        if (remainingDays > 0) {
-            LocalDate startDate = now.withDayOfMonth(fullWeeks * 7 + 1);
-            LocalDate endDate = now.withDayOfMonth(currentDay);
-            int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
-            favoriteCounts.add(String.format("%02d-%02d/%02d/%04d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), now.getYear(), count));
-        }
-
-        return favoriteCounts;
     }*/
 
     public List<String> getViewEventsMonth() {
+        List<String> viewCounts = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        int currentDay = now.getDayOfMonth();
+
+        if (currentDay < 8) {
+            for (int i = 1; i <= currentDay; i++) {
+                LocalDate date = now.withDayOfMonth(i);
+                int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(date.atStartOfDay(), date.atTime(23, 59, 59)));
+                viewCounts.add(String.format("%02d/%02d: %d", date.getDayOfMonth(), now.getMonthValue(), count));
+            }
+        } else {
+            int fullWeeks = currentDay / 7;
+            int remainingDays = currentDay % 7;
+
+            for (int i = 0; i < fullWeeks; i++) {
+                LocalDate startDate = now.withDayOfMonth(i * 7 + 1);
+                LocalDate endDate = startDate.plusDays(6);
+                int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
+                viewCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+            }
+
+            if (remainingDays > 0) {
+                LocalDate startDate = now.withDayOfMonth(fullWeeks * 7 + 1);
+                LocalDate endDate = now.withDayOfMonth(currentDay);
+                int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
+                if (remainingDays == 1) {
+                    viewCounts.add(String.format("%02d/%02d: %d", startDate.getDayOfMonth(), now.getMonthValue(), count));
+                } else {
+                    viewCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+                }
+            }
+        }
+
+        return viewCounts;
+    }
+    /*public List<String> getViewEventsMonth() {
         List<String> viewCounts = new ArrayList<>();
         LocalDate now = LocalDate.now();
         int currentDay = now.getDayOfMonth();
@@ -159,32 +208,7 @@ public class EventService {
         }
 
         return viewCounts;
-    }
-    /*public List<String> getViewEventsMonth() {
-        List<String> viewCounts = new ArrayList<>();
-        LocalDate now = LocalDate.now();
-        int currentDay = now.getDayOfMonth();
-        int fullWeeks = currentDay / 7;
-        int remainingDays = currentDay % 7;
-
-        for (int i = 0; i < fullWeeks; i++) {
-            LocalDate startDate = now.withDayOfMonth(i * 7 + 1);
-            LocalDate endDate = startDate.plusDays(6);
-            int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
-            viewCounts.add(String.format("%02d-%02d/%02d/%04d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), now.getYear(), count));
-        }
-
-        if (remainingDays > 0) {
-            LocalDate startDate = now.withDayOfMonth(fullWeeks * 7 + 1);
-            LocalDate endDate = now.withDayOfMonth(currentDay);
-            int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
-            viewCounts.add(String.format("%02d-%02d/%02d/%04d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), now.getYear(), count));
-        }
-
-        return viewCounts;
     }*/
-
-
 
     public List<String> getViewEventsLast7Days() {
         List<String> viewCounts = new ArrayList<>();
@@ -221,7 +245,7 @@ public class EventService {
         while (!current.isAfter(end)) {
             LocalDateTime weekEnd = current.plusDays(6).isAfter(end) ? end : current.plusDays(6);
             int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetween(current, weekEnd));
-            favoriteCounts.add(String.format("%02d-%02d/%02d/%04d: %d", current.getDayOfMonth(), weekEnd.getDayOfMonth(), current.getMonthValue(), current.getYear(), count));
+            favoriteCounts.add(String.format("%02d-%02d/%02d: %d", current.getDayOfMonth(), weekEnd.getDayOfMonth(), current.getMonthValue(), count));
             current = weekEnd.plusDays(1);
             dayCount += 7;
 
@@ -274,7 +298,7 @@ public class EventService {
         while (!current.isAfter(end)) {
             LocalDateTime weekEnd = current.plusDays(6).isAfter(end) ? end : current.plusDays(6);
             int count = Math.toIntExact(viewEventRepository.countByEventDateBetween(current, weekEnd));
-            viewCounts.add(String.format("%02d-%02d/%02d/%04d: %d", current.getDayOfMonth(), weekEnd.getDayOfMonth(), current.getMonthValue(), current.getYear(), count));
+            viewCounts.add(String.format("%02d-%02d/%02d: %d", current.getDayOfMonth(), weekEnd.getDayOfMonth(), current.getMonthValue(), count));
             current = weekEnd.plusDays(1);
             dayCount += 7;
 
@@ -345,6 +369,47 @@ public class EventService {
         List<String> viewCounts = new ArrayList<>();
         LocalDate now = LocalDate.now();
         int currentDay = now.getDayOfMonth();
+
+        if (currentDay < 8) {
+            // Hiển thị từng ngày khi currentDay < 8
+            for (int i = 1; i <= currentDay; i++) {
+                LocalDate date = now.withDayOfMonth(i);
+                int count = Math.toIntExact(viewEventRepository.countByEventDateBetweenAndNews_Categories_Code(
+                        date.atStartOfDay(), date.atTime(23, 59, 59), category));
+                viewCounts.add(String.format("%02d/%02d: %d", date.getDayOfMonth(), now.getMonthValue(), count));
+            }
+        } else {
+            // Chia theo tuần khi currentDay >= 8
+            int fullWeeks = currentDay / 7;
+            int remainingDays = currentDay % 7;
+
+            for (int i = 0; i < fullWeeks; i++) {
+                LocalDate startDate = now.withDayOfMonth(i * 7 + 1);
+                LocalDate endDate = startDate.plusDays(6);
+                int count = Math.toIntExact(viewEventRepository.countByEventDateBetweenAndNews_Categories_Code(
+                        startDate.atStartOfDay(), endDate.atTime(23, 59, 59), category));
+                viewCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+            }
+
+            if (remainingDays > 0) {
+                LocalDate startDate = now.withDayOfMonth(fullWeeks * 7 + 1);
+                LocalDate endDate = now.withDayOfMonth(currentDay);
+                int count = Math.toIntExact(viewEventRepository.countByEventDateBetweenAndNews_Categories_Code(
+                        startDate.atStartOfDay(), endDate.atTime(23, 59, 59), category));
+                if (remainingDays == 1) {
+                    viewCounts.add(String.format("%02d/%02d: %d", startDate.getDayOfMonth(), now.getMonthValue(), count));
+                } else {
+                    viewCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+                }
+            }
+        }
+
+        return viewCounts;
+    }
+    /*public List<String> getViewEventsMonthByCategory(String category) {
+        List<String> viewCounts = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        int currentDay = now.getDayOfMonth();
         int fullWeeks = currentDay / 7;
         int remainingDays = currentDay % 7;
 
@@ -367,9 +432,51 @@ public class EventService {
         }
 
         return viewCounts;
-    }
+    }*/
 
     public List<String> getFavoriteEventsMonthByCategory(String category) {
+        List<String> favoriteCounts = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        int currentDay = now.getDayOfMonth();
+
+        if (currentDay < 8) {
+            // Hiển thị từng ngày khi currentDay < 8
+            for (int i = 1; i <= currentDay; i++) {
+                LocalDate date = now.withDayOfMonth(i);
+                int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetweenAndNews_Categories_Code(
+                        date.atStartOfDay(), date.atTime(23, 59, 59), category));
+                favoriteCounts.add(String.format("%02d/%02d: %d", date.getDayOfMonth(), now.getMonthValue(), count));
+            }
+        } else {
+            // Chia theo tuần khi currentDay >= 8
+            int fullWeeks = currentDay / 7;
+            int remainingDays = currentDay % 7;
+
+            for (int i = 0; i < fullWeeks; i++) {
+                LocalDate startDate = now.withDayOfMonth(i * 7 + 1);
+                LocalDate endDate = startDate.plusDays(6);
+                int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetweenAndNews_Categories_Code(
+                        startDate.atStartOfDay(), endDate.atTime(23, 59, 59), category));
+                favoriteCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+            }
+
+            if (remainingDays > 0) {
+                LocalDate startDate = now.withDayOfMonth(fullWeeks * 7 + 1);
+                LocalDate endDate = now.withDayOfMonth(currentDay);
+                int count = Math.toIntExact(favoriteEventRepository.countByEventDateBetweenAndNews_Categories_Code(
+                        startDate.atStartOfDay(), endDate.atTime(23, 59, 59), category));
+                if (remainingDays == 1) {
+                    favoriteCounts.add(String.format("%02d/%02d: %d", startDate.getDayOfMonth(), now.getMonthValue(), count));
+                } else {
+                    favoriteCounts.add(String.format("%02d-%02d/%02d: %d", startDate.getDayOfMonth(), endDate.getDayOfMonth(), now.getMonthValue(), count));
+                }
+            }
+        }
+
+        return favoriteCounts;
+    }
+
+    /*public List<String> getFavoriteEventsMonthByCategory(String category) {
         List<String> favoriteCounts = new ArrayList<>();
         LocalDate now = LocalDate.now();
         int currentDay = now.getDayOfMonth();
@@ -395,7 +502,7 @@ public class EventService {
         }
 
         return favoriteCounts;
-    }
+    }*/
 
     public List<String> getViewEventsYearByCategory(String category) {
         List<String> viewCounts = new ArrayList<>();

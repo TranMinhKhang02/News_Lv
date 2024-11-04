@@ -83,7 +83,8 @@ function loadNewsTableSuccess(categoryCode, page) {
 }
 
 function showHideBtn() {
-    const newsId = sessionStorage.getItem('newsId');
+    var Role = sessionStorage.getItem('Role');
+    var newsId = sessionStorage.getItem('newsId');
     var status = sessionStorage.getItem('status');
     var btnSaveNews = $('#saveNews');
     var btnApprove = $('#approveNews');
@@ -93,20 +94,72 @@ function showHideBtn() {
         btnApprove.show();
         btnRefuse.show();
         btnSaveNews.hide();
-        btnUpdateNews.addClass('d-none');
+        btnUpdateNews.show();
+        // btnUpdateNews.addClass('d-none');
     } else if (status == 1) {
         btnApprove.hide();
         btnRefuse.hide();
     }
+
+
     if (newsId) {
         btnUpdateNews.show();
-        btnSaveNews.hide();
+        btnSaveNews.addClass('d-none');
     } else {
         btnUpdateNews.hide();
         btnApprove.hide();
         btnRefuse.hide();
     }
+
+    if (Role === 'AUTHOR') {
+        btnUpdateNews.show();
+        btnSaveNews.show();
+        btnApprove.hide();
+        btnRefuse.hide();
+    }
 }
+
+function thumbnailInput() {
+    $('#imageUpload').on('change', function () {
+        if ($(this).val()) {
+            $('#thumbnail').prop('readonly', true).val('');
+        } else {
+            $('#thumbnail').prop('readonly', false);
+        }
+    });
+
+    $('#thumbnail').on('input', function () {
+        if ($(this).val()) {
+            $('#imageUpload').prop('disabled', true).val('');
+            $('#thumbnailUrl').val('');
+        } else {
+            $('#imageUpload').prop('disabled', false);
+        }
+    });
+
+    $('#thumbnail').on('blur', function () {
+        if ($(this).val()) {
+            displaySelectedThumbnail($(this).val());
+        }
+    });
+}
+/*function thumbnailInput() {
+    $('#imageUpload').on('change', function () {
+        if ($(this).val()) {
+            $('#thumbnail').prop('readonly', true);
+        } else {
+            $('#thumbnail').prop('readonly', false);
+        }
+    });
+
+    $('#thumbnail').on('input', function () {
+        if ($(this).val()) {
+            $('#imageUpload').prop('disabled', true);
+        } else {
+            $('#imageUpload').prop('disabled', false);
+        }
+    });
+}*/
 
 // Thêm sự kiện click cho các danh mục
 $(document).on('click', '#categoryFetchNews', function () {
@@ -313,11 +366,17 @@ function backNews() {
 
 $(document).on('click', '#back-newsByCategory', function () {
     var categories = sessionStorage.getItem('categories');
+    var categoryCode = sessionStorage.getItem('categoryCodeInNewItem');
+    var userName = sessionStorage.getItem('userName');
     var status = sessionStorage.getItem('status');
+    var Role = sessionStorage.getItem('Role');
     console.log('categories:', categories);
-    if (categories) {
+    if (Role === 'ADMIN_MANAGE') {
         loadNewsTableManage(status)
-    } else {
+    } else if (Role === 'AUTHOR') {
+        loadNewsByCreatedBy(userName, status, categoryCode)
+    }
+    else {
         backNews()
     }
     /*var categoryCode = sessionStorage.getItem('categoryCodeInNewItem');
@@ -360,6 +419,9 @@ $(document).on('click', '#editNews', function (e) {
         // var newsId = $(this).data('news-id'); // Giả sử bạn có thuộc tính data-news-id trên thẻ <a>
         console.log('News ID:', newsId);
 
+        /*Chỉ được upload ảnh 1 trong 2 cách*/
+        thumbnailInput()
+
         // Gọi API để lấy dữ liệu tin tức
         $.ajax({
             url: '/news_lv/news/single/' + newsId,
@@ -372,6 +434,8 @@ $(document).on('click', '#editNews', function (e) {
                     $('input[name="title"]').val(news.title);
                     $('input[name="shortDescription"]').val(news.shortDescription);
                     $('#source').val(news.source);
+                    $('#thumbnailUrl').val(news.thumbnail);
+                    // $('#thumbnail').val(news.thumbnail);
                     // $('input[name="createdDate"]').val(new Date(news.createdDate).toLocaleDateString());
                     displaySelectedThumbnail(news.thumbnail);
                     // $('input[name="category"]').val(news.categories[0].name);
@@ -388,6 +452,9 @@ $(document).on('click', '#editNews', function (e) {
 });
 
 $(document).on('click', '#updateNews', function () {
+    var Role = sessionStorage.getItem('Role');
+    var status = sessionStorage.getItem('status');
+    var userName = sessionStorage.getItem('userName');
     var newsId = sessionStorage.getItem('newsId');
     var categoryCode = sessionStorage.getItem('categoryCodeInNewItem');
     var page = sessionStorage.getItem('thisPage');
@@ -400,13 +467,15 @@ $(document).on('click', '#updateNews', function () {
     var thumbnailUrl = $('#thumbnailUrl').val();
     // Lấy data từ CKEditor
     var content = editorInstance.getData();
+    var source = $('#source').val();
 
     var requestData = {
         title: title,
         shortDescription: shortDescription,
         categories: selectedCategoryIds,
         thumbnail: thumbnailUrl,
-        content: content
+        content: content,
+        source: source
     };
 
     $.ajax({
@@ -416,7 +485,13 @@ $(document).on('click', '#updateNews', function () {
         data: JSON.stringify(requestData),
         success: function(response) {
             alert('Cập nhật tin tức thành công');
-            loadNewsTableSuccess(categoryCode, page);
+            if (Role === 'ADMIN_MANAGE') {
+                loadNewsTableManage(status)
+            } else if (Role === 'AUTHOR') {
+                loadNewsByCreatedBy(userName, status, categoryCode)
+            } else {
+                loadNewsTableSuccess(categoryCode, page);
+            }
         },
         error: function(error) {
             // Xử lý khi có lỗi
@@ -435,6 +510,24 @@ $(document).on('click', '#createNews', function () {
         $('#content-container').find('input, select').each(function() {
             $(this).val('');
         });
+
+        thumbnailInput()
+        /*$('#imageUpload').on('change', function () {
+            if ($(this).val()) {
+                $('#thumbnail').prop('readonly', true);
+            } else {
+                $('#thumbnail').prop('readonly', false);
+            }
+        });
+
+        $('#thumbnail').on('input', function () {
+            if ($(this).val()) {
+                $('#imageUpload').prop('disabled', true);
+            } else {
+                $('#imageUpload').prop('disabled', false);
+            }
+        });*/
+
         fetchCategoryNameInEditNews('');
         initializeCKEditor()
     });
@@ -504,14 +597,22 @@ $(document).on('click', '#deleteNews', function () {
 });
 
 $(document).on('click', '#saveNews', function () {
+    var Role = sessionStorage.getItem('Role');
+    var status = sessionStorage.getItem('status');
+    var userName = sessionStorage.getItem('userName');
+    var categoryCode = sessionStorage.getItem('categoryCodeInNewItem');
     // Lấy id từ data-category-id của option được chọn
     var selectedCategoryIds = $('#category-select option:selected').map(function() {
         return $(this).data('category-id');
     }).get();
 
     var content = editorInstance.getData();
+    var thumbnail = $('#thumbnail').val();
     var thumbnailUrl = $('#thumbnailUrl').val(); // Đảm bảo bạn có input ẩn này
     var source = $('#source').val();
+
+    // Kiểm tra nếu trường thumbnailUrl có giá trị, nếu không thì sử dụng thumbnail
+    var finalThumbnail = thumbnailUrl ? thumbnailUrl : thumbnail;
 
     var newsData = {
         title: $('input[name="title"]').val(),
@@ -520,7 +621,7 @@ $(document).on('click', '#saveNews', function () {
         // category: $('#category-select').val(),
         categories: selectedCategoryIds,
         // content: $('input[name="content"]').val()
-        thumbnail: thumbnailUrl,
+        thumbnail: finalThumbnail,
         content: content,
         source: source
     };
@@ -535,7 +636,13 @@ $(document).on('click', '#saveNews', function () {
                 alert('Tạo tin tức thành công');
                 // Thực hiện các hành động khác nếu cần
                 // $('#content-container').load('/news_lv/page/newsTable');
-                loadNewsTableSuccess('the-thao');
+                if (Role === 'AUTHOR') {
+                    loadNewsByCreatedBy(userName, status, categoryCode)
+                } else if (Role === 'ADMIN_MANAGE') {
+                    loadNewsTableManage(status)
+                } else {
+                    loadNewsTableSuccess('the-thao');
+                }
             } else {
                 alert('Có lỗi xảy ra: ' + response.message);
             }
@@ -956,6 +1063,19 @@ function deleteOldImage(publicId) {
             console.error('Lỗi khi xóa ảnh:', error);
         }
     });
+}*/
+
+/*function displaySelectedThumbnail() {
+    var thumbnail = $('#thumbnail').val();
+    var thumbnailUrl = $('#thumbnailUrl').val();
+
+    var imageUrl = thumbnailUrl ? thumbnailUrl : thumbnail;
+
+    if (imageUrl) {
+        $('#imagePreview').html(`<img src="${imageUrl}" alt="Image Preview" style="max-width: 100%; height: auto;">`);
+    } else {
+        $('#imagePreview').empty(); // Xóa nội dung nếu không có URL
+    }
 }*/
 
 function displaySelectedThumbnail(imageUrl) {

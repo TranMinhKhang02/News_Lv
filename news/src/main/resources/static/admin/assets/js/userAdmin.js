@@ -83,8 +83,55 @@ $(document).on('click', '#viewUserDetail', function (e) {
     $('#content-container').load('/news_lv/page/editUser', function () {
         getUserById(userId);
         fetchRoleSelect()
+        $('#saveUser').hide();
     });
 })
+
+$(document).on('click', '#createUser', function (e) {
+    e.preventDefault()
+    sessionStorage.removeItem('roleCode');
+    $('#content-container').load('/news_lv/page/editUser', function () {
+        $('#content-container').find('input').each(function() {
+            $(this).val('');
+            $(this).removeAttr('readonly');
+        })
+        $('.password-input').show();
+        $('#updateUser').hide();
+        fetchRoleSelect()
+    });
+})
+
+$(document).on('click', '#saveUser', function (e) {
+    e.preventDefault()
+    createUser()
+})
+
+function createUser() {
+    var userDate = {
+        fullName: $('#fullName').val(),
+        userName: $('#userName').val(),
+        password: $('#password').val(),
+        email: $('#email').val(),
+        dob: $('#dob').val(),
+    }
+
+    var roleId = $('#roleUser').val();
+
+    $.ajax({
+        url: '/news_lv/users/createUser/' + roleId,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(userDate),
+        success: function (response) {
+            alert('Tạo người dùng thành công!');
+            loadUserTable()
+        },
+        error: function (error) {
+            console.error('Error creating user:', error);
+            alert('Tạo người dùng thất bại!');
+        }
+    })
+}
 
 $(document).on('click', '#back-userTable', function (e) {
     e.preventDefault()
@@ -130,6 +177,25 @@ function fetchRoleSelect() {
 
 function renderRoleSelect(roles) {
     var roleUser = $('#roleUser');
+    var sessionRoleCode = sessionStorage.getItem('roleCode');
+    roleUser.empty();
+    if (!sessionRoleCode) {
+        roleUser.append('<option value="" selected>Chọn vai trò</option>');
+    }
+
+    roles.forEach(function (role) {
+        var isSelected = sessionRoleCode === role.code ? 'selected' : '';
+        roleUser.append('<option value="' + role.id + '" ' + isSelected + '>' + role.name + '</option>');
+    });
+
+    /*// Thêm sự kiện change cho thẻ select
+    roleUser.on('change', function () {
+        var selectedRoleId = $(this).val();
+        sessionStorage.setItem('roleId', selectedRoleId);
+    });*/
+}
+/*function renderRoleSelect(roles) {
+    var roleUser = $('#roleUser');
     roleUser.empty();
     if(!roles) {
         roleUser.append('<option value="" selected>Chọn vai trò</option>');
@@ -139,7 +205,7 @@ function renderRoleSelect(roles) {
         var isSelected = roles === role.id ? 'selected' : '';
         roleUser.append('<option value="' + role.id + '" ' + isSelected + '>' + role.name + '</option>');
     })
-}
+}*/
 
 function fetchRoles() {
     $.ajax({
