@@ -60,7 +60,7 @@ public class TextToSpeechService {
             }
 
             // Tải tệp lên Cloudinary
-            Map<String, Object> uploadResult = cloudinaryService.uploadFile(audioFile);
+            Map<String, Object> uploadResult = cloudinaryService.uploadFile(audioFile, fileName);
             if (uploadResult != null) {
                 String audioUrl = (String) uploadResult.get("secure_url");
                 log.info("Đã tải tệp lên Cloudinary: " + audioUrl);

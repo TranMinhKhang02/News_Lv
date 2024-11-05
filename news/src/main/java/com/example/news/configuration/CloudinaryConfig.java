@@ -17,4 +17,13 @@ public class CloudinaryConfig {
                 "api_secret", "KuEgKknBTrJ7-FdsAHGJYa_Jx4c"
         ));
     }
+
+    @Bean
+    public Cloudinary cloudinaryAudio() {
+        return new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dztroerja",
+                "api_key", "135674519362858",
+                "api_secret", "eJQPIzzOMaZ8wmAe0nt6WJfG_tI"
+        ));
+    }
 }

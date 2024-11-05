@@ -173,8 +173,8 @@ public class NewsService {
                 .collect(Collectors.toList());
     }
 
-    public List<NewsResponse> getTop5NewsByCategoryCode(String categoryCode) {
-        return newsRepository.findTop5ByCategories_codeOrderByModifiedDateDesc(categoryCode).stream()
+    public List<NewsResponse> getTop5NewsByCategoryCode(String categoryCode, String statusCode) {
+        return newsRepository.findTop3ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(categoryCode, statusCode).stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
     }
@@ -200,22 +200,33 @@ public class NewsService {
     }
 
     public int getLikeCount(Long newsId) {
-        /*News news = new News();
-        long likeCount = newsRepository.countLikesByNewsId(newsId);
-        news.setLikeCount(likeCount);
-        return (int) likeCount;*/
         return newsRepository.findById(newsId)
-                .map(news -> news.getLikeCount().intValue())
+                .map(news -> news.getLikeCount() != null ? news.getLikeCount().intValue() : 0)
                 .orElse(0);
-//        return (int) newsRepository.countLikesByNewsId(newsId);
     }
 
     public int getViewCount(Long newsId) {
         return newsRepository.findById(newsId)
+                .map(news -> news.getViewCount() != null ? news.getViewCount().intValue() : 0)
+                .orElse(0);
+    }
+    /*public int getLikeCount(Long newsId) {
+        News news = new News();
+        long likeCount = newsRepository.countLikesByNewsId(newsId);
+        news.setLikeCount(likeCount);
+        return (int) likeCount;
+        return newsRepository.findById(newsId)
+                .map(news -> news.getLikeCount().intValue())
+                .orElse(0);
+//        return (int) newsRepository.countLikesByNewsId(newsId);
+    }*/
+
+    /*public int getViewCount(Long newsId) {
+        return newsRepository.findById(newsId)
                 .map(News::getViewCount)
                 .orElse(0L)
                 .intValue();
-    }
+    }*/
 
     public int getCommentCount(Long newsId) {
         return (int) newsRepository.countCommentsByNewId(newsId);
@@ -256,14 +267,14 @@ public class NewsService {
                 .collect(Collectors.toList());
     }
 
-    public List<NewsResponse> getAllByCategoryCodeAndStatusCode
+    /*public List<NewsResponse> getAllByCategoryCodeAndStatusCode
             (String categoryCode, String statusCode, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         List<News> newsList = newsRepository.findAllByCategories_codeAndStatusCode(categoryCode, statusCode, pageRequest).getContent();
         return newsList.stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
-    }
+    }*/
 
     public List<NewsResponse> getAllByCreatedByAndStatusCode
             (String createdBy, String statusCode, String categoryCode, int page, int size) {
@@ -274,8 +285,9 @@ public class NewsService {
                 .collect(Collectors.toList());
     }
 
-    public List<NewsResponse> getAllByCategoryCodeAndStatusCode(String categoryCode, String statusCode) {
-        return newsRepository.findAllByCategories_codeAndStatusCode(categoryCode, statusCode).stream()
+    public List<NewsResponse> getAllByCategoryCodeAndStatusCode(String categoryCode, String statusCode, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        return newsRepository.findAllByCategories_codeAndStatusCode(categoryCode, statusCode, pageRequest).stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
     }
@@ -287,6 +299,7 @@ public class NewsService {
         Status status = statusRepository.findById(request.getStatus())
                 .orElseThrow(() -> new RuntimeException("Status not found"));
 
+        news.setApprovedBy(request.getApproveBy());
         news.setStatus(status);
         newsRepository.save(news);
     }

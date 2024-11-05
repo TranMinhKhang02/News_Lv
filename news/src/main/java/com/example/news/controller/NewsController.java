@@ -108,7 +108,7 @@ public class NewsController {
     public ApiResponse<List<NewsResponse>> getAllNewsByCategory(
             @RequestParam(value = "category") String categoryCode,
             @RequestParam(value = "status", defaultValue = "1") String statusCode) {
-        List<NewsResponse> newsList = newsService.getAllByCategoryCodeAndStatusCode(categoryCode, statusCode);
+        List<NewsResponse> newsList = newsService.getAllByCategoryCodeAndStatusCode(categoryCode, statusCode, 1, 10);
 
         return ApiResponse.<List<NewsResponse>>builder()
                 .code(1000)
@@ -122,8 +122,11 @@ public class NewsController {
             @RequestParam(value = "status", defaultValue = "1") String statusCode,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<NewsResponse> newsList = newsService.getAllByCategoryCodeAndStatusCode(categories, statusCode);
-        int totalNewsByCategories = newsService.countAllByCategoryCode(categories, statusCode);
+        List<NewsResponse> newsListByCategories;
+        int totalNewsByCategories;
+
+        newsListByCategories = newsService.getAllByCategoryCodeAndStatusCode(categories, statusCode, page, size);
+        totalNewsByCategories = newsService.countAllByCategoryCodeAndStatusCode(categories, statusCode);
 
         int totalPage = (int) Math.ceil((double) totalNewsByCategories / size);
 
@@ -131,7 +134,7 @@ public class NewsController {
                 .code(1000)
                 .page(page)
                 .totalPage(totalPage)
-                .result(newsList)
+                .result(newsListByCategories)
                 .build();
     }
 
@@ -142,10 +145,35 @@ public class NewsController {
             @RequestParam(value = "status", defaultValue = "1") String statusCode,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<NewsResponse> newsList = newsService.getAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode, page, size);
-        int totalNewsByCategories = newsService.countAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode);
+        List<NewsResponse> newsListByCreatedBy;
+        int totalNewsByCreatedBy;
 
-        int totalPage = (int) Math.ceil((double) totalNewsByCategories / size);
+        newsListByCreatedBy = newsService.getAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode, page, size);
+        totalNewsByCreatedBy = newsService.countAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode);
+
+        int totalPage = (int) Math.ceil((double) totalNewsByCreatedBy / size);
+
+        return ApiNewsResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .page(page)
+                .totalPage(totalPage)
+                .result(newsListByCreatedBy)
+                .build();
+    }
+    /*@GetMapping("/by-createdBy")
+    public ApiNewsResponse<List<NewsResponse>> getAllNewsByCreatedBy(
+            @RequestParam(value = "createdBy") String createdBy,
+            @RequestParam(value = "categoryCode") String categoryCode,
+            @RequestParam(value = "status", defaultValue = "1") String statusCode,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<NewsResponse> newsList;
+        int totalNewsByCreatedBy;
+
+        newsList = newsService.getAllByCreatedByAndStatusCode(categoryCode, statusCode, createdBy, page, size);
+        totalNewsByCreatedBy = newsService.countAllByCreatedByAndStatusCode(createdBy, statusCode, categoryCode);
+
+        int totalPage = (int) Math.ceil((double) totalNewsByCreatedBy / size);
 
         return ApiNewsResponse.<List<NewsResponse>>builder()
                 .code(1000)
@@ -153,7 +181,7 @@ public class NewsController {
                 .totalPage(totalPage)
                 .result(newsList)
                 .build();
-    }
+    }*/
 
     @GetMapping("/by-category-and-status")
     public ApiNewsResponse<List<NewsResponse>> getAllNewsByCategoryAndStatus(
@@ -214,10 +242,12 @@ public class NewsController {
     }
 
     @GetMapping("/top5ByCategoryCode/{categoryCode}")
-    public ApiResponse<List<NewsResponse>> getTop5NewsByModifiedDate(@PathVariable String categoryCode) {
+    public ApiResponse<List<NewsResponse>> getTop5NewsByModifiedDate(
+            @RequestParam(value = "statusCode", defaultValue = "1") String statusCode,
+            @PathVariable String categoryCode) {
         return ApiResponse.<List<NewsResponse>>builder()
                 .code(1000)
-                .result(newsService.getTop5NewsByCategoryCode(categoryCode))
+                .result(newsService.getTop5NewsByCategoryCode(categoryCode, statusCode))
                 .build();
     }
 
@@ -248,7 +278,8 @@ public class NewsController {
     }
 
     @PutMapping("/update-status")
-    public ApiResponse<String> updateNewsStatus(@RequestBody List<Long> newsIds) {
+    public ApiResponse<String> updateNewsStatus(
+            @RequestBody List<Long> newsIds) {
         newsService.updateNewsStatus(newsIds, 1L);
         return ApiResponse.<String>builder()
                 .code(1000)

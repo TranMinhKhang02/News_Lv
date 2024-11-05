@@ -73,7 +73,7 @@
                             <h6 class="card-subtitle mb-2 mt-2 text-muted">Thông tin chung</h6>
                             <ul class="list-unstyled">
                                 <li class="mb-2 mt-2"><i class="bi bi-chat-dots"></i> Ý kiến của bạn (0)</li>
-                                <li class="mb-2 mt-2"><a href="#" class="mr-2" id="savedNews">Tin đã lưu</a></li>
+                                <li class="mb-2 mt-2"><a href="#" class="mr-2 savedNews" id="savedNews">Tin đã lưu</a></li>
                                 <li class="mb-2 mt-2"><i class="bi bi-eye"></i> Tin đã xem</li>
                                 <li class="mb-2 mt-2">
                                     <a class="mr-2" th:href="@{/page/logout}">Thoát</a>
@@ -191,7 +191,7 @@
 
 <script>
     $(document).ready(function() {
-        $('#savedNews').on('click', function() {
+        $('.savedNews').on('click', function() {
             $('#info-user').html(`
             <div class="d-flex mb-3">
                 <img src="/static/customer/img/news-100x100-4.jpg" style="width: 100px; height: 100px; object-fit: cover;">

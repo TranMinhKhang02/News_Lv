@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('#savedNews').on('click', function() {
+    $('.savedNews').on('click', function() {
         getFavorite(1, 5); // Gọi hàm getFavorite với trang 1 và kích thước 5 khi click vào nút "Tin đã lưu"
     });
 });

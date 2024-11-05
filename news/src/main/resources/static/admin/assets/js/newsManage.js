@@ -12,6 +12,8 @@ $(document).on('click', '#news-approvedManage', function (e) {
     sessionStorage.removeItem('newsId')
     loadNewsTableManage(status)
     titlePageManage()
+    $('.nav-link').not('#news-approvedManage').removeClass('active-categoryName');
+    $(this).addClass('active-categoryName');
 })
 
 $(document).on('click', '#news-waitApproveManage', function (e) {
@@ -21,6 +23,8 @@ $(document).on('click', '#news-waitApproveManage', function (e) {
     sessionStorage.removeItem('newsId')
     loadNewsTableManage(status)
     titlePageManage()
+    $('.nav-link').not('#news-waitApproveManage').removeClass('active-categoryName');
+    $(this).addClass('active-categoryName');
 })
 
 $(document).on('click', '#news-refusedManage', function (e) {
@@ -30,13 +34,15 @@ $(document).on('click', '#news-refusedManage', function (e) {
     sessionStorage.removeItem('newsId')
     loadNewsTableManage(status)
     titlePageManage()
+    $('.nav-link').not('#news-refusedManage').removeClass('active-categoryName');
+    $(this).addClass('active-categoryName');
 })
 
 function loadNewsTableManage(status) {
     var categories = sessionStorage.getItem('categories');
     var newsId = sessionStorage.getItem('newsId');
     $('#content-container').load('/news_lv/page/newsTableManage', function () {
-        fetchNewsByCategories(categories, status)
+        fetchNewsByCategories(categories, status, 1)
     });
 
     setTimeout(function () {
@@ -68,22 +74,56 @@ function loadNewsTableManage(status) {
     }, 300);*/
 }
 
-function fetchNewsByCategories(categories, status) {
+function fetchNewsByCategories(categories, status, page) {
     $.ajax({
         url: '/news_lv/news/by-categories',
         method: 'GET',
         data: {
             categories: categories,
             status: status,
-            size: 2
+            page: page,
+            size: 5
         },
         success: function(data) {
             if (data.code === 1000 && Array.isArray(data.result)) {
                 renderNews(data.result);
+                updatePaginationManage(data.page, data.totalPage, categories, status);
             }
         },
         error: function(error) {
             console.error('Error fetching news:', error);
         }
     });
+}
+
+function updatePaginationManage(currentPage, totalPage, categories, status) {
+    sessionStorage.setItem('thisPage', currentPage);
+    var paginationContainer = $('#page-Manage');
+    paginationContainer.empty(); // Xóa nội dung hiện tại
+
+    paginationContainer.append(`
+        <li class="page-item">
+            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategories('${categories}', ${status}, 1)">First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategories('${categories}', ${status}, ${currentPage - 1})">&laquo;</a>
+        </li>
+    `);
+
+    for (var i = 1; i <= totalPage; i++) {
+        paginationContainer.append(`
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="javascript:;" onclick="fetchNewsByCategories('${categories}', ${status}, ${i})">${i}</a>
+            </li>
+        `);
+    }
+
+    paginationContainer.append(`
+        <li class="page-item">
+            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategories('${categories}', ${status}, ${currentPage + 1})">&raquo;</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategories('${categories}', ${status}, ${totalPage})">Last</a>
+        </li>
+    `);
 }

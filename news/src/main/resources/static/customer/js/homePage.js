@@ -206,6 +206,12 @@
         `;
     }
 
+    $('.saveNews').on('click', function(event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của liên kết
+        getFavorite(1, 5); // Gọi hàm getFavorite với trang 1 và kích thước 5
+        window.location.href = $(this).attr('href'); // Chuyển hướng đến trang myInfo
+    });
+
 
     // =================================CAROUSEL================================
 

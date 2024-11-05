@@ -1075,14 +1075,64 @@ $(document).on('click', '#fetchViewCustom', function () {
 
 $(document).on('click', '#profileAdmin', function (e) {
     e.preventDefault();
-    console.log('Profile Admin');
     $('#content-container').load('/news_lv/page/profileAdmin', function(response, status, xhr) {
-        if (status == "error") {
+        var titlePage = $('.titlePage')
+        titlePage.html('Thông tin');
+        var titlePageHeading = $('.titlePage-heading')
+        titlePageHeading.html('Thông tin tài khoản');
+
+        var user = JSON.parse(sessionStorage.getItem('user'));
+        var userNameSession = sessionStorage.getItem('userName');
+        var fullNameSession = sessionStorage.getItem('fullName');
+        var emailSession = sessionStorage.getItem('email');
+        var dobSession = sessionStorage.getItem('dob');
+        var phoneSession = sessionStorage.getItem('phone');
+        var roleNameSession = sessionStorage.getItem('roleName');
+        var avatarSession = sessionStorage.getItem('avatar');
+
+        var avatarSrc = user && user.avatar ? user.avatar : (avatarSession ? avatarSession : defaultAvatarPath);
+
+        var avatar = $('#avatar');
+        var fullNameInput = $('#fullNameInput');
+        var userName = $('#userName');
+        var emailInput = $('#emailInput');
+        var fullName = $('#fullName');
+        var email = $('#email');
+        var dob = $('#dob');
+        var phoneNumber = $('#phoneNumber');
+        var phoneNumberInput = $('#phoneNumberInput');
+        var roleName = $('#roleName');
+
+        if (user) {
+            userName.val(user.userName);
+            fullNameInput.val(user.fullName);
+            emailInput.val(user.email);
+            dob.val(user.dob);
+            phoneNumberInput.val(user.phoneNumber);
+            fullName.text(user.fullName);
+            email.text(user.email);
+            phoneNumber.text(user.phoneNumber);
+            roleName.text(user.role.name);
+            avatar.attr('src', user.avatar ? user.avatar : defaultAvatarPath);
+        } else {
+            userName.val(userNameSession);
+            fullNameInput.val(fullNameSession);
+            emailInput.val(emailSession);
+            dob.val(dobSession);
+            phoneNumberInput.val(phoneSession);
+            fullName.text(fullNameSession);
+            email.text(emailSession);
+            phoneNumber.text(phoneSession);
+            roleName.text(roleNameSession);
+            avatar.attr('src', avatarSession ? avatarSession : defaultAvatarPath);
+        }
+
+        /*if (status == "error") {
             console.log("Error: " + xhr.status + ": " + xhr.statusText);
         } else {
             console.log("Content loaded successfully");
             console.log(response);
-        }
+        }*/
     });
 });
 

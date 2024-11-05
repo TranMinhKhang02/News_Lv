@@ -15,8 +15,31 @@ import java.util.Map;
 @Service
 public class CloudinaryService {
     Cloudinary cloudinary;
+    Cloudinary cloudinaryAudio;
 
-    public Map<String, Object> uploadFile(File file) {
+    public Map<String, Object> uploadFile(File file, String fileName) {
+        try {
+            Map<String, Object> options = ObjectUtils.asMap(
+                    "resource_type", "video",
+                    "public_id", fileName // Chỉ định tên file gốc
+            );
+            return cloudinaryAudio.uploader().upload(file, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    /*public Map<String, Object> uploadFile(File file) {
+        try {
+            Map<String, Object> options = ObjectUtils.asMap("resource_type", "video");
+            return cloudinaryAudio.uploader().upload(file, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }*/
+
+    /*public Map<String, Object> uploadFile(File file) {
         try {
             Map<String, Object> options = ObjectUtils.asMap("resource_type", "video");
             return cloudinary.uploader().upload(file, options);
@@ -24,7 +47,7 @@ public class CloudinaryService {
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 
     public Map<String, Object> deleteImage(String publicId) {
         try {

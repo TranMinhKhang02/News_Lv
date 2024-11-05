@@ -3,6 +3,12 @@
     
     // Dropdown on mouse hover
     $(document).ready(function () {
+        var Role = sessionStorage.getItem('Role')
+        if (Role == 'ADMIN' || Role == 'ADMIN_MANAGE' || Role == 'AUTHOR') {
+            $('#redirectAdmin').removeClass('d-none');
+        } else {
+            $('#redirectAdmin').remove()
+        }
         function toggleNavbarMethod() {
             if ($(window).width() > 992) {
                 $('.navbar .dropdown').on('mouseover', function () {
@@ -70,15 +76,18 @@
 
         // Kiểm tra xem sessionStorage có chứa thông tin user hay không
         const user = JSON.parse(sessionStorage.getItem('user'));
+        var avatarSession = sessionStorage.getItem('avatar');
+        var avatarSrc = user && user.avatar ? user.avatar : (avatarSession ? avatarSession : defaultAvatarPath);
 
         if (user) {
             // Cập nhật avatar
             const avatarImg = $('#userAvatar');
-            if (user.avatar && user.avatar !== '') {
+            avatarImg.attr('src', avatarSrc);
+            /*if (user.avatar && user.avatar !== '') {
                 avatarImg.attr('src', user.avatar); // Avatar từ sessionStorage
             } else {
                 avatarImg.attr('src', defaultAvatarPath); // Avatar mặc định
-            }
+            }*/
 
             // Cập nhật tên đầy đủ
             $('#userFullName').text(user.fullName);

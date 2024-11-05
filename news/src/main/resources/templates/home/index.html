@@ -108,18 +108,33 @@
             </div>
             <div class="col-lg-4">
                 <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
-                    <h3 class="m-0">Categories</h3>
-                    <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>
+                    <h3 class="m-0">Thể loại</h3>
+<!--                    <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>-->
                 </div>
-                <div class="position-relative overflow-hidden mb-3" style="height: 80px;">
+                <!--<div class="position-relative overflow-hidden mb-3" style="height: 80px;">
                     <img class="img-fluid w-100 h-100" th:src="@{/static/customer/img/cat-500x80-1.jpg}" style="object-fit: cover;">
                     <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                         Business
                     </a>
+                </div>-->
+                <div class="position-relative overflow-hidden mb-3" style="height: 80px; background-color: #9f224e;">
+                    <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none d-flex">
+                        Thể Thao
+                    </a>
                 </div>
                 <div class="position-relative overflow-hidden mb-3" style="height: 80px; background-color: #9f224e;">
                     <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none d-flex">
-                        Technology
+                        Chính Trị
+                    </a>
+                </div>
+                <div class="position-relative overflow-hidden mb-3" style="height: 80px; background-color: #9f224e;">
+                    <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none d-flex">
+                        Kinh Doanh
+                    </a>
+                </div>
+                <div class="position-relative overflow-hidden mb-3" style="height: 80px; background-color: #9f224e;">
+                    <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none d-flex">
+                        Y Tế
                     </a>
                 </div>
                 <!--<div class="position-relative overflow-hidden mb-3" style="height: 80px;">
@@ -128,18 +143,18 @@
                         Technology
                     </a>
                 </div>-->
-                <div class="position-relative overflow-hidden mb-3" style="height: 80px;">
+                <!--<div class="position-relative overflow-hidden mb-3" style="height: 80px;">
                     <img class="img-fluid w-100 h-100" th:src="@{/static/customer/img/cat-500x80-3.jpg}" style="object-fit: cover;">
                     <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                         Entertainment
                     </a>
-                </div>
-                <div class="position-relative overflow-hidden" style="height: 80px;">
+                </div>-->
+                <!--<div class="position-relative overflow-hidden" style="height: 80px;">
                     <img class="img-fluid w-100 h-100" th:src="@{/static/customer/img/cat-500x80-4.jpg}" style="object-fit: cover;">
                     <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none">
                         Sports
                     </a>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
@@ -152,7 +167,7 @@
     <div class="container">
         <div class="d-flex align-items-center justify-content-between bg-light py-2 px-4 mb-3">
             <h3 class="m-0">Mới nhất</h3>
-            <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>
+<!--            <a class="text-secondary font-weight-medium text-decoration-none" href="">View All</a>-->
         </div>
         <div id="latest-news-carousel" class="owl-carousel owl-carousel-2 carousel-item-4 position-relative">
             <!-- Các bài viết thể thao sẽ được thêm vào đây -->
@@ -708,6 +723,7 @@
 <!-- Template Javascript -->
 <script th:src="@{/static/customer/js/main.js}"></script>
 <script th:src="@{/static/customer/js/homePage.js}"></script>
+<script th:src="@{/static/customer/js/myInfo-user.js}"></script>
 <script th:inline="javascript">
     var defaultAvatarPath = /*[[@{/static/customer/img/user-avatar.png}]]*/ '/static/customer/img/user-avatar.png';
 </script>

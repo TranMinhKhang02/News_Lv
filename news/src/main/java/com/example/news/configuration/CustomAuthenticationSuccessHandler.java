@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
@@ -78,7 +80,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                     "sessionStorage.setItem('Role', '" + user.getRole().getCode() + "');" +
                     "sessionStorage.setItem('categories', '" + user.getRole().getCategories() + "');" +
                     "sessionStorage.setItem('userName', '" + (user.getUserName() != null ? user.getUserName() : user.getEmail()) + "');" +
+                    "sessionStorage.setItem('createdBy', '" + (user.getUserName() != null ? user.getUserName() : user.getEmail()) + "');" +
                     "sessionStorage.setItem('userId', '" + user.getId() + "');" +
+                    "sessionStorage.setItem('fullName', '" + user.getFullName() + "');" +
+                    "sessionStorage.setItem('avatar', '" + user.getAvatar() + "');" +
+                    "sessionStorage.setItem('dob', '" + (user.getDob() != null ? user.getDob().toString() : "") + "');" +
+                    "sessionStorage.setItem('roleName', '" + user.getRole().getName() + "');" +
+                    "sessionStorage.setItem('phone', '" + user.getPhoneNumber() + "');" +
+                    "sessionStorage.setItem('email', '" + user.getEmail() + "');" +
                     "window.location.href = '" + redirectUrl + "';" +
                     "</script>";
 

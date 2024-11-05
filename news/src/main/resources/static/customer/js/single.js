@@ -39,6 +39,7 @@ $(document).ready(function () {
                     renderNewsDetails(response.result);
                     newsContent = response.result.content;
                     speakContent(newsContent, response.result.summarized);
+                    fetchNewsByTopModifiedByCategory(response.result.categories[0].code)
                     console.log('News details:', response.result);
                 } else {
                     console.error('Unexpected response format:', response);
@@ -93,7 +94,8 @@ $(document).ready(function () {
 
     fetchNewsByTopViewInItem()
 
-    fetchNewsByTopModifiedByCategory()
+    /*var categoryCode = sessionStorage.getItem('categoryCode');
+    fetchNewsByTopModifiedByCategory(categoryCode)*/
 
     //===============================COMMENT================================
     // fetchComments(newsId);
@@ -475,9 +477,9 @@ function renderTopViewedNews(news) {
 }
 
 // ====================================News By CategoryCode View==============================
-function fetchNewsByTopModifiedByCategory() {
+function fetchNewsByTopModifiedByCategory(categoryCode) {
     var newsId = getNewsIdFromUrl();
-    var categoryCode = sessionStorage.getItem('categoryCode');
+    // var categoryCode = sessionStorage.getItem('categoryCode');
     var topViewByCategoryContent = $('#topModifiedByCategoryCode');
     topViewByCategoryContent.empty();
     $.ajax({
@@ -710,7 +712,7 @@ $(document).on('click', '.btn-updateComment', function() {
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function(response) {
-            alert('Comment updated successfully.');
+            // alert('Comment updated successfully.');
             // Reload comments or update the comment content in the DOM
             fetchComments(newsId);
         },
@@ -777,7 +779,7 @@ $('#bookmark-icon').click(function () {
                 },
                 success: function(response) {
                     $('#bookmark-icon path').attr('fill', 'none')
-                    alert('Tin tức đã được xóa khỏi danh sách yêu thích.');
+                    // alert('Tin tức đã được xóa khỏi danh sách yêu thích.');
                     getAllInteract();
                     isFavorite = false; // Cập nhật trạng thái
                 },
@@ -796,7 +798,7 @@ $('#bookmark-icon').click(function () {
                 success: function(response) {
                     $('#bookmark-icon path').attr('fill', '#9f224e')
                     $('#bookmark-icon').attr('color', '#9f224e');
-                    alert('Tin tức đã được thêm vào danh sách yêu thích.');
+                    // alert('Tin tức đã được thêm vào danh sách yêu thích.');
                     getAllInteract();
                     isFavorite = true; // Cập nhật trạng thái
                 },
@@ -851,7 +853,7 @@ function getAllInteract() {
         success: function(data) {
             console.log('View count incremented');
             console.log(data);
-            $('#news-comments-count').text(data.result.commentCount + ' Comments');
+            $('#news-comments-count').text(data.result.commentCount + ' Bình luận');
             $('#like-count').text(data.result.likeCount + ' Yêu thích');
             $('#view-count').text(data.result.viewCount + ' Luợt xem');
         },

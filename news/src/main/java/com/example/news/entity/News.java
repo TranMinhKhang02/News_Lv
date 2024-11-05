@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,6 +66,9 @@ public class News extends Base {
 
     @Column(name = "summary_createDate")
     LocalDateTime summary_createDate;
+
+    @Column(name = "approvedBy")
+    private String approvedBy;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(

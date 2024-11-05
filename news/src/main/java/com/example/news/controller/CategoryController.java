@@ -65,4 +65,14 @@ public class CategoryController {
                 .result(category)
                 .build();
     }
+
+    @GetMapping("/top-categoryByView")
+    public ApiResponse<List<CategoryResponse>> getTop4CategoryByView(
+            @RequestParam(value = "status", defaultValue = "1") int status) {
+        var categories = categoryService.getTop4ByView(status);
+        return ApiResponse.<List<CategoryResponse>>builder()
+                .code(1000)
+                .result(categories)
+                .build();
+    }
 }

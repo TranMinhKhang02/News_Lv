@@ -56,6 +56,11 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
+    public List<CategoryResponse> getTop4ByView(int status) {
+        List<Category> categories = categoryRepository.findTop4ByStatusOrderByNews_ViewCountDesc(status);
+        return categories.stream().map(categoryMapper::toCategoryResponse).toList();
+    }
+
     public CategoryResponse update(Long categoryId, CategoryUpdateRequest request) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Không tìm thấy category!"));
         categoryMapper.updateCategory(category, request);

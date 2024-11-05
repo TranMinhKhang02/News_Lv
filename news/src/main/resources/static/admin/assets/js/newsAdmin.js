@@ -1,6 +1,5 @@
 $(document).ready(function () {
-    // fetchNewsByCategory('the-thao', 1); // Mặc định khi load là thể thao
-    // sessionStorage.setItem('manage-comment', 'true');
+
 });
 // Thêm sự kiện click cho các mục li trong ul.navbar-nav
 $('.navbar-nav .nav-item .nav-link').click(function () {
@@ -61,6 +60,8 @@ const newsId = sessionStorage.getItem('newsId');
 
 function loadNewsTableSuccess(categoryCode, page) {
     $('#content-container').load('/news_lv/page/newsTable', function () {
+        var paginationAuthor = $('#pagination-author');
+        paginationAuthor.hide();
         sessionStorage.setItem('status', 1);
         $('#news-waitApprove').removeClass('active-categoryName');
         $('#approved-articles').addClass('active-categoryName');
@@ -106,7 +107,7 @@ function showHideBtn() {
         btnUpdateNews.show();
         btnSaveNews.addClass('d-none');
     } else {
-        btnUpdateNews.hide();
+        btnUpdateNews.addClass('d-none');
         btnApprove.hide();
         btnRefuse.hide();
     }
@@ -172,14 +173,14 @@ $(document).on('click', '#categoryFetchNews', function () {
 
     if (createdBy) {
         // Nếu userName tồn tại trong sessionStorage, thực hiện hành động tương tự như click vào thẻ #news-approvedAuthor
-        fetchNewsByCreatedBy(createdBy, status, categoryCode);
+        fetchNewsByCreatedBy(createdBy, status, categoryCode, 1);
     } else {
         // Nếu userName không tồn tại, thực hiện hành động mặc định
         fetchNewsByCategory(categoryCode, 1, status);
     }
 
     // $('.nav-link').removeClass('active-categoryName');
-    $('.nav-link').not('#approved-articles, #news-waitApprove, #news-refused, #showCommentByNewsTable, #showCategory, #showUsers, #showRole').removeClass('active-categoryName');
+    $('.nav-link').not('#approved-articles, #news-waitApprove, #news-refused, #showCommentByNewsTable, #showCategory, #showUsers, #showRole, #news-approvedAuthor, #news-waitApproveAuthor, #news-refusedAuthor').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 });
 
@@ -232,10 +233,13 @@ $(document).on('click', '#news-waitApprove', function () {
 function loadNewsTable(status) {
     newsRefused.removeClass('active-categoryName');
     showCommentByNewsTable.removeClass('active-categoryName');
+    $('.nav-link').removeClass('active');
     // var status = $(this).data('status');
     sessionStorage.setItem('status', status);
     sessionStorage.removeItem('manage-comment');
     $('#content-container').load('/news_lv/page/newsTable', function () {
+        var paginationAuthor = $('#pagination-author');
+        paginationAuthor.hide();
         fetchCategoryNames();
         fetchNewsByCategory('the-thao', 1, status); // Mặc định khi load là thể thao và status là 2
     });
@@ -252,6 +256,8 @@ $(document).on('click', '#news-refused', function () {
     sessionStorage.setItem('status', status);
     sessionStorage.removeItem('manage-comment');
     $('#content-container').load('/news_lv/page/newsTable', function () {
+        var paginationAuthor = $('#pagination-author');
+        paginationAuthor.hide();
         fetchCategoryNames();
         fetchNewsByCategory('the-thao', 1, status); // Mặc định khi load là thể thao và status là 2
     });
@@ -271,6 +277,8 @@ $(document).on('click', '#showCommentByNewsTable', function () {
     var manageComment = sessionStorage.getItem('manage-comment');
 
     $('#content-container').load('/news_lv/page/newsTable', function () {
+        var paginationAuthor = $('#pagination-author');
+        paginationAuthor.hide();
 
         if (manageComment === 'true') {
             $('.icon-news').addClass('d-none');
@@ -301,8 +309,10 @@ $(document).on('click', '#approveNews', function () {
     var newsId = sessionStorage.getItem('newsId');
     var category_code = sessionStorage.getItem('categoryCodeInNewItem');
     var page = sessionStorage.getItem('thisPage');
+    var approveBy = sessionStorage.getItem('createdBy');
     var statusUpdateRequest = {
-        status: 2 // Trạng thái "Đã duyệt"
+        status: 2,
+        approveBy: approveBy
     };
 
     $.ajax({
@@ -333,6 +343,8 @@ function backNews() {
     var newsId = sessionStorage.getItem('newsId');
     var manageComment = sessionStorage.getItem('manage-comment');
     $('#content-container').load('/news_lv/page/newsTable', function () {
+        var paginationAuthor = $('#pagination-author');
+        paginationAuthor.hide();
         fetchCategoryNames();
         fetchNewsByCategory(categoryCode, thisPage, status); // Mặc định khi load là thể thao và status là 2
 
@@ -677,7 +689,7 @@ function fetchNewsByCategory(categoryCode, page, status) {
             category: categoryCode,
             status: status,
             page: page,
-            size: 2
+            size: 5
         },
         success: function(data) {
             /*if (data.code === 1000) {
