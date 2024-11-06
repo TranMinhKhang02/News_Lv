@@ -29,6 +29,14 @@
 </head>
 
 <body>
+
+<!--===========Loading=============-->
+<div id="loading-overlay" class="d-none"></div>
+<div id="loading" class="d-none">
+    <img th:src="@{/static/loading/circle-loading.gif}" alt="Loading...">
+</div>
+<!--===========Loading=============-->
+
 <!-- Topbar Start -->
 <div th:insert="~{home/menu/topbar}"></div>
 <!-- Topbar End -->
@@ -346,6 +354,7 @@
 <!--<script th:src="@{/static/customer/js/homePage.js}"></script>-->
 <script th:src="@{/static/customer/js/single.js}"></script>
 <script th:src="@{/static/customer/js/myInfo-user.js}"></script>
+<script th:src="@{/static/loading/loading.js}"></script>
 <script th:inline="javascript">
     var defaultAvatarPath = /*[[@{/static/customer/img/user-avatar.png}]]*/ '/static/customer/img/user-avatar.png';
 </script>

@@ -90,6 +90,7 @@ public class SecurityConfig {
                         .userService(customOAuth2UserService())
                     )
                     .successHandler(new CustomAuthenticationSuccessHandler(userService))
+                    .failureHandler(new CustomAuthenticationFailureHandler())
             )
             .csrf(AbstractHttpConfigurer::disable);
 

@@ -50,11 +50,20 @@
                     <form id="registrationForm">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="userName" name=userName placeholder="Tên đăng nhập" required minlength="4">
+                            <div id="userNameError" class="text-danger d-none">Tên đăng nhập đã tồn tại!</div>
                             <label for="userName">Tên đăng nhập</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control" id="password" name="password" required minlength="4" placeholder="Mật khẩu">
                             <label for="password">Mật khẩu</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="passwordReplay" name="password" required minlength="4" placeholder="Nhập lại mật khẩu">
+                            <label for="password">Nhập lại mật khẩu</label>
+                        </div>
+                        <div class="mb-3 form-floating">
+                            <input type="checkbox" class="form-check-input" id="showPass">
+                            <label class="form-control" for="showPass">Hiển thị mật khẩu</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="fullName" name="fullName" required placeholder="Họ và tên">
@@ -128,6 +137,34 @@
             });
         });
     });
+
+    $('#userName').on('blur', function() {
+        var userName = $(this).val();
+        if (userName) {
+            checkUserNameExists(userName);
+        }
+    });
+
+    function checkUserNameExists(userName) {
+        $.ajax({
+            url: '/news_lv/users/checkUserName',
+            type: 'GET',
+            data: {
+                userName: userName
+            },
+            success: function(response) {
+                if (response.result) {
+                    $('#userNameError').removeClass('d-none')
+                    $('#userName').val(''); // Xóa giá trị của trường userName
+                } else {
+                    $('#userNameError').addClass('d-none')
+                }
+            },
+            error: function(error) {
+                console.error('Error checking userName:', error);
+            }
+        });
+    }
 </script>
 
 </body>

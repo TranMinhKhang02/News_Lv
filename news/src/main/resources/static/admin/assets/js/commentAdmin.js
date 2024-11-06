@@ -107,6 +107,7 @@ $(document).on('click', '.delete-comment', function () {
         url: '/news_lv/comment/' + commentId,
         method: 'DELETE',
         success: function(response) {
+            createToast('success', 'fas fa-check', 'Thành công', 'Xóa bình luận thành công');
             if (response.code === 1000) {
                 loadComments(newsId);
             }

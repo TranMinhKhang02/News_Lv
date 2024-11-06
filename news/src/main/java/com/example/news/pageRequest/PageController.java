@@ -4,6 +4,8 @@ import com.example.news.dto.response.ApiResponse;
 import com.example.news.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -20,6 +22,8 @@ import java.util.Map;
 @RequestMapping("/page")
 @Controller
 public class PageController {
+
+    private static final Logger log = LoggerFactory.getLogger(PageController.class);
 
     @ModelAttribute
     public void addUserInfoToModel(HttpSession session, Model model, HttpServletRequest httpRequest) {
@@ -103,8 +107,21 @@ public class PageController {
     public String showAdminPage(HttpSession session, Model model, HttpServletRequest httpRequest) {
         // Lấy thông tin người dùng từ kết quả xác thực
         User user = (User) httpRequest.getSession().getAttribute("user");
-        // Lấy thông tin từ session
-//        String fullName = (String) session.getAttribute("fullName");
+        // Kiểm tra nếu người dùng là null
+        if (user == null) {
+            return "redirect:/page/error";
+        }
+        log.info("User Role: {}", user.getRole().getCode());
+        var role = user.getRole().getCode();
+        // Kiểm tra vai trò của người dùng
+        if (!role.equals("ADMIN") && !role.equals("ADMIN_MANAGE") && !role.equals("AUTHOR")) {
+            return "redirect:/page/error";
+        }
+
+        /*// Kiểm tra nếu người dùng không có vai trò hợp lệ
+        if (user == null || (!user.getRole().equals("ADMIN") && !user.getRole().equals("ADMIN_MANAGE") && !user.getRole().equals("AUTHOR"))) {
+            return "redirect:/error";
+        }*/
 
         // Thêm vào model
         model.addAttribute("fullName", user.getFullName());
@@ -210,5 +227,10 @@ public class PageController {
         Map<String, Object> userInfo = new HashMap<>(attributes);
 
         return ResponseEntity.ok(userInfo); // Trả về toàn bộ thông tin người dùng
+    }
+
+    @GetMapping("/error")
+    public String showErrorPage() {
+        return "error/page404";
     }
 }

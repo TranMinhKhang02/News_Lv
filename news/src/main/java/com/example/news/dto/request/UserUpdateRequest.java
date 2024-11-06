@@ -14,5 +14,8 @@ import java.util.Date;
 public class UserUpdateRequest {
     String password;
     String fullName;
+    String email;
+    String phoneNumber;
+    String avatar;
     LocalDateTime dob;
 }

@@ -1,7 +1,25 @@
 $(document).ready(function () {
+    showLoading()
+    function toggleChartTimeout() {
+        setTimeout(function () {
+            $('#favoriteYearCheckbox').prop('checked', true);
+            $('#favoriteMonthCheckbox').prop('checked', true);
+            $('#viewYearCheckbox').prop('checked', true);
+            $('#viewMonthCheckbox').prop('checked', true);
+            // Gọi hàm toggleChart cho các checkbox và biểu đồ tương ứng
+            toggleChart($('#favoriteYearCheckbox'), $('#chartFavoriteYear'));
+            toggleChart($('#favoriteMonthCheckbox'), $('#chartFavoriteMonth'));
+            toggleChart($('#favorite7DaysCheckbox'), $('#chartFavorite7LastDay'));
+            toggleChart($('#favoriteCustomCheckbox'), $('#chartFavoriteCustom'));
+            toggleChart($('#viewYearCheckbox'), $('#chartViewYear'));
+            toggleChart($('#viewMonthCheckbox'), $('#chartViewMonth'));
+            toggleChart($('#view7DaysCheckbox'), $('#chartView7LastDay'));
+            toggleChart($('#viewCustomCheckbox'), $('#chartViewCustom'));
+        }, 100); // Đặt độ trễ 100ms
+    }
 
-    setTimeout(function () {
-
+    toggleChartTimeout()
+    /*setTimeout(function () {
         $('#favoriteYearCheckbox').prop('checked', true);
         $('#favoriteMonthCheckbox').prop('checked', true);
         $('#viewYearCheckbox').prop('checked', true);
@@ -15,13 +33,7 @@ $(document).ready(function () {
         toggleChart($('#viewMonthCheckbox'), $('#chartViewMonth'));
         toggleChart($('#view7DaysCheckbox'), $('#chartView7LastDay'));
         toggleChart($('#viewCustomCheckbox'), $('#chartViewCustom'));
-
-        // Hiển thị các biểu đồ mặc định
-        /*$('#chartFavoriteYear').show();
-        $('#chartFavorite7LastDay').show()
-        $('#chartFavoriteMonth').css('display', 'none')
-        $('#chartFavoriteCustom').css('display', 'none')*/
-    }, 100); // Đặt độ trễ 100ms
+    }, 100); // Đặt độ trễ 100ms*/
 
     function toggleChart(checkbox, chart) {
         // Kiểm tra trạng thái của checkbox ngay khi hàm được gọi
@@ -64,17 +76,6 @@ $(document).ready(function () {
             }
         });
     }
-    /*function toggleChart(checkbox, chart) {
-        checkbox.change(function() {
-            if (checkbox.is(':checked')) {
-                chart.show();
-                console.log('Show chart');
-            } else {
-                chart.css('display', 'none');
-                console.log('Hide chart');
-            }
-        });
-    }*/
 
     var Role = sessionStorage.getItem('Role');
     /*=========================EVENT===============================*/
@@ -97,7 +98,11 @@ $(document).ready(function () {
             view7LastDay()
 
             viewCustom()
+
+            toggleChartTimeout()
         })
+
+        hideLoading()
     }
     /*=========================EVENT===============================*/
     console.log('Role: ', Role);
@@ -124,8 +129,9 @@ $(document).ready(function () {
         sessionStorage.removeItem('categories')
         navAdmin.remove()
         navManage.remove()
+    } else {
+        window.location.href = '/news_lv/page/error'
     }
-
 });
 
 function fetchDataAndUpdateUI() {

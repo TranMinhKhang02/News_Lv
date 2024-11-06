@@ -65,7 +65,8 @@ function updateRoleUser(userId, roleId) {
         contentType: 'application/json',
         data: JSON.stringify({ roleId: roleId }),
         success: function (response) {
-            alert('Cập nhật vai trò thành công!');
+            // alert('Cập nhật vai trò thành công!');
+            createToast('success', 'fas fa-check', 'Thành công', 'Cập nhật vai trò thành công');
             loadUserTable()
             // Xử lý sau khi cập nhật thành công, ví dụ: chuyển hướng hoặc cập nhật giao diện
         },
@@ -84,6 +85,13 @@ $(document).on('click', '#viewUserDetail', function (e) {
         getUserById(userId);
         fetchRoleSelect()
         $('#saveUser').hide();
+
+        $('#userName').on('blur', function() {
+            var userName = $(this).val();
+            if (userName) {
+                checkUserNameExists(userName);
+            }
+        });
     });
 })
 
@@ -123,7 +131,8 @@ function createUser() {
         contentType: 'application/json',
         data: JSON.stringify(userDate),
         success: function (response) {
-            alert('Tạo người dùng thành công!');
+            // alert('Tạo người dùng thành công!');
+            createToast('success', 'fas fa-check', 'Thành công', 'Tạo người dùng thành công');
             loadUserTable()
         },
         error: function (error) {
@@ -131,6 +140,27 @@ function createUser() {
             alert('Tạo người dùng thất bại!');
         }
     })
+}
+
+function checkUserNameExists(userName) {
+    $.ajax({
+        url: '/news_lv/users/checkUserName',
+        type: 'GET',
+        data: {
+            userName: userName
+        },
+        success: function(response) {
+            if (response.result) {
+                $('#userNameError').removeClass('d-none')
+                $('#userName').val(''); // Xóa giá trị của trường userName
+            } else {
+                $('#userNameError').addClass('d-none')
+            }
+        },
+        error: function(error) {
+            console.error('Error checking userName:', error);
+        }
+    });
 }
 
 $(document).on('click', '#back-userTable', function (e) {

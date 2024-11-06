@@ -28,15 +28,30 @@
   <!-- Nucleo Icons -->
   <link th:href="@{/static/admin/assets/css/nucleo-icons.css}" rel="stylesheet" />
   <link th:href="@{/static/admin/assets/css/nucleo-svg.css}" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link th:href="@{/static/admin/assets/css/nucleo-svg.css}" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" th:href="@{/static/admin/assets/css/argon-dashboard.css}" rel="stylesheet" />
   <link th:href="@{/static/admin/assets/css/custom.css}" rel="stylesheet" />
+  <link th:href="@{/static/notification/notification.css}" rel="stylesheet" />
 </head>
 
-<body class="g-sidenav-show   bg-gray-100">
+<body class="g-sidenav-show bg-gray-100">
+<!--===========Notification=============-->
+<div class="notifications" id="notification-container"></div>
+<!--===========Notification=============-->
+
+<!--===========Loading=============-->
+<div id="loading-overlay" class="d-none"></div>
+<div id="loading" class="d-none">
+  <img th:src="@{/static/loading/circle-loading.gif}" alt="Loading...">
+</div>
+<!--===========Loading=============-->
+
+<!-- Nội dung trang -->
 <div class="min-height-300 bg-primary position-absolute w-100"></div>
 <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
   <div class="sidenav-header">
@@ -753,6 +768,8 @@
 <script th:src="@{/static/admin/assets/js/userAdmin.js}"></script>
 <script th:src="@{/static/admin/assets/js/roleAdmin.js}"></script>
 <script th:src="@{/static/admin/assets/js/profile.js}"></script>
+<script th:src="@{/static/notification/notification.js}"></script>
+<script th:src="@{/static/loading/loading.js}"></script>
 <script th:inline="javascript">
   var defaultAvatarPath = /*[[@{/static/customer/img/user-avatar.png}]]*/ '/static/customer/img/user-avatar.png';
 </script>

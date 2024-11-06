@@ -153,6 +153,14 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping("/checkUserName")
+    public ApiResponse<Boolean> checkUserName(@RequestParam String userName) {
+        return ApiResponse.<Boolean>builder()
+                .code(1000)
+                .result(userService.checkUserExist(userName))
+                .build();
+    }
+
     @GetMapping("/myInfo")
     public ApiResponse<UserResponse> getCurrentUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // Lấy session hiện tại

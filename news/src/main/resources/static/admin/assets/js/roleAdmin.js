@@ -232,7 +232,8 @@ function createRole() {
         data: JSON.stringify(roleData),
         success: function (response) {
             if (response.code === 1000) {
-                alert('Vai trò đã được tạo thành công!');
+                // alert('Vai trò đã được tạo thành công!');
+                createToast('success', 'fas fa-check', 'Thành công', 'Tạo vai trò thành công');
                 loadRoleTable()
                 // Chuyển hướng hoặc cập nhật giao diện người dùng nếu cần
             } else {

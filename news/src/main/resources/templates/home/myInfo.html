@@ -102,12 +102,16 @@
                             <input type="email" class="form-control" id="email" th:value="${userInfo.email}">
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Mật khẩu</label>
-                            <input type="password" class="form-control" id="password">
+                            <label for="passwordPrevious" class="form-label">Mật khẩu cũ</label>
+                            <input type="password" class="form-control" id="passwordPrevious">
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordNew" class="form-label">Mật khẩu mới</label>
+                            <input type="password" class="form-control" id="passwordNew">
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="twoFactorAuth">
-                            <label class="form-check-label" for="twoFactorAuth">Bảo mật 2 lớp</label>
+                            <input type="checkbox" class="form-check-input" id="showPass">
+                            <label class="form-check-label" for="showPass">Hiển thị mật khẩu</label>
                         </div>
                         <hr>
                         <h5>Kết nối tài khoản</h5>
@@ -120,25 +124,25 @@
 
                         <h5>Thông tin cá nhân</h5>
                         <div class="mb-3">
-                            <label for="birthday" class="form-label">Ngày sinh</label>
-                            <input type="date" class="form-control" id="birthday">
+                            <label for="dob" class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" id="dob">
                         </div>
-                        <div class="mb-3">
+                        <!--<div class="mb-3">
                             <label for="gender" class="form-label">Giới tính</label>
                             <select class="form-select" id="gender">
                                 <option value="male">Nam</option>
                                 <option value="female">Nữ</option>
                                 <option value="other">Khác</option>
                             </select>
-                        </div>
+                        </div>-->
                         <div class="mb-3">
-                            <label for="phone" class="form-label">Số điện thoại cá nhân</label>
-                            <input type="tel" class="form-control" id="phone">
+                            <label for="phoneNumber" class="form-label">Số điện thoại cá nhân</label>
+                            <input type="tel" class="form-control" id="phoneNumber">
                         </div>
-                        <div class="mb-3">
+                        <!--<div class="mb-3">
                             <label for="address" class="form-label">Địa chỉ</label>
                             <textarea class="form-control" id="address"></textarea>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
                 <!--<div class="col-md-6">
@@ -190,6 +194,19 @@
 <script th:src="@{/static/customer/js/myInfo-user.js}"></script>
 
 <script>
+    var showPass = $('#showPass');
+    var passwordNew = $('#passwordNew');
+    var passwordPrevious = $('#passwordPrevious');
+
+    showPass.on('change', function() {
+        if (showPass.is(':checked')) {
+            passwordNew.attr('type', 'text');
+            passwordPrevious.attr('type', 'text');
+        } else {
+            passwordNew.attr('type', 'password');
+            passwordPrevious.attr('type', 'password');
+        }
+    });
     $(document).ready(function() {
         $('.savedNews').on('click', function() {
             $('#info-user').html(`

@@ -219,7 +219,8 @@ function createCategory() {
         success: function (response) {
             if (response.code === 1000) {
                 loadCategorySuccess();
-                alert('Tạo thể loại thành công!');
+                // alert('Tạo thể loại thành công!');
+                createToast('success', 'fas fa-check', 'Thành công', 'Tạo thể loại thành công');
                 // Thực hiện các hành động khác sau khi tạo thành công
             } else {
                 console.error('Failed to create category:', response);
@@ -256,7 +257,8 @@ function updateCategory(categoryId) {
         success: function (response) {
             if (response.code === 1000) {
                 loadCategorySuccess()
-                alert('Cập nhật thể loại thành công!');
+                // alert('Cập nhật thể loại thành công!');
+                createToast('success', 'fas fa-check', 'Thành công', 'Cập nhật thể loại thành công');
                 // Thực hiện các hành động khác sau khi cập nhật thành công
             } else {
                 console.error('Failed to update category:', response);

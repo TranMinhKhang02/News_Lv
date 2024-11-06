@@ -174,6 +174,24 @@
     max-width: 100%;
 }
 
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 10000; /* Ensure it is behind the loading GIF */
+}
+
+#loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10001; /* Ensure it is above the overlay */
+}
+
 @media (min-width: 576px) {
     #audioElement {
         justify-content: center;

@@ -49,7 +49,7 @@ public class News extends Base {
     @Column(name = "n_likeCount")
     Long likeCount;
 
-    @Column(name = "n_source")
+    @Column(columnDefinition = "TEXT", name = "n_source")
     String source;
 
     @Column(name = "n_rejectReason")

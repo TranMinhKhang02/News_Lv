@@ -200,6 +200,10 @@ public class UserService {
         }
     }
 
+    public boolean checkUserExist(String username) {
+        return userRepository.existsByUserName(username);
+    }
+
     public User loginWithGoogle(String googleId, String email, String fullName, String avatar, LocalDate dob) {
         // Kiểm tra xem người dùng đã tồn tại trong cơ sở dữ liệu hay chưa
         Optional<User> existingUser = userRepository.findByGoogleId(googleId);

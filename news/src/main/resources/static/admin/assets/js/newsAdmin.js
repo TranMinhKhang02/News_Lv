@@ -322,7 +322,8 @@ $(document).on('click', '#approveNews', function () {
         data: JSON.stringify(statusUpdateRequest),
         success: function(response) {
             if (response.code === 1000) {
-                alert('Cập nhật trạng thái của bài viết thành công.');
+                // alert('Cập nhật trạng thái của bài viết thành công.');
+                createToast('success', 'fas fa-check', 'Thành công', 'Cập nhật trạng thái thành công');
                 // Thực hiện các hành động khác nếu cần, ví dụ: tải lại danh sách tin tức
                 loadNewsTableSuccess(category_code, page)
             } else {
@@ -496,7 +497,8 @@ $(document).on('click', '#updateNews', function () {
         contentType: 'application/json',
         data: JSON.stringify(requestData),
         success: function(response) {
-            alert('Cập nhật tin tức thành công');
+            // alert('Cập nhật tin tức thành công');
+            createToast('success', 'fas fa-check', 'Thành công', 'Cập nhật tin tức thành công');
             if (Role === 'ADMIN_MANAGE') {
                 loadNewsTableManage(status)
             } else if (Role === 'AUTHOR') {
@@ -568,7 +570,8 @@ $(document).on('click', '#deleteNews', function () {
                 data: JSON.stringify(selectedIds),
                 success: function(response) {
                     if (response.code === 1000) {
-                        alert('Xóa bài viết thành công');
+                        // alert('Xóa bài viết thành công');
+                        createToast('success', 'fas fa-check', 'Thành công', 'Xóa tin tức thành công');
                         location.reload(); // Tải lại trang để cập nhật danh sách bài viết
                     } else {
                         alert('Có lỗi xảy ra: ' + response.message);
@@ -645,7 +648,8 @@ $(document).on('click', '#saveNews', function () {
         data: JSON.stringify(newsData),
         success: function(response) {
             if (response.code === 1000) {
-                alert('Tạo tin tức thành công');
+                // alert('Tạo tin tức thành công');
+                createToast('success', 'fas fa-check', 'Thành công', 'Đăng tin tức thành công');
                 // Thực hiện các hành động khác nếu cần
                 // $('#content-container').load('/news_lv/page/newsTable');
                 if (Role === 'AUTHOR') {
@@ -1019,6 +1023,9 @@ function uploadToCloudinary(file) {
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
 
+    // Hiển thị trạng thái loading
+    $('#loading-imagePreview').removeClass('d-none');
+
     return fetch(cloudinaryUrl, {
         method: "POST",
         body: formData
@@ -1039,6 +1046,10 @@ function uploadToCloudinary(file) {
         .catch((error) => {
             console.error("Error uploading to Cloudinary:", error);
             return null;
+        })
+        .finally(() => {
+            // Ẩn trạng thái loading
+            $('#loading-imagePreview').addClass('d-none');
         });
 }
 

@@ -1,6 +1,7 @@
 var newsContent = '';
 
 $(document).ready(function () {
+    showLoading()
     $('#homeNavbar').removeClass('active');
     $('#singleNavbar').addClass('active');
 
@@ -90,6 +91,8 @@ $(document).ready(function () {
         // let cleanedSummary = news.summary.replace(/^"|"$/g, '');
         $('#news-summaryText').text(news.summary);
         audio.attr('src', news.audioPath);
+
+        hideLoading()
     }
 
     fetchNewsByTopViewInItem()
