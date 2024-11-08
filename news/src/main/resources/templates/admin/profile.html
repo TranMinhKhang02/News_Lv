@@ -4,7 +4,7 @@
             <div class="card-header pb-0">
                 <div class="d-flex align-items-center">
                     <p class="mb-0">Thông tin</p>
-                    <button class="btn btn-primary btn-sm ms-auto" id="updateProfile">Chỉnh sửa</button>
+                    <button class="btn btn-primary btn-sm ms-auto">Chỉnh sửa</button>
                 </div>
             </div>
             <div class="card-body">
@@ -33,6 +33,22 @@
                             <label class="form-control-label">Ngày sinh</label>
                             <input class="form-control" id="dob" type="date">
                         </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-control-label">Mật khẩu cũ</label>
+                            <input class="form-control" id="passwordPrevious" type="password" value="">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-control-label">Mật khẩu mới</label>
+                            <input class="form-control" id="password" type="password" value="">
+                        </div>
+                    </div>
+                    <div class="col-md-6 form-check ms-3">
+                        <input type="checkbox" class="form-check-input" id="showPass">
+                        <label class="form-check-label" for="showPass">Hiển thị mật khẩu</label>
                     </div>
                 </div>
                 <hr class="horizontal dark">
@@ -63,7 +79,7 @@
                         </div>
                     </div>-->
                 </div>
-                <button class="btn btn-primary btn-sm ms-auto" id="saveProfile">Lưu</button>
+                <button class="btn btn-primary btn-sm ms-auto" id="updateProfileAdmin">Cập nhật</button>
                 <!--<hr class="horizontal dark">
                 <p class="text-uppercase text-sm">About me</p>
                 <div class="row">
@@ -81,22 +97,32 @@
         <div class="card card-profile">
             <img th:src="@{/static/admin/assets/img/bg-profile.jpg}" alt="Image placeholder" class="card-img-top">
             <div class="row justify-content-center">
-                <div class="col-4 col-lg-4 order-lg-2">
+                <!--<div class="col-4 col-lg-4 order-lg-2">
                     <div class="mt-n4 mt-lg-n6 mb-4 mb-lg-0">
                         <a href="javascript:;">
                             <img src="" id="avatar" class="rounded-circle img-fluid border border-2 border-white">
                         </a>
                     </div>
+                </div>-->
+                <div class="col-4 col-lg-4 order-lg-2">
+                    <div class="mt-n4 mt-lg-n6 mb-4 mb-lg-0 position-relative">
+                        <a href="javascript:;">
+                            <img src="" id="avatar" class="rounded-circle img-fluid border border-2 border-white">
+                        </a>
+                        <!--<a href="javascript:;" class="position-absolute top-0 start-100 translate-middle p-2 bg-white border border-2 rounded-circle" id="editAvatar">
+                            <i class="fa fa-edit" aria-hidden="true" style="padding: 2px 2px 2px 3px;"></i>
+                        </a>-->
+                    </div>
                 </div>
             </div>
-            <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
+            <!--<div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
                 <div class="d-flex justify-content-between">
                     <a href="javascript:;" class="btn btn-sm btn-info mb-0 d-none d-lg-block">Connect</a>
                     <a href="javascript:;" class="btn btn-sm btn-info mb-0 d-block d-lg-none"><i class="ni ni-collection"></i></a>
                     <a href="javascript:;" class="btn btn-sm btn-dark float-right mb-0 d-none d-lg-block">Message</a>
                     <a href="javascript:;" class="btn btn-sm btn-dark float-right mb-0 d-block d-lg-none"><i class="ni ni-email-83"></i></a>
                 </div>
-            </div>
+            </div>-->
             <div class="card-body pt-0">
                 <!--<div class="row">
                     <div class="col">
@@ -121,13 +147,13 @@
                         Mark Davis<span class="font-weight-light">, 35</span>
                     </h5>
                     <div class="h6 font-weight-300" id="email">
-                        <i class="ni location_pin mr-2"></i>Bucharest, Romania
+                        <i class="ni location_pin mr-2"></i>
                     </div>
                     <div class="h6 mt-4" id="roleName">
-                        <i class="ni business_briefcase-24 mr-2"></i>Solution Manager - Creative Tim Officer
+                        <i class="ni business_briefcase-24 mr-2"></i>
                     </div>
                     <div id="phoneNumber">
-                        <i class="ni education_hat mr-2"></i>University of Computer Science
+                        <i class="ni education_hat mr-2"></i>
                     </div>
                 </div>
             </div>

@@ -169,7 +169,7 @@
                     </div>
                 </div>-->
             </div>
-            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            <button type="submit" class="btn btn-primary" id="updateProfile">Lưu thay đổi</button>
         </div>
     </div>
 </div>
@@ -193,7 +193,18 @@
 <script th:src="@{/static/customer/js/main.js}"></script>
 <script th:src="@{/static/customer/js/myInfo-user.js}"></script>
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userInfo = /*[[${userInfo != null}]]*/ false;
+    if (!userInfo) {
+        // Xóa session
+        sessionStorage.clear();
+        localStorage.clear();
+        // Chuyển hướng đến trang home
+        window.location.href = '/news_lv/page/home';
+    }
+    /*]]>*/
+
     var showPass = $('#showPass');
     var passwordNew = $('#passwordNew');
     var passwordPrevious = $('#passwordPrevious');

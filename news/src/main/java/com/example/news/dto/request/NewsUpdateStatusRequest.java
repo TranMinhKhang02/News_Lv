@@ -14,5 +14,6 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewsUpdateStatusRequest {
     Long status;
+    String rejectReason;
     String approveBy;
 }

@@ -47,6 +47,9 @@ public class User extends Base {
     @Column(name = "u_avatar")
     String avatar;
 
+    @Column(name = "u_cloudinaryId")
+    String cloudinaryId;
+
     @Column(name = "u_dob")
     LocalDate dob;
 

@@ -85,6 +85,24 @@ public class UserService {
     }*/
 
     public UserResponse updateUser(long userId, UserUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
+
+        // Kiểm tra mật khẩu cũ nếu có thay đổi mật khẩu
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            if (!passwordEncoder.matches(request.getPasswordPrevious(), user.getPassword())) {
+                throw new RuntimeException("Mật khẩu cũ không đúng!");
+            }
+            // Mã hoá mật khẩu mới
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        // Cập nhật thông tin người dùng
+        userMapper.updateUserFields(user, request);
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+    /*public UserResponse updateUser(long userId, UserUpdateRequest request) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy user!"));
@@ -94,7 +112,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
-    }
+    }*/
 
     public UserResponse updateUserRole(Long userId, UserUpdateRequestByAdmin request) {
         User user = userRepository.findById(userId)

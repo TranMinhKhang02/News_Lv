@@ -16,6 +16,7 @@ import java.util.Map;
 public class CloudinaryService {
     Cloudinary cloudinary;
     Cloudinary cloudinaryAudio;
+    Cloudinary cloudinaryAvatar;
 
     public Map<String, Object> uploadFile(File file, String fileName) {
         try {
@@ -58,6 +59,17 @@ public class CloudinaryService {
         }
     }
 
+    public Map<String, Object> uploadImage(File file, String fileName) {
+        try {
+            Map<String, Object> options = ObjectUtils.asMap(
+                    "resource_type", "image"
+            );
+            return cloudinaryAvatar.uploader().upload(file, options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     /*public Map deleteImage(String publicId) {
         try {
             return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());

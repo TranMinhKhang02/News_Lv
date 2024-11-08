@@ -3,8 +3,7 @@ package com.example.news.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -12,10 +11,12 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
+    String passwordPrevious;
     String password;
     String fullName;
     String email;
     String phoneNumber;
-    String avatar;
-    LocalDateTime dob;
+//    String avatar;
+//    String cloudinaryId;
+    LocalDate dob;
 }

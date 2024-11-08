@@ -1,4 +1,20 @@
 <div class="container-fluid py-4">
+
+    <!-- Form xác nhận từ chối -->
+    <div id="rejectConfirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Xác nhận từ chối</h2>
+            <p>Nhập lý do từ chối:</p>
+            <textarea id="rejectReason" rows="2" cols="50"></textarea>
+            <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-danger max-width-200" id="confirmReject">Xác nhận</button>
+                <button class="btn btn-primary max-width-200" id="cancelReject">Hủy</button>
+            </div>
+        </div>
+    </div>
+    <!-- Form xác nhận từ chối -->
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -71,6 +87,26 @@
                             <div class="form-group w-670">
                                 <label class="form-control-label">Nguồn tin tức</label>
                                 <input class="form-control" id="source" type="text" name="source" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="forAuthor" class="d-none">
+                        <hr class="horizontal dark">
+                        <div class="row">
+                            <div class="col-md-12 d-flex justify-content-center">
+                                <div class="form-group w-670">
+                                    <label class="form-control-label">Lý do từ chối</label>
+                                    <input class="form-control" id="rejectReasonInput" type="text" name="rejectReasonInput" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="horizontal dark">
+                        <div class="row">
+                            <div class="col-md-12 d-flex justify-content-center">
+                                <div class="form-group w-670">
+                                    <label class="form-control-label">Người phê duyệt</label>
+                                    <input class="form-control" id="approvedBy" type="text" name="approvedBy" value="">
+                                </div>
                             </div>
                         </div>
                     </div>

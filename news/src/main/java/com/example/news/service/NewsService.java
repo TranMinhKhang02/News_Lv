@@ -300,6 +300,7 @@ public class NewsService {
                 .orElseThrow(() -> new RuntimeException("Status not found"));
 
         news.setApprovedBy(request.getApproveBy());
+        news.setRejectReason(request.getRejectReason());
         news.setStatus(status);
         newsRepository.save(news);
     }

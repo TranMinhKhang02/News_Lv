@@ -1,7 +1,19 @@
 $(document).ready(function () {
-    showLoading()
     function toggleChartTimeout() {
-        setTimeout(function () {
+        $('#favoriteYearCheckbox').prop('checked', true);
+        $('#favoriteMonthCheckbox').prop('checked', true);
+        $('#viewYearCheckbox').prop('checked', true);
+        $('#viewMonthCheckbox').prop('checked', true);
+        // Gọi hàm toggleChart cho các checkbox và biểu đồ tương ứng
+        toggleChart($('#favoriteYearCheckbox'), $('#chartFavoriteYear'));
+        toggleChart($('#favoriteMonthCheckbox'), $('#chartFavoriteMonth'));
+        toggleChart($('#favorite7DaysCheckbox'), $('#chartFavorite7LastDay'));
+        toggleChart($('#favoriteCustomCheckbox'), $('#chartFavoriteCustom'));
+        toggleChart($('#viewYearCheckbox'), $('#chartViewYear'));
+        toggleChart($('#viewMonthCheckbox'), $('#chartViewMonth'));
+        toggleChart($('#view7DaysCheckbox'), $('#chartView7LastDay'));
+        toggleChart($('#viewCustomCheckbox'), $('#chartViewCustom'));
+        /*setTimeout(function () {
             $('#favoriteYearCheckbox').prop('checked', true);
             $('#favoriteMonthCheckbox').prop('checked', true);
             $('#viewYearCheckbox').prop('checked', true);
@@ -15,10 +27,10 @@ $(document).ready(function () {
             toggleChart($('#viewMonthCheckbox'), $('#chartViewMonth'));
             toggleChart($('#view7DaysCheckbox'), $('#chartView7LastDay'));
             toggleChart($('#viewCustomCheckbox'), $('#chartViewCustom'));
-        }, 100); // Đặt độ trễ 100ms
+        }, 100); // Đặt độ trễ 100ms*/
     }
 
-    toggleChartTimeout()
+    setTimeout(toggleChartTimeout, 100)
     /*setTimeout(function () {
         $('#favoriteYearCheckbox').prop('checked', true);
         $('#favoriteMonthCheckbox').prop('checked', true);
@@ -99,10 +111,8 @@ $(document).ready(function () {
 
             viewCustom()
 
-            toggleChartTimeout()
+            setTimeout(toggleChartTimeout, 100)
         })
-
-        hideLoading()
     }
     /*=========================EVENT===============================*/
     console.log('Role: ', Role);
@@ -1139,6 +1149,19 @@ $(document).on('click', '#profileAdmin', function (e) {
             console.log("Content loaded successfully");
             console.log(response);
         }*/
+        const showPass = $('#showPass');
+        const password = $('#password');
+        const passwordPrevious = $('#passwordPrevious');
+
+        showPass.on('change', function() {
+            if (showPass.is(':checked')) {
+                password.attr('type', 'text');
+                passwordPrevious.attr('type', 'text');
+            } else {
+                password.attr('type', 'password');
+                passwordPrevious.attr('type', 'password');
+            }
+        });
     });
 });
 

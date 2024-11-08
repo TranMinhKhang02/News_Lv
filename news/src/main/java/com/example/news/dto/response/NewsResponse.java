@@ -24,6 +24,7 @@ public class NewsResponse extends BaseResponse<NewsResponse> {
     String shortDescription;
     String source;
     String rejectReason; // lý do từ chối duyệt bài viết
+    String approvedBy;
     String summary;
     boolean isSummarized;
     String audioPath;

@@ -26,4 +26,13 @@ public class CloudinaryConfig {
                 "api_secret", "eJQPIzzOMaZ8wmAe0nt6WJfG_tI"
         ));
     }
+
+    @Bean
+    public Cloudinary cloudinaryAvatar() {
+        return new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dhocs0lis",
+                "api_key", "671141423223572",
+                "api_secret", "AkLDlGwfdngC4fvKvD3WcGctQ7A"
+        ));
+    }
 }

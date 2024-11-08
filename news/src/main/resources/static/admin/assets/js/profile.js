@@ -1,24 +1,37 @@
 $(document).ready(function() {
-    /*var user = JSON.parse(sessionStorage.getItem('user'));
-    var fullNameInput = $('#fullNameInput')
-    var userName = $('#userName')
-    var emailInput = $('#emailInput')
-    var fullName = $('#fullName')
-    var email = $('#email')
-    var phone = $('#phone')
-    var roleName = $('#roleName')
 
-    userName.val(user.userName)
-    console.log('userName', user.userName)
-    fullNameInput.val(user.fullName)
-    console.log('fullName', user.fullName)
-    emailInput.val(user.email)
-    console.log('email', user.email)
-
-    fullName.text(user.fullName)
-    email.text(user.email)
-    phone.text(user.phone)
-    console.log('phone', user.phone)
-    roleName.text(user.role.name)
-    console.log('roleName', user.role.name)*/
 })
+
+$(document).on('click', '#updateProfileAdmin', function() {
+    var data = {
+        passwordPrevious: $('#passwordPrevious').val(),
+        password: $('#password').val(),
+        fullName: $('#fullNameInput').val(),
+        email: $('#emailInput').val(),
+        phoneNumber: $('#phoneNumberInput').val(),
+        dob: $('#dob').val()
+    }
+    if(!data.password) {
+        delete data.password;
+        delete data.passwordPrevious;
+    }
+
+    updateProfile(data);
+})
+
+function updateProfile(data) {
+    var userId = sessionStorage.getItem('userId');
+    $.ajax({
+        url: "/news_lv/users/" + userId,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            createToast('success', 'fas fa-check', 'Thành công', 'Cập nhật thông tin thành công');
+        },
+        error: function (error) {
+            console.error('Error updating user:', error);
+            alert('Có lỗi xảy ra khi cập nhật thông tin.');
+        }
+    })
+}

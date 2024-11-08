@@ -1,6 +1,11 @@
 var newsContent = '';
 
 $(document).ready(function () {
+    var userId = sessionStorage.getItem('userId');
+    if (!userId) {
+        $('#toggle-summary-btn').remove()
+        $('#news-summary').remove()
+    }
     showLoading()
     $('#homeNavbar').removeClass('active');
     $('#singleNavbar').addClass('active');
@@ -625,7 +630,7 @@ function createCommentHtml(comment) {
 
     return `
         <div class="media mb-4">
-            <img src="${avatarSrc}" alt="Image" class="img-fluid-comment mr-3 mt-1" style="width: 45px;">
+            <img src="${avatarSrc}" alt="Image" class="img-fluid-comment mr-3 mt-1" style="width: 45px; border-radius: 50%;">
             <div class="media-body">
                 <h6><a href="#">${comment.user.fullName}</a> <small><i>${new Date(comment.createdDate).toLocaleString()}</i></small></h6>
                 <p id="content-comment-${comment.id}">${comment.content}</p>

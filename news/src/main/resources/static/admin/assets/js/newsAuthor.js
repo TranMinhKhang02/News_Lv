@@ -12,6 +12,7 @@ function titlePageAuthor() {
 }
 
 function loadNewsByCreatedBy(createdBy, status, categoryCode) {
+    var newsId = sessionStorage.getItem('newsId');
     $('#content-container').load('/news_lv/page/newsTable', function () {
         var paginationAdmin = $('#pagination-admin');
         paginationAdmin.hide();

@@ -146,11 +146,11 @@ function createToast(type, iconClass, title, message) {
     }, 5000); // Adjust the timeout duration as needed
 }
 
-/*$(document).on('click', '#success', function() {
+$(document).on('click', '#btn-success', function() {
     console.log('Click success');
     let type = 'success';
     let icon = 'fa-solid fa-circle-check';
     let title = 'Success';
     let text = 'This is a success toast.';
     createToast(type, icon, title, text);
-});*/
+});

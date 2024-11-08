@@ -35,4 +35,22 @@ public interface UserMapper {
         role.setId(roleId);
         return role;
     }
+
+    default void updateUserFields(@MappingTarget User user, UserUpdateRequest request) {
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+        /*if (request.getAvatar() != null) {
+            user.setAvatar(request.getAvatar());
+        }*/
+        if (request.getDob() != null) {
+            user.setDob(request.getDob());
+        }
+    }
 }

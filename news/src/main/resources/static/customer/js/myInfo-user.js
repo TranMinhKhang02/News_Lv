@@ -2,6 +2,11 @@ $(document).ready(function () {
     $('.savedNews').on('click', function() {
         getFavorite(1, 5); // Gọi hàm getFavorite với trang 1 và kích thước 5 khi click vào nút "Tin đã lưu"
     });
+    var userId = sessionStorage.getItem('userId');
+    if(userId) {
+        fetchUserById(userId);
+    }
+
 });
 
 function getFavorite(page, size) {
@@ -108,4 +113,58 @@ function generatePagination(currentPage, totalPage) {
 
     paginationHtml += '</ul></nav>';
     return paginationHtml;
+}
+
+function fetchUserById(userId) {
+    $.ajax({
+        url: "/news_lv/users/" + userId,
+        type: 'Get',
+        success: function (response) {
+            var user = response.result;
+            $('#fullName').val(user.fullName);
+            $('#email').val(user.email);
+            $('#phoneNumber').val(user.phoneNumber);
+            $('#avatar').val(user.avatar);
+            $('#dob').val(user.dob);
+        },
+        error: function (error) {
+            console.error('Error updating user:', error);
+            alert('Có lỗi xảy ra khi cập nhật thông tin.');
+        }
+    })
+}
+
+$(document).on('click', '#updateProfile', function() {
+    var userId = sessionStorage.getItem('userId');
+    var data = {
+        passwordPrevious: $('#passwordPrevious').val(),
+        password: $('#passwordNew').val(),
+        fullName: $('#fullName').val(),
+        email: $('#email').val(),
+        phoneNumber: $('#phoneNumber').val(),
+        avatar: $('#avatar').val(),
+        dob: $('#dob').val()
+    }
+    if(!data.password) {
+        delete data.password;
+        delete data.passwordPrevious;
+    }
+
+    updateProfile(userId, data);
+})
+
+function updateProfile(userId, data) {
+    $.ajax({
+        url: "/news_lv/users/" + userId,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (response) {
+            alert('Cập nhật thông tin thành công');
+        },
+        error: function (error) {
+            console.error('Error updating user:', error);
+            alert('Có lỗi xảy ra khi cập nhật thông tin.');
+        }
+    })
 }
