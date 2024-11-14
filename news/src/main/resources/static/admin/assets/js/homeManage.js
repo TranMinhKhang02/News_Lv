@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    setTimeout(function () {
+    // showLoading();
+
+    function toggleChartTimeoutManage() {
         $('#favoriteYearManageCheckbox').prop('checked', true);
         $('#favoriteMonthManageCheckbox').prop('checked', true);
         $('#viewYearManageCheckbox').prop('checked', true);
@@ -12,7 +14,25 @@ $(document).ready(function () {
         toggleChart($('#viewYearManageCheckbox'), $('#chartViewYearMange'));
         toggleChart($('#viewMonthManageCheckbox'), $('#chartViewMonthMange'));
         toggleChart($('#view7DaysManageCheckbox'), $('#chartView7LastDayMange'));
-    }, 300); // Đặt độ trễ 300ms
+
+        hideLoading()
+    }
+    /*setTimeout(function () {
+        $('#favoriteYearManageCheckbox').prop('checked', true);
+        $('#favoriteMonthManageCheckbox').prop('checked', true);
+        $('#viewYearManageCheckbox').prop('checked', true);
+        $('#viewMonthManageCheckbox').prop('checked', true);
+
+        // Gọi hàm toggleChart cho các checkbox và biểu đồ tương ứng
+        toggleChart($('#favoriteYearManageCheckbox'), $('#chartFavoriteYearMange'));
+        toggleChart($('#favoriteMonthManageCheckbox'), $('#chartFavoriteMonthMange'));
+        toggleChart($('#favorite7DaysManageCheckbox'), $('#chartFavorite7LastDayMange'));
+        toggleChart($('#viewYearManageCheckbox'), $('#chartViewYearMange'));
+        toggleChart($('#viewMonthManageCheckbox'), $('#chartViewMonthMange'));
+        toggleChart($('#view7DaysManageCheckbox'), $('#chartView7LastDayMange'));
+    }, 300); // Đặt độ trễ 300ms*/
+
+    setTimeout(toggleChartTimeoutManage, 100);
 
     function toggleChart(checkbox, chart) {
         // Kiểm tra trạng thái của checkbox ngay khi hàm được gọi
@@ -818,6 +838,8 @@ $(document).ready(function () {
             viewMonthManage()
 
             view7LastDayManage()
+
+            setTimeout(toggleChartTimeoutManage, 100);
         })
     }
 });

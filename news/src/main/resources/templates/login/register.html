@@ -4,12 +4,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>NEWSBIG</title>
+
+    <!-- Favicon -->
+    <link th:href="@{/static/customer/img/favicon.png}" rel="icon">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" th:href="@{/static/login/login.css}">
+    <link th:href="@{/static/notification/notification.css}" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/static/notification/notification.js}"></script>
+    <style>
+        .c-red {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 
@@ -41,6 +52,10 @@
     </div>
 </form>-->
 
+<!--===========Notification=============-->
+<div class="notifications" id="notification-container"></div>
+<!--===========Notification=============-->
+
 <div class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -49,32 +64,46 @@
                     <h5 class="card-title text-center mb-5 fw-light fs-5">Đăng ký</h5>
                     <form id="registrationForm">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="userName" name=userName placeholder="Tên đăng nhập" required minlength="4">
+                            <input type="text" class="form-control" id="userName" name=userName placeholder="Tên đăng nhập" required minlength="5" pattern="^[a-zA-Z0-9]+$">
                             <div id="userNameError" class="text-danger d-none">Tên đăng nhập đã tồn tại!</div>
-                            <label for="userName">Tên đăng nhập</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="password" name="password" required minlength="4" placeholder="Mật khẩu">
-                            <label for="password">Mật khẩu</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="passwordReplay" name="password" required minlength="4" placeholder="Nhập lại mật khẩu">
-                            <label for="password">Nhập lại mật khẩu</label>
-                        </div>
-                        <div class="mb-3 form-floating">
-                            <input type="checkbox" class="form-check-input" id="showPass">
-                            <label class="form-control" for="showPass">Hiển thị mật khẩu</label>
+                            <label for="userName">Tên đăng nhập
+                                <span class="c-red">*</span>
+                            </label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="fullName" name="fullName" required placeholder="Họ và tên">
-                            <label for="fullName">Họ và tên</label>
+                            <div id="fullNameError" class="text-danger d-none"></div>
+                            <label for="fullName">Họ và tên
+                                <span class="c-red">*</span>
+                            </label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" name="password" required minlength="6" placeholder="Mật khẩu">
+                            <label for="password">Mật khẩu
+                                <span class="c-red">*</span>
+                            </label>
+                            <div id="passwordErrorShow" class="text-danger d-none"></div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="passwordReplay" name="passwordReplay" required minlength="6" placeholder="Nhập lại mật khẩu">
+                            <label for="passwordReplay">Nhập lại mật khẩu
+                                <span class="c-red">*</span>
+                            </label>
+                            <div id="passwordError" class="text-danger d-none"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="checkbox" id="showPass" name="showPass">
+                            <label for="showPass">Hiển thị mật khẩu</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="date" class="form-control" id="dob" name="dob" required>
-                            <label for="dob">Ngày sinh</label>
+                            <div id="dobError" class="text-danger d-none"></div>
+                            <label for="dob">Ngày sinh
+                                <span class="c-red">*</span>
+                            </label>
                         </div>
 
-                        <!--<div class="form-check mb-3">
+                        <!--< div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck">
                             <label class="form-check-label" for="rememberPasswordCheck">
                                 Remember password
@@ -110,40 +139,184 @@
 
 <!-- jQuery AJAX to send data -->
 <script>
-    $(document).ready(function() {
-        $('#submitBtn').on('click', function(e) {
-            e.preventDefault();
-            // Create a JSON object from form fields
-            let formData = {
-                userName: $('#userName').val(),
-                password: $('#password').val(),
-                fullName: $('#fullName').val(),
-                dob: $('#dob').val()
-            };
+    var showPass = $('#showPass');
+    var password = $('#password');
+    var passwordReplay = $('#passwordReplay');
 
-            $.ajax({
-                url: '/news_lv/users', // The API endpoint
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(formData),
-                success: function(response) {
-                    // Handle success, redirect to home
-                    window.location.href = "/news_lv/page/login";
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    alert("Error: " + xhr.responseText);
-                }
-            });
+    showPass.on('change', function() {
+        if (showPass.is(':checked')) {
+            password.attr('type', 'text');
+            passwordReplay.attr('type', 'text');
+        } else {
+            password.attr('type', 'password');
+            passwordReplay.attr('type', 'password');
+        }
+    });
+
+    $('#password').on('blur', function() {
+        var passwordVal = $('#password').val();
+        if (passwordVal.length < 6) {
+            $('#passwordErrorShow').removeClass('d-none');
+            $('#passwordErrorShow').text('Mật khẩu phải có ít nhất 6 ký tự!')
+            return;
+        } else {
+            $('#passwordErrorShow').addClass('d-none');
+        }
+    });
+
+    $('#passwordReplay').on('blur', function() {
+        var passwordVal = $('#password').val();
+        var passwordReplayVal = $(this).val();
+        if (passwordVal !== passwordReplayVal) {
+            $('#passwordError').removeClass('d-none');
+            $('#passwordError').text('Mật khẩu không trùng khớp!')
+        } else {
+            $('#passwordError').addClass('d-none');
+        }
+    });
+
+    $('#submitBtn').on('click', function(e) {
+        e.preventDefault();
+        var isValid = true;
+
+        // Kiểm tra tất cả các trường nhập liệu
+        $('#registrationForm input[required]').each(function() {
+            if ($(this).val() === '') {
+                isValid = false;
+                return false;
+            }
         });
+
+        if (!isValid) {
+            alert("Vui lòng điền đầy đủ thông tin.");
+            return;
+        }
+
+        var dob = new Date($('#dob').val());
+        var today = new Date();
+        var age = today.getFullYear() - dob.getFullYear();
+        var monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+        if (age < 14) {
+            $('#dobError').removeClass('d-none');
+            $('#dobError').text('Bạn không đủ tuổi để đăng ký tài khoản!');
+            return;
+        } else {
+            $('#dobError').addClass('d-none');
+        }
+
+        let formData = {
+            userName: $('#userName').val(),
+            password: $('#password').val(),
+            fullName: $('#fullName').val(),
+            dob: $('#dob').val()
+        };
+
+        $.ajax({
+            url: '/news_lv/users', // The API endpoint
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                createToast('success', 'fas fa-check', 'Thành công', 'Đăng ký tài khoản thành công');
+                window.location.href = "/news_lv/page/login";
+            },
+            error: function(response) {
+                createToast('error', 'fas fa-exclamation', 'Thất bại', 'Đăng ký không thành công');
+            }
+        });
+    });
+
+    $(document).ready(function() {
+    });
+
+    function isValidUserName(userName) {
+        // Kiểm tra userName phải chứa ít nhất một chữ cái và có độ dài >= 5
+        var userNamePattern = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{5,}$/;
+        return userNamePattern.test(userName);
+    }
+
+    function isValidFullName(fullName) {
+        // Kiểm tra fullName có nghĩa với ít nhất một khoảng trắng và có độ dài >= 5
+        var fullNamePattern = /^[a-zA-Z]+(\s[a-zA-Z]+)+$/;
+        return fullNamePattern.test(fullName) && fullName.length >= 5;
+    }
+
+    $('#fullName').on('blur', function() {
+        var fullName = $(this).val();
+
+        if (!isValidFullName(fullName)) {
+            $('#fullNameError').removeClass('d-none');
+            $('#fullNameError').text('Họ và tên phải bao gồm ít nhất một khoảng trắng và có ý nghĩa!');
+            return;
+        } else {
+            $('#fullNameError').addClass('d-none');
+        }
     });
 
     $('#userName').on('blur', function() {
         var userName = $(this).val();
+
+        if (!isValidUserName(userName)) {
+            $('#userNameError').removeClass('d-none');
+            $('#userNameError').text('Tên đăng nhập không hợp lệ!');
+            return;
+        } else {
+            $('#userNameError').addClass('d-none');
+        }
+
+        // Kiểm tra xem userName đã tồn tại hay chưa
         if (userName) {
             checkUserNameExists(userName);
         }
     });
+    /*function isValidUserName(userName) {
+        // Kiểm tra userName không phải là chuỗi vô nghĩa
+        var userNamePattern = /^[a-zA-Z0-9]+$/;
+        return userName.length >= 5 && userNamePattern.test(userName);
+    }
+
+    function isValidFullName(fullName) {
+        // Kiểm tra fullName không phải là chuỗi vô nghĩa
+        var fullNamePattern = /^[a-zA-Z\s]+$/;
+        return fullName.length >= 5 && fullNamePattern.test(fullName);
+    }
+
+    $('#fullName').on('blur', function() {
+        var fullName = $(this).val();
+
+        if (!isValidFullName(fullName)) {
+            $('#fullNameError').removeClass('d-none');
+            $('#fullNameError').text('Họ và tên phải có nghĩa!')
+            return;
+        } else {
+            $('#fullNameError').addClass('d-none');
+        }
+    });
+
+    $('#userName').on('blur', function() {
+        var userName = $(this).val();
+
+        var userNamePattern = /^[a-zA-Z0-9]+$/;
+        if (userName.length < 5 || !userNamePattern.test(userName)) {
+            $('#userNameError').removeClass('d-none');
+        } else {
+            $('#userNameError').addClass('d-none');
+        }
+
+        if (userName) {
+            checkUserNameExists(userName);
+        }
+
+        // Kiểm tra tính hợp lệ của userName và fullName
+        if (!isValidUserName(userName)) {
+            $('#userNameError').removeClass('d-none');
+            $('#userNameError').text('Tên đăng nhập phải có nghĩa!')
+            return;
+        }
+    });*/
 
     function checkUserNameExists(userName) {
         $.ajax({
@@ -155,6 +328,7 @@
             success: function(response) {
                 if (response.result) {
                     $('#userNameError').removeClass('d-none')
+                    $('#userNameError').text('Tên đăng nhập phải có ít nhất 6 ký tự và không chứa ký tự đặc biệt!')
                     $('#userName').val(''); // Xóa giá trị của trường userName
                 } else {
                     $('#userNameError').addClass('d-none')

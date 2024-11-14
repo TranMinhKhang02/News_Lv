@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -56,8 +57,8 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
-    public List<CategoryResponse> getTop4ByView(int status) {
-        List<Category> categories = categoryRepository.findTop4ByStatusOrderByNews_ViewCountDesc(status);
+    public List<CategoryResponse> getTop4ByCreatedDate(int status) {
+        List<Category> categories = categoryRepository.findTop4ByStatusAndParentCategoryNotNullOrderByCreatedDateDesc(status);
         return categories.stream().map(categoryMapper::toCategoryResponse).toList();
     }
 
@@ -67,14 +68,15 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
-    public CategoryResponse delete(Long categoryId) {
-        var category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Không tìm thấy category!"));
-        if (category == null) {
-            return null;
+    public List<CategoryResponse> delete(List<Long> categoryIds) {
+        List<CategoryResponse> deletedCategories = new ArrayList<>();
+        for (Long categoryId : categoryIds) {
+            var category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Không tìm thấy category!"));
+            category.setStatus(0);
+            category = categoryRepository.save(category);
+            deletedCategories.add(categoryMapper.toCategoryResponse(category));
         }
-        category.setStatus(0);
-        category = categoryRepository.save(category);
-        return categoryMapper.toCategoryResponse(category);
+        return deletedCategories;
     }
 
 }

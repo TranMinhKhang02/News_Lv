@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $('.savedNews').on('click', function() {
         getFavorite(1, 5); // Gọi hàm getFavorite với trang 1 và kích thước 5 khi click vào nút "Tin đã lưu"
+        $('#updateProfile').hide();
     });
     var userId = sessionStorage.getItem('userId');
     if(userId) {
@@ -77,7 +78,7 @@ function generatePagination(currentPage, totalPage) {
     // Nút First
     paginationHtml += `
         <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="getFavorite(1, 5)">First</a>
+            <a class="page-link" href="#" onclick="getFavorite(1, 5)">Đầu</a>
         </li>
     `;
 
@@ -107,7 +108,7 @@ function generatePagination(currentPage, totalPage) {
     // Nút Last
     paginationHtml += `
         <li class="page-item ${currentPage === totalPage ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="getFavorite(${totalPage}, 5)">Last</a>
+            <a class="page-link" href="#" onclick="getFavorite(${totalPage}, 5)">Cuối</a>
         </li>
     `;
 

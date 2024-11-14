@@ -45,6 +45,7 @@ $(document).ready(function () {
                     renderNewsDetails(response.result);
                     newsContent = response.result.content;
                     speakContent(newsContent, response.result.summarized);
+                    console.log('CategoryCode: ', response.result.categories[0].code)
                     fetchNewsByTopModifiedByCategory(response.result.categories[0].code)
                     console.log('News details:', response.result);
                 } else {
@@ -450,7 +451,7 @@ function fetchNewsByTopViewInItem() {
     var topViewsContent = $('#topViewsInItem');
     topViewsContent.empty();
     $.ajax({
-        url: '/news_lv/news/top5ByViewCount',
+        url: '/news_lv/news/top5ByViewCountWeek',
         method: 'GET',
         success: function(response) {
             if (response.code === 1000 && Array.isArray(response.result)) {
@@ -486,7 +487,8 @@ function renderTopViewedNews(news) {
 
 // ====================================News By CategoryCode View==============================
 function fetchNewsByTopModifiedByCategory(categoryCode) {
-    var newsId = getNewsIdFromUrl();
+    var newsId = parseInt(getNewsIdFromUrl(), 10)
+    console.log('News ID:', newsId);
     // var categoryCode = sessionStorage.getItem('categoryCode');
     var topViewByCategoryContent = $('#topModifiedByCategoryCode');
     topViewByCategoryContent.empty();
@@ -496,6 +498,7 @@ function fetchNewsByTopModifiedByCategory(categoryCode) {
         success: function(response) {
             if (response.code === 1000 && Array.isArray(response.result)) {
                 response.result.forEach(function(news) {
+                    console.log('NewsID in foreach:', news.id);
                     if (news.id !== newsId) { // Loại bỏ bài viết có ID trùng
                         var newsItem = renderTopModifiedByCategory(news);
                         topViewByCategoryContent.append(newsItem);
@@ -623,9 +626,11 @@ function createCommentHtml(comment) {
 
     var avatarSrc = comment.user.avatar ? comment.user.avatar : defaultAvatarPath;
     var editCommentBtn = '';
+    var deleteCommentIcon = '';
 
     if (comment.user.id == userId) {
         editCommentBtn = `<button class="btn btn-sm btn-outline-secondary edit-btn" data-parent-comment-id="${comment.parentComment}" data-user-id="${comment.user.id}" data-comment-id="${comment.id}">Chỉnh sửa</button>`;
+        deleteCommentIcon = `<i class="fa fa-trash ms-5 ml-2 delete-comment" style="cursor: pointer;" data-comment-id="${comment.id}"></i>`;
     }
 
     return `
@@ -633,10 +638,10 @@ function createCommentHtml(comment) {
             <img src="${avatarSrc}" alt="Image" class="img-fluid-comment mr-3 mt-1" style="width: 45px; border-radius: 50%;">
             <div class="media-body">
                 <h6><a href="#">${comment.user.fullName}</a> <small><i>${new Date(comment.createdDate).toLocaleString()}</i></small></h6>
-                <p id="content-comment-${comment.id}">${comment.content}</p>
+                <p id="content-comment-${comment.id}">${comment.content}${deleteCommentIcon}</p>
                 ${editCommentBtn}
                 <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="${comment.id}">Trả lời</button>
-                ${repliesHtml ? `<div class="ml-4">${repliesHtml}</div>` : ''}
+                ${repliesHtml ? `<div class="ml-4 mt-2">${repliesHtml}</div>` : ''}
             </div>
         </div>
     `;
@@ -650,7 +655,7 @@ $(document).on('click', '.reply-btn', function () {
 
     var commentId = $(this).data('comment-id');
     var replyFormHtml = `
-        <div class="form-group reply-form">
+        <div class="form-group reply-form mt-2">
             <div class="input-group">
                 <textarea id="reply-textArea-${commentId}" class="form-control auto-resize" placeholder="Bình luận ..." rows="1"></textarea>
                 <div class="input-group-append">
@@ -682,7 +687,7 @@ $(document).on('click', '.edit-btn', function () {
     var commentContent = $(`#content-comment-${commentId}`).text();
 
     var editFormHtml = `
-        <div class="form-group edit-form">
+        <div class="form-group edit-form mt-2">
             <div class="input-group">
                 <textarea id="edit-textArea-${commentId}" class="form-control auto-resize" 
                     rows="1">${commentContent}
@@ -701,6 +706,21 @@ $(document).on('click', '.edit-btn', function () {
     $('.auto-resize').on('input', function() {
         this.style.height = 'auto';
         this.style.height = (this.scrollHeight) + 'px';
+    });
+})
+
+$(document).on('click', '.delete-comment', function () {
+    var commentId = $(this).data('comment-id');
+
+    $.ajax({
+        url: '/news_lv/comment/' + commentId,
+        method: 'DELETE',
+        success: function(response) {
+            fetchComments(newsId);
+        },
+        error: function(error) {
+            console.error('Error deleting comment:', error);
+        }
     });
 })
 

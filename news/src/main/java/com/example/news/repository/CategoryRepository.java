@@ -12,5 +12,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // Lấy category parentId là null
     List<Category> findAllByParentCategoryNotNullAndStatus(int status);
 
-    List<Category> findTop4ByStatusOrderByNews_ViewCountDesc(int status);
+    List<Category> findTop4ByStatusAndParentCategoryNotNullOrderByCreatedDateDesc(int status);
 }

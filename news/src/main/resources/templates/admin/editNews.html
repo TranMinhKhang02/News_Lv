@@ -20,7 +20,7 @@
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="d-flex align-items-center">
-                        <p class="mb-0">Chỉnh sửa tin tức</p>
+                        <p class="mb-0">Thông tin tin tức</p>
                         <button id="back-newsByCategory" class="btn btn-primary btn-sm ms-auto">Quay lại</button>
                     </div>
                 </div>
@@ -43,10 +43,10 @@
                         </div>
                     </div>
                     <hr class="horizontal dark">
-                    <div class="row d-flex justify-content-center">
-                        <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center">
 <!--                        <div class="col-md-3 ml-category">-->
-                            <div class="form-group">
+                            <div class="form-group w-670">
                                 <label class="form-control-label">Thể loại</label>
                                 <select class="form-control" name="category" id="category-select"></select>
                                 <!--<input class="form-control" type="text" name="category" value="">-->
@@ -67,7 +67,7 @@
                             <input type="hidden" id="publicId" name="publicId">
                             <!-- Thêm div để hiển thị hình ảnh sau khi upload -->
                             <div id="loading-imagePreview" class="d-none">
-                                <img th:src="@{/static/loading/circle-loading.gif}" alt="Loading...">
+                                <img class="w-100" th:src="@{/static/loading/circle-loading.gif}" alt="Loading...">
                             </div>
                             <div id="imagePreview" style="margin-top: 25px;"></div>
                         </div>

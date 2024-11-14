@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -174,7 +175,7 @@ public class NewsService {
     }
 
     public List<NewsResponse> getTop5NewsByCategoryCode(String categoryCode, String statusCode) {
-        return newsRepository.findTop3ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(categoryCode, statusCode).stream()
+        return newsRepository.findTop5ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(categoryCode, statusCode).stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
     }
@@ -347,6 +348,37 @@ public class NewsService {
             newsRepository.deleteById(newsId);
         }
     }
+
+    public List<NewsResponse> getTop5NewsByViewCountInWeek(String statusCode) {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        Pageable pageable = PageRequest.of(0, 5);
+        return newsRepository.findTop5ByViewCountInWeek(statusCode, oneWeekAgo, pageable).stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<NewsResponse> getTop5NewsByLikeCountInWeek(String statusCode) {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        Pageable pageable = PageRequest.of(0, 5);
+        return newsRepository.findTop5ByLikeCountInWeek(statusCode, oneWeekAgo, pageable).stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+    }
+    /*public List<NewsResponse> getTop5NewsByViewCountInWeek(String statusCode) {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        return newsRepository.findTop5ByViewCountInWeek(statusCode, oneWeekAgo).stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+//        return newsRepository.findTop5ByViewCountInWeek(statusCode, oneWeekAgo);
+    }
+
+    public List<NewsResponse> getTop5NewsByLikeCountInWeek(String statusCode) {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        return newsRepository.findTop5ByLikeCountInWeek(statusCode, oneWeekAgo).stream()
+                .map(newsMapper::toNewsResponse)
+                .collect(Collectors.toList());
+//        return newsRepository.findTop5ByLikeCountInWeek(statusCode, oneWeekAgo);
+    }*/
 
     /*=========================VIEW-FAVORITE==================================*/
 

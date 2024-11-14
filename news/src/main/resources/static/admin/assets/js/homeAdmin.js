@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    showLoading()
+
     function toggleChartTimeout() {
         $('#favoriteYearCheckbox').prop('checked', true);
         $('#favoriteMonthCheckbox').prop('checked', true);
@@ -13,6 +15,8 @@ $(document).ready(function () {
         toggleChart($('#viewMonthCheckbox'), $('#chartViewMonth'));
         toggleChart($('#view7DaysCheckbox'), $('#chartView7LastDay'));
         toggleChart($('#viewCustomCheckbox'), $('#chartViewCustom'));
+
+        hideLoading()
         /*setTimeout(function () {
             $('#favoriteYearCheckbox').prop('checked', true);
             $('#favoriteMonthCheckbox').prop('checked', true);
@@ -89,7 +93,6 @@ $(document).ready(function () {
         });
     }
 
-    var Role = sessionStorage.getItem('Role');
     /*=========================EVENT===============================*/
     function loadDashboardAdmin() {
         $('#content-container').load('/news_lv/page/dashboardAdmin', function () {
@@ -115,33 +118,38 @@ $(document).ready(function () {
         })
     }
     /*=========================EVENT===============================*/
-    console.log('Role: ', Role);
+    function removeNavMenu() {
+        var Role = sessionStorage.getItem('Role');
+        console.log('Role: ', Role);
 
-    var navAdmin = $('.nav-admin');
-    var navManage = $('.nav-manage');
-    var navAuthor = $('.nav-author');
+        var navAdmin = $('.nav-admin');
+        var navManage = $('.nav-manage');
+        var navAuthor = $('.nav-author');
 
-    if (Role === 'ADMIN') {
-        loadDashboardAdmin()
-        $(document).on('click', '#dashboardAdmin', function (e) {
-            e.preventDefault();
+        if (Role === 'ADMIN') {
             loadDashboardAdmin()
-        })
-        sessionStorage.removeItem('categories')
-        sessionStorage.removeItem('userName')
-        navManage.remove()
-        navAuthor.remove()
-    } else if (Role === 'ADMIN_MANAGE') {
-        sessionStorage.removeItem('userName')
-        navAdmin.remove()
-        navAuthor.remove()
-    } else if (Role === 'AUTHOR') {
-        sessionStorage.removeItem('categories')
-        navAdmin.remove()
-        navManage.remove()
-    } else {
-        window.location.href = '/news_lv/page/error'
+            $(document).on('click', '#dashboardAdmin', function (e) {
+                e.preventDefault();
+                loadDashboardAdmin()
+            })
+            sessionStorage.removeItem('categories')
+            sessionStorage.removeItem('userName')
+            navManage.remove()
+            navAuthor.remove()
+        } else if (Role === 'ADMIN_MANAGE') {
+            sessionStorage.removeItem('userName')
+            navAdmin.remove()
+            navAuthor.remove()
+        } else if (Role === 'AUTHOR') {
+            sessionStorage.removeItem('categories')
+            navAdmin.remove()
+            navManage.remove()
+        } else {
+            window.location.href = '/news_lv/page/error'
+        }
     }
+
+    removeNavMenu()
 });
 
 function fetchDataAndUpdateUI() {

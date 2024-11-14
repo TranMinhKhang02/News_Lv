@@ -8,6 +8,7 @@
         fetchNewsByCreatedDate()
         fetchNewsByView()
         fetchNewsByLikes()
+        Top4CategoryByCreatedDate()
     });
 
     // Fetch categories
@@ -93,7 +94,7 @@
         let mostViewNewsContainer = $('#views-news-carousel');
         mostViewNewsContainer.empty();
         $.ajax({
-            url: '/news_lv/news/top5ByViewCount',
+            url: '/news_lv/news/top5ByViewCountWeek',
             method: 'GET',
             success: function(response) {
                 if (response.code === 1000 && Array.isArray(response.result)) {
@@ -129,7 +130,7 @@
         let mostLikeNewsContainer = $('#likes-news-carousel');
         mostLikeNewsContainer.empty();
         $.ajax({
-            url: '/news_lv/news/top5ByLikeCount',
+            url: '/news_lv/news/top5ByLikeCountWeek',
             method: 'GET',
             success: function(response) {
                 if (response.code === 1000 && Array.isArray(response.result)) {
@@ -211,6 +212,37 @@
         getFavorite(1, 5); // Gọi hàm getFavorite với trang 1 và kích thước 5
         window.location.href = $(this).attr('href'); // Chuyển hướng đến trang myInfo
     });
+
+    function Top4CategoryByCreatedDate() {
+        $.ajax({
+            url: '/news_lv/category/top-categoryByCreatedDate',
+            method: 'GET',
+            success: function(response) {
+                if (response.code === 1000) {
+                    renderTop4Category(response.result);
+                } else {
+                    console.error('Error fetching categories:', response.message);
+                }
+            },
+            error: function(error) {
+                console.error('Error fetching categories:', error);
+            }
+        });
+    }
+
+    function renderTop4Category(categories) {
+        var topCategoryContainer = $('#top4CategoryByCreatedDate');
+        topCategoryContainer.empty();
+        categories.forEach(function(category) {
+            topCategoryContainer.append(`
+            <div class="position-relative overflow-hidden mb-3" style="height: 80px; background-color: #9f224e;">
+                <a href="" class="overlay align-items-center justify-content-center h4 m-0 text-white text-decoration-none d-flex">
+                    ${category.name}
+                </a>
+            </div>
+        `);
+        });
+    }
 
 
     // =================================CAROUSEL================================

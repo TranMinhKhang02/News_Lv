@@ -774,6 +774,7 @@ $(document).on('click', '#saveNews', function () {
     }).get();
 
     var content = editorInstance.getData();
+    var title = $('input[name="title"]').val();
     var thumbnail = $('#thumbnail').val();
     var thumbnailUrl = $('#thumbnailUrl').val(); // Đảm bảo bạn có input ẩn này
     var source = $('#source').val();
@@ -781,13 +782,16 @@ $(document).on('click', '#saveNews', function () {
     // Kiểm tra nếu trường thumbnailUrl có giá trị, nếu không thì sử dụng thumbnail
     var finalThumbnail = thumbnailUrl ? thumbnailUrl : thumbnail;
 
+    // Kiểm tra các trường dữ liệu
+    if (!title || !content || !finalThumbnail || !source || selectedCategoryIds.length === 0) {
+        createToast('error', 'fas fa-exclamation', 'Lỗi', 'Vui lòng điền đầy đủ thông tin.');
+        return;
+    }
+
     var newsData = {
-        title: $('input[name="title"]').val(),
+        title: title,
         shortDescription: $('input[name="shortDescription"]').val(),
-        // createdDate: $('input[name="createdDate"]').val(),
-        // category: $('#category-select').val(),
         categories: selectedCategoryIds,
-        // content: $('input[name="content"]').val()
         thumbnail: finalThumbnail,
         content: content,
         source: source
@@ -812,12 +816,12 @@ $(document).on('click', '#saveNews', function () {
                     loadNewsTableSuccess('the-thao');
                 }
             } else {
-                alert('Có lỗi xảy ra: ' + response.message);
+                createToast('error', 'fas fa-exclamation', 'Lỗi', 'Có lỗi xảy ra khi tạo tin tức');
             }
         },
         error: function(error) {
             console.error('Error creating news:', error);
-            alert('Có lỗi xảy ra khi tạo tin tức');
+            createToast('error', 'fas fa-exclamation', 'Lỗi', 'Có lỗi xảy ra khi tạo tin tức');
         }
     });
 });
@@ -953,7 +957,7 @@ function updatePagination(currentPage, totalPage, categoryCode) {
 
     paginationContainer.append(`
         <li class="page-item">
-            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategory('${categoryCode}', 1)">First</a>
+            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategory('${categoryCode}', 1)">Đầu</a>
         </li>
         <li class="page-item">
             <a class="page-link" href="javascript:;" onclick="fetchNewsByCategory('${categoryCode}', ${currentPage - 1})">&laquo;</a>
@@ -973,7 +977,7 @@ function updatePagination(currentPage, totalPage, categoryCode) {
             <a class="page-link" href="javascript:;" onclick="fetchNewsByCategory('${categoryCode}', ${currentPage + 1})">&raquo;</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategory('${categoryCode}', ${totalPage})">Last</a>
+            <a class="page-link" href="javascript:;" onclick="fetchNewsByCategory('${categoryCode}', ${totalPage})">Cuối</a>
         </li>
     `);
 }
@@ -1168,6 +1172,43 @@ $(document).on('change', '#imageUpload', function (event) {
 })
 
 function uploadToCloudinary(file) {
+    const cloudinaryUrl = "https://api.cloudinary.com/v1_1/dhocs0lis/image/upload";
+    const uploadPreset = "ml_default";
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
+
+    // Hiển thị trạng thái loading
+    $('#loading-imagePreview').removeClass('d-none');
+
+    return fetch(cloudinaryUrl, {
+        method: "POST",
+        body: formData
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Cloudinary response:", data);
+
+            // Cập nhật input ẩn với URL trả về từ Cloudinary
+            $("#thumbnailUrl").val(data.secure_url);
+            $("#publicId").val(data.public_id);
+
+            // Hiển thị hình ảnh sau khi upload
+            displaySelectedThumbnail(data.secure_url);
+
+            return data.secure_url;
+        })
+        .catch((error) => {
+            console.error("Error uploading to Cloudinary:", error);
+            return null;
+        })
+        .finally(() => {
+            // Ẩn trạng thái loading
+            $('#loading-imagePreview').addClass('d-none');
+        });
+}
+/*function uploadToCloudinary(file) {
     const cloudinaryUrl = "https://api.cloudinary.com/v1_1/dd1grolgr/image/upload";
     const uploadPreset = "auto-tag";
     const formData = new FormData();
@@ -1203,7 +1244,7 @@ function uploadToCloudinary(file) {
             // Ẩn trạng thái loading
             $('#loading-imagePreview').addClass('d-none');
         });
-}
+}*/
 
 function deleteOldImage(publicId) {
     // Gọi API của server để xóa ảnh
@@ -1287,7 +1328,7 @@ function initializeCKEditor(content) {
                 ],
                 shouldNotGroupWhenFull: true
             },
-            placeholder: 'Welcome to content New',
+            placeholder: 'Nhập nội dung tin tức',
             fontFamily: {
                 options: [
                     'default',

@@ -109,6 +109,52 @@ $(document).on('click', '#createUser', function (e) {
     });
 })
 
+$(document).on('click', '#deleteUser', function () {
+    var userIds = [];
+    var userNames = [];
+    $('#checkboxUsers:checked').each(function () {
+        userIds.push($(this).val());
+        userNames.push($(this).closest('tr').find('#userName').text());
+    });
+
+    if (userIds.length > 0) {
+        var confirmationMessage = 'Bạn có chắc muốn xóa người dùng:<br>' + userNames.join(',<br>') + '?';
+        $('#confirmationMessage').html(confirmationMessage);
+        /*var confirmationMessage = 'Bạn có chắc muốn xóa các bài viết:\n' + selectedTitles.join(',\n') + '?';
+        $('#confirmationMessage').text(confirmationMessage);*/
+        $('#deleteConfirmationModal').show();
+
+        $('#confirmDelete').off('click').on('click', function () {
+            $.ajax({
+                url: '/news_lv/users/update-status',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(userIds),
+                success: function(response) {
+                    if (response.code === 1000) {
+                        loadCategorySuccess()
+                        createToast('success', 'fas fa-check', 'Thành công', 'Xóa người dùng thành công');
+                        // location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + response.message);
+                    }
+                },
+                error: function(error) {
+                    console.error('Error deleting news:', error);
+                    alert('Có lỗi xảy ra khi xóa người dùng');
+                }
+            });
+            $('#deleteConfirmationModal').hide();
+        });
+
+        $('#cancelDelete, .close').off('click').on('click', function () {
+            $('#deleteConfirmationModal').hide();
+        });
+    } else {
+        alert('Vui lòng chọn ít nhất một ngươi dùng để xóa');
+    }
+});
+
 $(document).on('click', '#saveUser', function (e) {
     e.preventDefault()
     createUser()
@@ -360,7 +406,7 @@ function createUserItem(user) {
     return `
         <tr>
             <td id="fullName">${user.fullName}</td>
-            <td>${user.userName}</td>
+            <td id="userName">${user.userName}</td>
             <td class="text-center">${user.email}</td>
             <td class="text-center">${user.role.name}</td>
             <td class="text-center">${new Date(user.createdDate).toLocaleDateString()}</td>
@@ -372,7 +418,7 @@ function createUserItem(user) {
                 </a>
             </td>
             <td class="align-middle">
-                <input type="checkbox" class="delete-checkbox" value="${user.id}">
+                <input type="checkbox" id="checkboxUsers" class="delete-checkbox" data-user-id="${user.id}" value="${user.id}">
             </td>
         </tr>
     `;

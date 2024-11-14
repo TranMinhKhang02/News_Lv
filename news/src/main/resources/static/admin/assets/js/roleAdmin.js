@@ -33,6 +33,52 @@ $(document).on('click', '#editRole', function (e) {
     });
 })
 
+$(document).on('click', '#deleteRole', function () {
+    var roleIds = [];
+    var roleNames = [];
+    $('#checkboxRole:checked').each(function () {
+        roleIds.push($(this).val());
+        roleNames.push($(this).closest('tr').find('#title-roleTable').text());
+    });
+
+    if (roleIds.length > 0) {
+        var confirmationMessage = 'Bạn có chắc muốn xóa vai trò:<br>' + roleNames.join(',<br>') + '?';
+        $('#confirmationMessage').html(confirmationMessage);
+        /*var confirmationMessage = 'Bạn có chắc muốn xóa các bài viết:\n' + selectedTitles.join(',\n') + '?';
+        $('#confirmationMessage').text(confirmationMessage);*/
+        $('#deleteConfirmationModal').show();
+
+        $('#confirmDelete').off('click').on('click', function () {
+            $.ajax({
+                url: '/news_lv/role/update-status',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(roleIds),
+                success: function(response) {
+                    if (response.code === 1000) {
+                        loadCategorySuccess()
+                        createToast('success', 'fas fa-check', 'Thành công', 'Xóa vai trò thành công');
+                        // location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + response.message);
+                    }
+                },
+                error: function(error) {
+                    console.error('Error deleting news:', error);
+                    alert('Có lỗi xảy ra khi xóa vai trò');
+                }
+            });
+            $('#deleteConfirmationModal').hide();
+        });
+
+        $('#cancelDelete, .close').off('click').on('click', function () {
+            $('#deleteConfirmationModal').hide();
+        });
+    } else {
+        alert('Vui lòng chọn ít nhất một vai trò để xóa');
+    }
+});
+
 function fetchCategoriesRole(categories, roleCode) {
     $.ajax({
         url: '/news_lv/category',
@@ -193,7 +239,7 @@ function createRoleTable(role) {
                     </a>
                 </td>
                 <td class="align-middle">
-                    <input type="checkbox" class="delete-checkbox" value="${role.id}">
+                    <input type="checkbox" id="checkboxRole" class="delete-checkbox" data-role-id="${role.id}" value="${role.id}">
                 </td>
             </tr>
         `;

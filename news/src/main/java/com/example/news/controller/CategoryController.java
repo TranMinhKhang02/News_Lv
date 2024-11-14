@@ -66,10 +66,19 @@ public class CategoryController {
                 .build();
     }
 
-    @GetMapping("/top-categoryByView")
+    @GetMapping("/top-categoryByCreatedDate")
     public ApiResponse<List<CategoryResponse>> getTop4CategoryByView(
             @RequestParam(value = "status", defaultValue = "1") int status) {
-        var categories = categoryService.getTop4ByView(status);
+        var categories = categoryService.getTop4ByCreatedDate(status);
+        return ApiResponse.<List<CategoryResponse>>builder()
+                .code(1000)
+                .result(categories)
+                .build();
+    }
+
+    @PutMapping("/delete")
+    public ApiResponse<List<CategoryResponse>> deleteCategories(@RequestBody List<Long> categoryIds) {
+        var categories = categoryService.delete(categoryIds);
         return ApiResponse.<List<CategoryResponse>>builder()
                 .code(1000)
                 .result(categories)

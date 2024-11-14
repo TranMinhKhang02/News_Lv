@@ -139,6 +139,10 @@
 	</div>
 
 <script>
+	$(document).ready(function() {
+		sessionStorage.clear()
+		localStorage.clear()
+	});
 	// Kiểm tra nếu không có mục nào trong lịch sử trước đó
 	if (window.history.length <= 1) {
 		window.location.href = '/news_lv/page/home';

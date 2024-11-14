@@ -64,10 +64,10 @@ public class News extends Base {
     @Column(name = "n_audioPath")
     String audioPath;
 
-    @Column(name = "summary_createDate")
+    @Column(name = "n_summary_createDate")
     LocalDateTime summary_createDate;
 
-    @Column(name = "approvedBy")
+    @Column(name = "n_approvedBy")
     private String approvedBy;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
@@ -90,6 +90,14 @@ public class News extends Base {
     @OneToMany(mappedBy = "news", orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonBackReference // Không trả về danh sách news trong phản hồi JSON
     List<Comment> comments;
+
+    @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    List<ViewEvent> viewEvents;
+
+    @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    List<FavoriteEvent> favoriteEvents;
 
     public void prePersist() {
         if (summarized) { // Chỉ cập nhật summary_createDate nếu bài viết đã được tóm tắt

@@ -78,7 +78,7 @@ $(document).on('click', '#back-categoryTable', function (e) {
 // Function to fetch categories and populate the table
 function fetchCategoryTable() {
     $.ajax({
-        url: '/news_lv/category', // URL of your API endpoint
+        url: '/news_lv/category/all', // URL of your API endpoint
         method: 'GET',
         success: function (response) {
             if (response.code === 1000) {
@@ -181,7 +181,7 @@ function createCategoryTableRow(category) {
                     </a>
                 </td>
                 <td class="align-middle">
-                    <input type="checkbox" class="delete-checkbox" value="${category.id}">
+                    <input type="checkbox" id="checkboxCategory" class="delete-checkbox" data-category-id="${category.id}" value="${category.id}">
                 </td>
             </tr>
         `;
@@ -191,6 +191,52 @@ $(document).on('click', '#saveCategory', function (e) {
     e.preventDefault()
     createCategory()
 })
+
+$(document).on('click', '#deleteCategory', function () {
+    var categoryIds = [];
+    var categoryNames = [];
+    $('#checkboxCategory:checked').each(function () {
+        categoryIds.push($(this).val());
+        categoryNames.push($(this).closest('tr').find('#title-categoryTable').text());
+    });
+
+    if (categoryIds.length > 0) {
+        var confirmationMessage = 'Bạn có chắc muốn xóa các thể loại:<br>' + categoryNames.join(',<br>') + '?';
+        $('#confirmationMessage').html(confirmationMessage);
+        /*var confirmationMessage = 'Bạn có chắc muốn xóa các bài viết:\n' + selectedTitles.join(',\n') + '?';
+        $('#confirmationMessage').text(confirmationMessage);*/
+        $('#deleteConfirmationModal').show();
+
+        $('#confirmDelete').off('click').on('click', function () {
+            $.ajax({
+                url: '/news_lv/category/delete',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(categoryIds),
+                success: function(response) {
+                    if (response.code === 1000) {
+                        loadCategorySuccess()
+                        createToast('success', 'fas fa-check', 'Thành công', 'Xóa thể loại thành công');
+                        // location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra: ' + response.message);
+                    }
+                },
+                error: function(error) {
+                    console.error('Error deleting news:', error);
+                    alert('Có lỗi xảy ra khi xóa bài viết');
+                }
+            });
+            $('#deleteConfirmationModal').hide();
+        });
+
+        $('#cancelDelete, .close').off('click').on('click', function () {
+            $('#deleteConfirmationModal').hide();
+        });
+    } else {
+        alert('Vui lòng chọn ít nhất một thể loại để xóa');
+    }
+});
 
 // Hàm chuyển đổi tên thành mã thể loại
 function generateCategoryCode(name) {

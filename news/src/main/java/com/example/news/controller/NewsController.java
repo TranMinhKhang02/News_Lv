@@ -241,6 +241,24 @@ public class NewsController {
                 .build();
     }
 
+    @GetMapping("/top5ByViewCountWeek")
+    public ApiResponse<List<NewsResponse>> getTop5NewsByViewCountWeek(
+            @RequestParam(value = "statusCode", defaultValue = "1") String statusCode) {
+        return ApiResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .result(newsService.getTop5NewsByViewCountInWeek(statusCode))
+                .build();
+    }
+
+    @GetMapping("/top5ByLikeCountWeek")
+    public ApiResponse<List<NewsResponse>> getTop5NewsByLikeCountWeek(
+            @RequestParam(value = "statusCode", defaultValue = "1") String statusCode) {
+        return ApiResponse.<List<NewsResponse>>builder()
+                .code(1000)
+                .result(newsService.getTop5NewsByLikeCountInWeek(statusCode))
+                .build();
+    }
+
     @GetMapping("/top5ByCategoryCode/{categoryCode}")
     public ApiResponse<List<NewsResponse>> getTop5NewsByModifiedDate(
             @RequestParam(value = "statusCode", defaultValue = "1") String statusCode,

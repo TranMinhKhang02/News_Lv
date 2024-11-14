@@ -124,6 +124,22 @@ public class CommentService {
     public void delete(Long commentId) {
         var comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+        deleteRecursively(comment);
+    }
+
+    private void deleteRecursively(Comment comment) {
+        // Xóa tất cả các bình luận con trước
+        if (comment.getReplies() != null) {
+            for (Comment reply : comment.getReplies()) {
+                deleteRecursively(reply);
+            }
+        }
+        // Xóa bình luận hiện tại
         commentRepository.delete(comment);
     }
+    /*public void delete(Long commentId) {
+        var comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+        commentRepository.delete(comment);
+    }*/
 }
