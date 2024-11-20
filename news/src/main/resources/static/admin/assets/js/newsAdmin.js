@@ -247,17 +247,20 @@ $(document).on('click', '#categoryFetchNews', function () {
     sessionStorage.setItem('categoryCodeInNewItem', categoryCode);
     var status = sessionStorage.getItem('status');
     var createdBy = sessionStorage.getItem('userName');
+    var authorComment = sessionStorage.getItem('manage-comment');
 
     if (createdBy) {
         // Nếu userName tồn tại trong sessionStorage, thực hiện hành động tương tự như click vào thẻ #news-approvedAuthor
         fetchNewsByCreatedBy(createdBy, status, categoryCode, 1);
+    } else if (authorComment && createdBy){
+        fetchNewsByCreatedBy(createdBy, 1, categoryCode)
     } else {
         // Nếu userName không tồn tại, thực hiện hành động mặc định
         fetchNewsByCategory(categoryCode, 1, status);
     }
 
     // $('.nav-link').removeClass('active-categoryName');
-    $('.nav-link').not('#approved-articles, #news-waitApprove, #news-refused, #showCommentByNewsTable, #showCategory, #showUsers, #showRole, #news-approvedAuthor, #news-waitApproveAuthor, #news-refusedAuthor').removeClass('active-categoryName');
+    $('.nav-link').not('#showCommentByNewsTableManage, #showCommentByNewsTableAuthor, #approved-articles, #news-waitApprove, #news-refused, #showCommentByNewsTable, #showCategory, #showUsers, #showRole, #news-approvedAuthor, #news-waitApproveAuthor, #news-refusedAuthor').removeClass('active-categoryName');
     $(this).addClass('active-categoryName');
 });
 
@@ -548,9 +551,11 @@ $(document).on('click', '#back-newsByCategory', function () {
 $(document).on('click', '#editNews', function (e) {
     var newsId = $(this).data('news-id');
     var Role = sessionStorage.getItem('Role');
+    var status = sessionStorage.getItem('status');
     sessionStorage.setItem('newsId', newsId);
     e.preventDefault(); // Ngăn chặn hành động mặc định của thẻ <a>
     $('#content-container').load('/news_lv/page/editNews', function () {
+        hideInputReject()
         if (Role === 'AUTHOR') {
             $('#forAuthor').removeClass('d-none');
         }

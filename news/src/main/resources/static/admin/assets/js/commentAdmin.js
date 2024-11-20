@@ -12,6 +12,15 @@ $(document).on('click', '#viewCommentByNews', function (e) {
     sessionStorage.setItem('newsId', newsId);
     $('#content-container').load('/news_lv/page/viewCommentByNews', function () {
         getNewsItemByNewsId();
+        var Role = sessionStorage.getItem('Role');
+        if (Role === 'ADMIN_MANAGE') {
+            $('#back-CommentByNews').addClass('d-none');
+        } else if (Role === 'ADMIN') {
+            $('#back-CommentByNewsManage').addClass('d-none');
+        } else if (Role === 'AUTHOR') {
+            $('#back-CommentByNewsManage').addClass('d-none');
+            $('#back-CommentByNews').addClass('d-none');
+        }
     });
 })
 

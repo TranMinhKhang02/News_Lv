@@ -24,7 +24,7 @@ function loadNewsByCreatedBy(createdBy, status, categoryCode) {
         $('tr').each(function () {
             var editLink = $(this).find('a#editNews');
             var newsIdInRow = editLink.data('news-id');
-            if (newsIdInRow == newsId) {
+            if (newsIdInRow === newsId) {
                 $(this).find('#title-newsTable').addClass('active-categoryName');
             }
         });
@@ -33,6 +33,7 @@ function loadNewsByCreatedBy(createdBy, status, categoryCode) {
 
 $(document).on('click', '#news-approvedAuthor', function(e) {
     e.preventDefault();
+    sessionStorage.removeItem('manage-comment')
     titlePageAuthor()
     titlePageHeading.html('Tin tức đã duyệt');
     var createdBy = sessionStorage.getItem('userName')
@@ -47,6 +48,7 @@ $(document).on('click', '#news-approvedAuthor', function(e) {
 
 $(document).on('click', '#news-waitApproveAuthor', function(e) {
     e.preventDefault();
+    sessionStorage.removeItem('manage-comment')
     titlePageAuthor()
     titlePageHeading.html('Tin tức chờ duyệt');
     var createdBy = sessionStorage.getItem('userName')
@@ -61,6 +63,8 @@ $(document).on('click', '#news-waitApproveAuthor', function(e) {
 
 $(document).on('click', '#news-refusedAuthor', function(e) {
     e.preventDefault();
+    sessionStorage.removeItem('manage-comment')
+    sessionStorage.removeItem('newsId')
     titlePageAuthor()
     titlePageHeading.html('Tin tức bị từ chối');
     var createdBy = sessionStorage.getItem('userName')
@@ -72,6 +76,40 @@ $(document).on('click', '#news-refusedAuthor', function(e) {
     approvedAuthor.removeClass('active-categoryName');
     waitApproveAuthor.removeClass('active-categoryName');
 })
+
+$(document).on('click', '#showCommentByNewsTableAuthor', function(e) {
+    e.preventDefault();
+    sessionStorage.setItem('manage-comment', 'true')
+    titlePageAuthor()
+    titlePageHeading.html('Bình luận tin tức');
+    var createdBy = sessionStorage.getItem('userName')
+    sessionStorage.setItem('categoryCodeInNewItem', 'the-thao');
+    sessionStorage.removeItem('newsId')
+    loadNewsByCreatedBy(createdBy, 1, 'the-thao')
+    $('#showCommentByNewsTableAuthor').addClass('active-categoryName');
+    approvedAuthor.removeClass('active-categoryName');
+    waitApproveAuthor.removeClass('active-categoryName');
+    refusedAuthor.removeClass('active-categoryName');
+})
+
+$(document).on('click', '#back-CommentByNewsAuthor', function (e) {
+    e.preventDefault();
+    var createdBy = sessionStorage.getItem('userName')
+    var categoryCode = sessionStorage.getItem('categoryCodeInNewItem')
+    loadNewsByCreatedBy(createdBy, 1, categoryCode)
+})
+
+
+
+function hideInputReject() {
+    var status = sessionStorage.getItem('status');
+    var rejectReason = $('#rejectInput');
+    if (status != 3) {
+        rejectReason.addClass('d-none');
+    } else {
+        rejectReason.removeClass('d-none');
+    }
+}
 
 function fetchNewsByCreatedBy(createdBy, status, categoryCode, page) {
     $.ajax({

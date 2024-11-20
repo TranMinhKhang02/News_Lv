@@ -93,7 +93,7 @@
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-collection text-warning text-sm opacity-10"></i>
           </div>
-          <span id="menu-manageNewsManage" class="menu-title" data-bs-toggle="collapse" href="#manage-newsManage" aria-expanded="false" aria-controls="manage-newsManage">Quản lý tin tức Manage</span>
+          <span id="menu-manageNewsManage" class="menu-title" data-bs-toggle="collapse" href="#manage-newsManage" aria-expanded="false" aria-controls="manage-newsManage">Quản lý tin tức</span>
         </a>
         <div class="collapse" id="manage-newsManage">
           <ul class="nav flex-column sub-menu">
@@ -103,18 +103,46 @@
           </ul>
         </div>
       </li>
+      <li class="nav-item nav-manage">
+        <a class="nav-link " href="#">
+          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="ni ni-chat-round text-success text-sm opacity-10"></i>
+            <!--            <i class="ni ni-credit-card text-success text-sm opacity-10"></i>-->
+          </div>
+          <span id="menu-manageCommentManage" class="menu-title" href="#manage-commentManage" data-bs-toggle="collapse" aria-expanded="false" aria-controls="manage-commentManage">Quản lý bình luận</span>
+        </a>
+        <div class="collapse" id="manage-commentManage">
+          <ul class="nav flex-column sub-menu">
+            <li class="nav-item"> <a class="nav-link" id="showCommentByNewsTableManage" href="#">Bình luận tin tức</a></li>
+          </ul>
+        </div>
+      </li>
       <li class="nav-item nav-author">
         <a class="nav-link " href="#">
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <i class="ni ni-collection text-warning text-sm opacity-10"></i>
           </div>
-          <span id="menu-manageNewsAuthor" class="menu-title" data-bs-toggle="collapse" href="#manage-newsAuthor" aria-expanded="false" aria-controls="manage-newsAuthor">Quản lý tin tức Author</span>
+          <span id="menu-manageNewsAuthor" class="menu-title" data-bs-toggle="collapse" href="#manage-newsAuthor" aria-expanded="false" aria-controls="manage-newsAuthor">Quản lý tin tức</span>
         </a>
         <div class="collapse" id="manage-newsAuthor">
           <ul class="nav flex-column sub-menu">
             <li class="nav-item"> <a class="nav-link" id="news-approvedAuthor" data-status="1" href="#">Tin tức đã duyệt</a></li>
             <li class="nav-item"> <a class="nav-link" id="news-waitApproveAuthor" data-status="2" href="#">Tin tức chờ duyệt</a></li>
             <li class="nav-item"> <a class="nav-link" id="news-refusedAuthor" data-status="3" href="#">Tin tức từ chối</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="nav-item nav-author">
+        <a class="nav-link " href="#">
+          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="ni ni-chat-round text-success text-sm opacity-10"></i>
+            <!--            <i class="ni ni-credit-card text-success text-sm opacity-10"></i>-->
+          </div>
+          <span id="menu-manageCommentAuthor" class="menu-title" href="#manage-commentAuthor" data-bs-toggle="collapse" aria-expanded="false" aria-controls="manage-commentAuthor">Quản lý bình luận</span>
+        </a>
+        <div class="collapse" id="manage-commentAuthor">
+          <ul class="nav flex-column sub-menu">
+            <li class="nav-item"> <a class="nav-link" id="showCommentByNewsTableAuthor" href="#">Bình luận tin tức</a></li>
           </ul>
         </div>
       </li>

@@ -38,18 +38,41 @@ $(document).on('click', '#news-refusedManage', function (e) {
     $(this).addClass('active-categoryName');
 })
 
+$(document).on('click', '#manage-commentManage', function (e) {
+    e.preventDefault();
+    sessionStorage.setItem('manage-comment', 'true')
+    sessionStorage.removeItem('newsId')
+    loadNewsTableManage(1)
+    $('.nav-link').not('#manage-commentManage').removeClass('active-categoryName');
+    $(this).addClass('active-categoryName');
+})
+
+$(document).on('click', '#back-CommentByNewsManage', function (e) {
+    e.preventDefault();
+    loadNewsTableManage(1)
+    /*var categoryCode = sessionStorage.getItem('categoryCodeInNewItem')
+    var page = sessionStorage.getItem('thisPage')
+    loadNewsTableSuccess(categoryCode, page);*/
+})
+
 function loadNewsTableManage(status) {
     var categories = sessionStorage.getItem('categories');
     var newsId = sessionStorage.getItem('newsId');
+    var manageComment = sessionStorage.getItem('manage-comment');
     $('#content-container').load('/news_lv/page/newsTableManage', function () {
         fetchNewsByCategories(categories, status, 1)
     });
 
     setTimeout(function () {
         $('tr').each(function () {
-            var editLink = $(this).find('a#editNews');
+            var editLink;
+            if(manageComment === 'true') {
+                editLink = $(this).find('a#viewCommentByNews');
+            } else {
+                editLink = $(this).find('a#editNews');
+            }
             var newsIdInRow = editLink.data('news-id');
-            if (newsIdInRow == newsId) {
+            if (newsIdInRow === newsId) {
                 $(this).find('#title-newsTable').addClass('active-categoryName');
             }
         });
