@@ -36,6 +36,38 @@
         $('#logoutButton').on('click', function(event) {
             event.preventDefault(); // Ngăn chặn hành động mặc định
 
+            // Gửi yêu cầu AJAX tới server để xóa session
+            $.ajax({
+                url: '/news_lv/page/logout',
+                method: 'GET',
+                success: function(response) {
+                    // Xóa sessionStorage
+                    sessionStorage.removeItem('userLogin');
+                    sessionStorage.removeItem('user');
+                    sessionStorage.removeItem('userId');
+                    // sessionStorage.removeItem('currentNewsId');
+                    sessionStorage.clear();
+
+                    // Xóa localStorage
+                    localStorage.clear();
+
+                    // Đánh dấu trạng thái logout trong sessionStorage
+                    sessionStorage.setItem('isLoggedOut', 'true');
+
+                    // Ẩn nút login
+                    $('#login-btn').hide();
+
+                    // Reload lại trang
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error during logout:", error);
+                }
+            });
+        });
+        /*$('#logoutButton').on('click', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định
+
             sessionStorage.removeItem('userLogin');
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('userId');
@@ -50,9 +82,10 @@
             sessionStorage.setItem('isLoggedOut', 'true');
 
             // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
-            window.location.href = '/news_lv/page/home';
+            // window.location.href = '/news_lv/page/home';
             $('#login-btn').hide();
-        });
+            location.reload();
+        });*/
 
         // Kiểm tra trạng thái logout từ sessionStorage
         const isLoggedOut = sessionStorage.getItem('isLoggedOut') === 'true';

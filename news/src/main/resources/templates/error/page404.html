@@ -148,7 +148,7 @@
 		window.location.href = '/news_lv/page/home';
 	} else {
 		// Thêm một mục vào lịch sử khi trang lỗi được tải
-		history.pushState(null, null, location.href);
+		// history.pushState(null, null, location.href);
 
 		window.addEventListener('popstate', function(event) {
 			window.location.href = '/news_lv/page/home';

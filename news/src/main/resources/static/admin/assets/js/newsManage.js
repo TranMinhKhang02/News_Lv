@@ -72,7 +72,7 @@ function loadNewsTableManage(status) {
                 editLink = $(this).find('a#editNews');
             }
             var newsIdInRow = editLink.data('news-id');
-            if (newsIdInRow === newsId) {
+            if (newsIdInRow == newsId) {
                 $(this).find('#title-newsTable').addClass('active-categoryName');
             }
         });

@@ -68,7 +68,7 @@ $(document).ready(function () {
         $('#news-date').text(new Date(news.modifiedDate).toLocaleDateString());
         $('#news-category').text(news.categories[0].name);
         // $('#audioElement')[0].load();
-        $('#news-comments-count').text(news.countComment + ' Comments');
+        $('#news-comments-count').text(news.countComment + ' Bình luận');
         /*$('#like-count').text(news.countLike + ' Yêu thích');
         $('#view-count').text(news.countView + ' Luợt xem');*/
         // Hiển thị nội dung vào trong CKEditor
@@ -98,6 +98,8 @@ $(document).ready(function () {
         $('#news-summaryText').text(news.summary);
         audio.attr('src', news.audioPath);
 
+        $('#source').attr('href', news.source);
+
         hideLoading()
     }
 
@@ -120,7 +122,7 @@ $(document).ready(function () {
 
     setTimeout(function () {
         viewCount()
-    }, 10000) // 10s
+    }, 1000) // 10s
 });
 
 $(document).on('click', '#toggle-summary-btn', function () {

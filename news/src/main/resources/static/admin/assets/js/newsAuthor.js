@@ -13,6 +13,7 @@ function titlePageAuthor() {
 
 function loadNewsByCreatedBy(createdBy, status, categoryCode) {
     var newsId = sessionStorage.getItem('newsId');
+    var manageComment = sessionStorage.getItem('manage-comment');
     $('#content-container').load('/news_lv/page/newsTable', function () {
         var paginationAdmin = $('#pagination-admin');
         paginationAdmin.hide();
@@ -22,9 +23,15 @@ function loadNewsByCreatedBy(createdBy, status, categoryCode) {
 
     setTimeout(function () {
         $('tr').each(function () {
-            var editLink = $(this).find('a#editNews');
+            // var editLink = $(this).find('a#editNews');
+            var editLink;
+            if(manageComment === 'true') {
+                editLink = $(this).find('a#viewCommentByNews');
+            } else {
+                editLink = $(this).find('a#editNews');
+            }
             var newsIdInRow = editLink.data('news-id');
-            if (newsIdInRow === newsId) {
+            if (newsIdInRow == newsId) {
                 $(this).find('#title-newsTable').addClass('active-categoryName');
             }
         });
@@ -33,6 +40,7 @@ function loadNewsByCreatedBy(createdBy, status, categoryCode) {
 
 $(document).on('click', '#news-approvedAuthor', function(e) {
     e.preventDefault();
+    sessionStorage.removeItem('newsId')
     sessionStorage.removeItem('manage-comment')
     titlePageAuthor()
     titlePageHeading.html('Tin tức đã duyệt');
@@ -48,6 +56,7 @@ $(document).on('click', '#news-approvedAuthor', function(e) {
 
 $(document).on('click', '#news-waitApproveAuthor', function(e) {
     e.preventDefault();
+    sessionStorage.removeItem('newsId')
     sessionStorage.removeItem('manage-comment')
     titlePageAuthor()
     titlePageHeading.html('Tin tức chờ duyệt');
@@ -79,6 +88,7 @@ $(document).on('click', '#news-refusedAuthor', function(e) {
 
 $(document).on('click', '#showCommentByNewsTableAuthor', function(e) {
     e.preventDefault();
+    sessionStorage.removeItem('newsId')
     sessionStorage.setItem('manage-comment', 'true')
     titlePageAuthor()
     titlePageHeading.html('Bình luận tin tức');

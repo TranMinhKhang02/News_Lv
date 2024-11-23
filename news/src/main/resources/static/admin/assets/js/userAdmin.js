@@ -27,7 +27,7 @@ function backUserTable() {
         $('tr').each(function () {
             var editLink = $(this).find('a#viewUserDetail');
             var userInRow = editLink.data('user-id');
-            if (userInRow == userId) {
+            if (userInRow === userId) {
                 $(this).find('#fullName').addClass('active-categoryName');
             }
         });

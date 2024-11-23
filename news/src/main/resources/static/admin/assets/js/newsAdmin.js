@@ -414,6 +414,7 @@ function updateStatusNews(statusUpdateRequest) {
     var newsId = sessionStorage.getItem('newsId');
     var category_code = sessionStorage.getItem('categoryCodeInNewItem');
     var status = sessionStorage.getItem('status');
+    var Role = sessionStorage.getItem('Role');
     var page = sessionStorage.getItem('thisPage');
     $.ajax({
         url: '/news_lv/news/' + newsId + '/status',
@@ -428,7 +429,11 @@ function updateStatusNews(statusUpdateRequest) {
                     createToast('success', 'fas fa-check', 'Thành công', 'Phê duyệt tin tức thành công');
                 }
                 // Thực hiện các hành động khác nếu cần, ví dụ: tải lại danh sách tin tức
-                loadNewsTableByStatusAndCategory(status, category_code)
+                if (Role === 'ADMIN_MANAGE') {
+                    loadNewsTableManage(1)
+                } else {
+                    loadNewsTableByStatusAndCategory(status, category_code)
+                }
             } else {
                 alert('Có lỗi xảy ra: ' + response.message);
             }

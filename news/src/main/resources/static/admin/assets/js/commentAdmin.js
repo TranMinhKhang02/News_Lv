@@ -15,8 +15,10 @@ $(document).on('click', '#viewCommentByNews', function (e) {
         var Role = sessionStorage.getItem('Role');
         if (Role === 'ADMIN_MANAGE') {
             $('#back-CommentByNews').addClass('d-none');
+            $('#back-CommentByNewsAuthor').addClass('d-none');
         } else if (Role === 'ADMIN') {
             $('#back-CommentByNewsManage').addClass('d-none');
+            $('#back-CommentByNewsAuthor').addClass('d-none');
         } else if (Role === 'AUTHOR') {
             $('#back-CommentByNewsManage').addClass('d-none');
             $('#back-CommentByNews').addClass('d-none');
