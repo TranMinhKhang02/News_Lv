@@ -1,3 +1,4 @@
+/*
 package com.example.news.entity;
 
 import jakarta.persistence.*;
@@ -34,3 +35,4 @@ public class Notification extends Base {
     private News news;
 
 }
+*/

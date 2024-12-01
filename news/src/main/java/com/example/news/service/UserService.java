@@ -206,6 +206,7 @@ public class UserService {
         favoriteEventRepository.deleteByNewsIdAndUserId(newsId, userId);
 
         user.getFavoriteNews().remove(news);
+        news.setLikeCount(news.getLikeCount() - 1); // Giảm likeCount
         userRepository.save(user);
     }
 

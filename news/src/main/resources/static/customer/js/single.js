@@ -98,7 +98,13 @@ $(document).ready(function () {
         $('#news-summaryText').text(news.summary);
         audio.attr('src', news.audioPath);
 
-        $('#source').attr('href', news.source);
+        var source = $('#source');
+        if (news.source != null || news.source !== '') {
+            $(source).removeClass('d-none');
+            $(source).attr('href', news.source);
+        } else {
+            $(source).addClass('d-none');
+        }
 
         hideLoading()
     }
