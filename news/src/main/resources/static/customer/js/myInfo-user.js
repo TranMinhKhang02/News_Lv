@@ -27,11 +27,12 @@ function getFavorite(page, size) {
             },
             error: function(error) {
                 console.error('Error fetching favorite news:', error);
-                alert('Có lỗi xảy ra khi lấy danh sách yêu thích.');
+                createToast('error', 'fas fa-exclamation', 'Thất bại', 'Có lỗi xảy ra khi lấy danh sách yêu thích');
             }
         });
     } else {
         alert('Vui lòng đăng nhập để xem danh sách yêu thích.');
+        createToast('warning', 'fas fa-exclamation-circle', 'Thất bại', 'Vui lòng đăng nhập để xem danh sách yêu thích');
     }
 }
 
@@ -161,11 +162,14 @@ function updateProfile(userId, data) {
         contentType: 'application/json',
         data: JSON.stringify(data),
         success: function (response) {
-            alert('Cập nhật thông tin thành công');
+            createToast('success', 'fas fa-check', 'Thành công', 'Cập nhật thông tin thành công');
+            sessionStorage.clear();
+            window.location.href = "/news_lv/page/login";
+
         },
         error: function (error) {
             console.error('Error updating user:', error);
-            alert('Có lỗi xảy ra khi cập nhật thông tin.');
+            createToast('error', 'fas fa-exclamation', 'Thất bại', 'Có lỗi xảy ra khi cập nhật thông tin');
         }
     })
 }

@@ -544,7 +544,8 @@ $('#submit-comment').click(function(e) {
     e.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
     var message = $('#message').val(); // Lấy nội dung bình luận
     if (!userId) {
-        alert('Vui lòng đăng nhập để sử dụng chức năng này.');
+        // alert('Vui lòng đăng nhập để sử dụng chức năng này.');
+        createToast('warning', 'fas fa-exclamation-circle', 'Cảnh báo', 'Vui lòng đăng nhập để sử dụng chức năng này');
         return;
     }
     submitComment(message);
@@ -657,7 +658,7 @@ function createCommentHtml(comment) {
 
 $(document).on('click', '.reply-btn', function () {
     if (!userId) {
-        alert('Vui lòng đăng nhập để bình luận.');
+        createToast('warning', 'fas fa-exclamation-circle', 'Cảnh báo', 'Vui lòng đăng nhập để bình luận.');
         return;
     }
 
@@ -725,6 +726,7 @@ $(document).on('click', '.delete-comment', function () {
         method: 'DELETE',
         success: function(response) {
             fetchComments(newsId);
+            getAllInteract()
         },
         error: function(error) {
             console.error('Error deleting comment:', error);
@@ -801,7 +803,7 @@ $('#backHome-icon').click(function () {
 $('#bookmark-icon').click(function () {
     // const userId = sessionStorage.getItem('userId');
     if (!userId) {
-        alert('Vui lòng đăng nhập để sử dụng chức năng này.');
+        createToast('warning', 'fas fa-exclamation-circle', 'Cảnh báo', 'Vui lòng đăng nhập để sử dụng chức năng này');
     } else {
         // alert('Đã đăng nhập.');
         var newsId = getNewsIdFromUrl(); // Lấy newsId từ URL hoặc từ một nguồn khác

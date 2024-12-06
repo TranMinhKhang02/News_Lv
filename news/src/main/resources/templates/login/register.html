@@ -188,7 +188,7 @@
         });
 
         if (!isValid) {
-            alert("Vui lòng điền đầy đủ thông tin.");
+            createToast('warning', 'fas fa-exclamation-circle', 'Thất bại', 'Vui lòng điền đầy đủ thông tin');
             return;
         }
 
@@ -220,7 +220,7 @@
             contentType: 'application/json',
             data: JSON.stringify(formData),
             success: function(response) {
-                createToast('success', 'fas fa-check', 'Thành công', 'Đăng ký tài khoản thành công');
+                sessionStorage.setItem('registerSuccess', 'true');
                 window.location.href = "/news_lv/page/login";
             },
             error: function(response) {
@@ -240,7 +240,7 @@
 
     function isValidFullName(fullName) {
         // Kiểm tra fullName có nghĩa với ít nhất một khoảng trắng và có độ dài >= 5
-        var fullNamePattern = /^[a-zA-Z]+(\s[a-zA-Z]+)+$/;
+        var fullNamePattern = /^[a-zA-ZÀ-ỹ]+(\s[a-zA-ZÀ-ỹ]+)+$/;
         return fullNamePattern.test(fullName) && fullName.length >= 5;
     }
 

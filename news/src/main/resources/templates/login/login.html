@@ -74,6 +74,12 @@
 </div>
 <script>
     $(document).ready(function() {
+        setTimeout(function() {
+            if (sessionStorage.getItem('registerSuccess') === 'true') {
+                createToast('success', 'fas fa-check', 'Thành công', 'Đăng ký tài khoản thành công');
+                sessionStorage.removeItem('registerSuccess'); // Remove the item to prevent showing the message again
+            }
+        }, 500);
         $('#loginBtn').on('click', function(e) {
             e.preventDefault();
 
@@ -119,8 +125,12 @@
                     let userRoleCode = response.result.user.role.code;
 
                     // Kiểm tra role và chuyển hướng nếu role có tiền tố là "ADMIN"
-                    if (userRoleCode.startsWith('ADMIN')) {
+                    if (userRoleCode === 'ADMIN' || userRoleCode === 'ADMIN_MANAGE' || userRoleCode === 'AUTHOR') {
+                    // if (userRoleCode.startsWith('ADMIN')) {
                         window.location.href = '/news_lv/page/admin'; // Chuyển hướng đến trang admin
+                        if (userRoleCode === 'AUTHOR') {
+                            sessionStorage.setItem('author', 'true');
+                        }
                     } else if (userRoleCode === 'USER') {
                         let currentNewsId = sessionStorage.getItem('currentNewsId');
                         if (currentNewsId) {

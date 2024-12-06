@@ -3,6 +3,10 @@
     
     // Dropdown on mouse hover
     $(document).ready(function () {
+        var LoggedOut = sessionStorage.getItem('isLoggedOut')
+        if (LoggedOut === 'true') {
+            sessionStorage.clear();
+        }
         var Role = sessionStorage.getItem('Role')
         if (Role == 'ADMIN' || Role == 'ADMIN_MANAGE' || Role == 'AUTHOR') {
             $('#redirectAdmin').removeClass('d-none');

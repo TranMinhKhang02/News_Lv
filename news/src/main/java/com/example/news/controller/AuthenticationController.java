@@ -76,7 +76,6 @@ public class AuthenticationController {
             log.info("User role: {}", user.getRole().getCode());
             log.info("User authorities: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
             log.info("User context: {}", SecurityContextHolder.getContext().getAuthentication());
-
         }
 
         return ApiResponse.<AuthenticationResponse>builder()

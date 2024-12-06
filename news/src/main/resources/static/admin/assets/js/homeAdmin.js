@@ -1176,7 +1176,7 @@ $(document).on('click', '#profileAdmin', function (e) {
 $('#logoutButton').on('click', function(event) {
     event.preventDefault(); // Ngăn chặn hành động mặc định
 
-    sessionStorage.removeItem('userLogin');
+    /*sessionStorage.removeItem('userLogin');
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('userId');
     sessionStorage.removeItem('currentNewsId');
@@ -1190,8 +1190,35 @@ $('#logoutButton').on('click', function(event) {
     sessionStorage.setItem('isLoggedOut', 'true');
 
     // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
-    window.location.href = '/news_lv/page/home';
-    $('#login-btn').hide();
+    window.location.href = '/news_lv/page/home';*/
+    $.ajax({
+        url: '/news_lv/page/logout',
+        method: 'GET',
+        success: function(response) {
+            // Xóa sessionStorage
+            sessionStorage.removeItem('userLogin');
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('userId');
+            sessionStorage.removeItem('currentNewsId');
+            sessionStorage.clear();
+
+            // Xóa localStorage
+            localStorage.clear();
+
+            // Đánh dấu trạng thái logout trong sessionStorage
+            sessionStorage.setItem('isLoggedOut', 'true');
+
+            // Ẩn nút login
+            $('#login-btn').hide();
+
+            // Redirect tới trang logout kèm theo URL hiện tại dưới dạng query parameter
+            window.location.href = '/news_lv/page/home';
+        },
+        error: function(xhr, status, error) {
+            console.error("Error during logout:", error);
+        }
+    });
+    // $('#login-btn').hide();
 });
 
 // Hàm toggleChart để ẩn/hiện biểu đồ khi checkbox thay đổi

@@ -793,7 +793,7 @@ $(document).on('click', '#saveNews', function () {
     var finalThumbnail = thumbnailUrl ? thumbnailUrl : thumbnail;
 
     // Kiểm tra các trường dữ liệu
-    if (!title || !content || !finalThumbnail || !source || selectedCategoryIds.length === 0) {
+    if (!title || !content || !finalThumbnail || selectedCategoryIds.length === 0) {
         createToast('error', 'fas fa-exclamation', 'Lỗi', 'Vui lòng điền đầy đủ thông tin.');
         return;
     }
