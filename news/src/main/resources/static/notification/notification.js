@@ -154,3 +154,34 @@ $(document).on('click', '#btn-success', function() {
     let text = 'This is a success toast.';
     createToast(type, icon, title, text);
 });
+
+/*
+success.onclick = function(){
+        let type = 'success';
+        let icon = 'fa-solid fa-circle-check';
+        let title = 'Success';
+        let text = 'This is a success toast.';
+        createToast(type, icon, title, text);
+    }
+    error.onclick = function(){
+        let type = 'error';
+        let icon = 'fa-solid fa-circle-exclamation';
+        let title = 'Error';
+        let text = 'This is a error toast.';
+        createToast(type, icon, title, text);
+    }
+    warning.onclick = function(){
+        let type = 'warning';
+        let icon = 'fa-solid fa-triangle-exclamation';
+        let title = 'Warning';
+        let text = 'This is a warning toast.';
+        createToast(type, icon, title, text);
+    }
+    info.onclick = function(){
+        let type = 'info';
+        let icon = 'fa-solid fa-circle-info';
+        let title = 'Info';
+        let text = 'This is a info toast.';
+        createToast(type, icon, title, text);
+    }
+* */

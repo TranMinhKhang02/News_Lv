@@ -591,6 +591,7 @@ function submitComment(message, parentCommentId = null) {
         success: function(response) {
             // alert('Bình luận của bạn đã được gửi.');
             fetchComments(newsId);
+            $('#message').val('');
             getAllInteract();
         },
         error: function(error) {

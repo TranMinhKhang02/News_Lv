@@ -21,14 +21,14 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
     List<News> findAllByCategories_code(String categoryCode);
 
-    List<News> findAllByCategories_codeAndStatusCode(String categoryCode, String statusCode);
+    List<News> findAllByCategories_codeAndStatusCodeOrderByModifiedDateDesc(String categoryCode, String statusCode);
     long countByCategories_CodeAndStatusCode(String categoryCode, String statusCode);
 
 //    Page<News> findAllByCategories_codeAndStatusCodeAndCreatedBy(String categoryCode, String statusCode, String createdBy, Pageable pageable);
-    Page<News> findAllByCreatedByAndStatusCodeAndCategories_code(String createdBy, String statusCode, String categoryCode, Pageable pageable);
+    Page<News> findAllByCreatedByAndStatusCodeAndCategories_codeOrderByModifiedDateDesc(String createdBy, String statusCode, String categoryCode, Pageable pageable);
     long countByCreatedByAndStatusCodeAndCategories_code(String createdBy, String statusCode, String categoryCode);
 
-    Page<News> findAllByCategories_codeAndStatusCode(String categoryCode, String statusCode, Pageable pageable);
+    Page<News> findAllByCategories_codeAndStatusCodeOrderByModifiedDateDesc(String categoryCode, String statusCode, Pageable pageable);
     long countAllByCategories_codeAndStatusCode(String categoryCode, String statusCode);
 
     Page<News> findByUsersFavorited_Id(Long userId, Pageable pageable);
@@ -49,7 +49,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     List<News> findTop5ByOrderByLikeCountDesc();
     List<News> findTop5ByStatusCodeOrderByLikeCountDesc(String statusCode);
 
-    List<News> findTop5ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(String categoryCode, String statusCode);
+    List<News> findTop6ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(String categoryCode, String statusCode);
 
     List<News> findBySummarizedFalse();
 

@@ -714,12 +714,12 @@ $(document).on('click', '#deleteNews', function () {
                         createToast('success', 'fas fa-check', 'Thành công', 'Xóa tin tức thành công');
                         // location.reload();
                     } else {
-                        alert('Có lỗi xảy ra: ' + response.message);
+                        createToast('error', 'fas circle-exclamation', 'Lỗi', 'Có lỗi xảy ra khi xóa bài viết');
                     }
                 },
                 error: function(error) {
                     console.error('Error deleting news:', error);
-                    alert('Có lỗi xảy ra khi xóa bài viết');
+                    createToast('error', 'fas circle-exclamation', 'Lỗi', 'Có lỗi xảy ra khi xóa bài viết');
                 }
             });
             $('#deleteConfirmationModal').hide();
@@ -729,7 +729,7 @@ $(document).on('click', '#deleteNews', function () {
             $('#deleteConfirmationModal').hide();
         });
     } else {
-        alert('Vui lòng chọn ít nhất một bài viết để xóa');
+        createToast('error', 'fas circle-exclamation', 'Thất bại', 'Vui lòng chọn ít nhất một bài viết để xóa');
     }
 });
 /*$(document).on('click', '#deleteNews', function () {

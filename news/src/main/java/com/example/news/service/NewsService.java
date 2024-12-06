@@ -175,7 +175,7 @@ public class NewsService {
     }
 
     public List<NewsResponse> getTop5NewsByCategoryCode(String categoryCode, String statusCode) {
-        return newsRepository.findTop5ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(categoryCode, statusCode).stream()
+        return newsRepository.findTop6ByCategories_codeAndStatusCodeOrderByModifiedDateDesc(categoryCode, statusCode).stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
     }
@@ -280,7 +280,7 @@ public class NewsService {
     public List<NewsResponse> getAllByCreatedByAndStatusCode
             (String createdBy, String statusCode, String categoryCode, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        List<News> newsList = newsRepository.findAllByCreatedByAndStatusCodeAndCategories_code(createdBy, statusCode, categoryCode, pageRequest).getContent();
+        List<News> newsList = newsRepository.findAllByCreatedByAndStatusCodeAndCategories_codeOrderByModifiedDateDesc(createdBy, statusCode, categoryCode, pageRequest).getContent();
         return newsList.stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
@@ -288,7 +288,7 @@ public class NewsService {
 
     public List<NewsResponse> getAllByCategoryCodeAndStatusCode(String categoryCode, String statusCode, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        return newsRepository.findAllByCategories_codeAndStatusCode(categoryCode, statusCode, pageRequest).stream()
+        return newsRepository.findAllByCategories_codeAndStatusCodeOrderByModifiedDateDesc(categoryCode, statusCode, pageRequest).stream()
                 .map(newsMapper::toNewsResponse)
                 .collect(Collectors.toList());
     }
@@ -303,6 +303,7 @@ public class NewsService {
         news.setApprovedBy(request.getApproveBy());
         news.setRejectReason(request.getRejectReason());
         news.setStatus(status);
+        news.setModifiedDate(LocalDateTime.now());
         newsRepository.save(news);
     }
 
